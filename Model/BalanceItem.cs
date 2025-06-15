@@ -13,16 +13,17 @@ namespace FinancialCalculator.Model
 
         public string Name { get; set; }
 
-        private float monthlyAmount;
-        private float monthlyPercent;
+        protected float monthlyAmount;
+        protected float monthlyPercent;
 
         public float MonthlyAmount { 
             get => monthlyAmount; 
             set { 
                 monthlyAmount = value; 
                 monthlyPercent = monthlyAmount / balanceSheet.takeHomeAmount;
+                OnPropertyChanged("MonthlyAmount");
                 OnPropertyChanged("MonthlyPercentStr");
-                UpdateCalculatedValues();
+                balanceSheet.UpdateCalculatedValues();
             } 
         }
         public string MonthlyPercentStr
@@ -33,8 +34,8 @@ namespace FinancialCalculator.Model
                 monthlyPercent =  p / 100;
                 monthlyAmount = monthlyPercent * balanceSheet.takeHomeAmount;
                 OnPropertyChanged("MonthlyAmount");
-                OnPropertyChanged("MonthlyPercent");
-                UpdateCalculatedValues();
+                OnPropertyChanged("MonthlyPercentStr");
+                balanceSheet.UpdateCalculatedValues();
             }
         }
         public string Notes { get; set; }
@@ -59,24 +60,6 @@ namespace FinancialCalculator.Model
                 monthlyAmount = 0;
                 monthlyPercent = 0;
             }
-        }
-
-
-        public void UpdateCalculatedValues()
-        {
-            OnPropertyChanged("FederalTaxPercent");
-            OnPropertyChanged("StateTaxPercent");
-            OnPropertyChanged("TotalTaxAmount");
-            OnPropertyChanged("TotalTaxPercent");
-            OnPropertyChanged("TakeHomeAmount");
-
-            OnPropertyChanged("TotalInvestmentAmount");
-            OnPropertyChanged("TotalInvestmentPercent");
-            OnPropertyChanged("TotalFixedCostsAmount");
-            OnPropertyChanged("TotalFixedCostsPercent");
-            OnPropertyChanged("TotalFreeSpendingAmount");
-            OnPropertyChanged("TotalFreeSpendingPercent");
-
         }
     }
 }

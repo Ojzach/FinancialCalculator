@@ -166,16 +166,21 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Text="{Binding Name}" Grid.Column="0"/>
                                 <TextBox Text="{Binding MonthlyPercentStr, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
                                 <TextBox Text="{Binding MonthlyAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="2"/>
-                                <TextBox Text="{Binding Notes}" Grid.Column="3"/>
+                                <TextBox Text="{Binding GoalSavingsAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3"/>
+                                <TextBox Text="{Binding CurrentSavingsAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="4"/>
+                                <DatePicker SelectedDate="{Binding GoalDate}" Grid.Column="5"/>
+                                <TextBox Text="{Binding Notes}" Grid.Column="6"/>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-
                 </ListBox>
 
 

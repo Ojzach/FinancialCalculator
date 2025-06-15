@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using FinancialCalculator.Model;
 
 namespace FinancialCalculator.ViewModel
@@ -92,7 +93,7 @@ namespace FinancialCalculator.ViewModel
         public ObservableCollection<BalanceItem> FixedCostsBalanceItems 
         { get => balanceSheet.fixedCostsBalanceItems; set { balanceSheet.fixedCostsBalanceItems = value; UpdateCalculatedValues(); } }
 
-        public ObservableCollection<BalanceItem> SavingsBalanceItems
+        public ObservableCollection<SavingsBalanceItem> SavingsBalanceItems
         { get => balanceSheet.savingsBalanceItems; set { balanceSheet.savingsBalanceItems = value; UpdateCalculatedValues(); } }
 
         public ObservableCollection<BalanceItem> FreeSpendingBalanceItems 
@@ -112,6 +113,8 @@ namespace FinancialCalculator.ViewModel
             OnPropertyChanged("TotalInvestmentPercent");
             OnPropertyChanged("TotalFixedCostsAmount");
             OnPropertyChanged("TotalFixedCostsPercent");
+            OnPropertyChanged("TotalSavingsAmount");
+            OnPropertyChanged("TotalSavingsPercent");
             OnPropertyChanged("TotalFreeSpendingAmount");
             OnPropertyChanged("TotalFreeSpendingPercent");
 

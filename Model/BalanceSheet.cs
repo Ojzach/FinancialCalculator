@@ -21,7 +21,7 @@ namespace FinancialCalculator.Model
 
         public ObservableCollection<BalanceItem> investmentBalanceItems = new ObservableCollection<BalanceItem>();
         public ObservableCollection<BalanceItem> fixedCostsBalanceItems = new ObservableCollection<BalanceItem>();
-        public ObservableCollection<BalanceItem> savingsBalanceItems = new ObservableCollection<BalanceItem>();
+        public ObservableCollection<SavingsBalanceItem> savingsBalanceItems = new ObservableCollection<SavingsBalanceItem>();
         public ObservableCollection<BalanceItem> freeSpendingBalanceItems = new ObservableCollection<BalanceItem>();
 
         public BalanceSheet(BalanceSheetViewModel viewModel) 
@@ -40,6 +40,10 @@ namespace FinancialCalculator.Model
             fixedCostsBalanceItems.Add(new BalanceItem(this, "AMO Dues"));
 
 
+            savingsBalanceItems.Add(new SavingsBalanceItem(this, "Emergency Fund"));
+            savingsBalanceItems.Add(new SavingsBalanceItem(this, "Rally Car"));
+            savingsBalanceItems.Add(new SavingsBalanceItem(this, "House"));
+
             freeSpendingBalanceItems.Add(new BalanceItem(this, "Food"));
             freeSpendingBalanceItems.Add(new BalanceItem(this, "Gas"));
             freeSpendingBalanceItems.Add(new BalanceItem(this, "Food"));
@@ -47,7 +51,12 @@ namespace FinancialCalculator.Model
             freeSpendingBalanceItems.Add(new BalanceItem(this, "Adobe", _monthlyAmount: 15.89f));
             freeSpendingBalanceItems.Add(new BalanceItem(this, "Google Photos", _monthlyAmount: 2.11f));
             freeSpendingBalanceItems.Add(new BalanceItem(this, "Other"));
+
+            vm = viewModel;
         }
+
+        private BalanceSheetViewModel vm;
+        public void UpdateCalculatedValues() => vm.UpdateCalculatedValues();
 
     }
 }
