@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FinancialCalculator.Stores;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,8 +18,8 @@ namespace FinancialCalculator.Model
         public float GoalSavingsAmount { get => goalSavingsAmount; set { goalSavingsAmount = value; SetMonthlyAmount(); } }
         public DateTime GoalDate { get => goalDate; set { goalDate = value < DateTime.Today ? DateTime.Today : value; SetMonthlyAmount(); } }
 
-        public SavingsBalanceItem(BalanceSheet _balanceSheet, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, string notes = "")
-            : base(_balanceSheet, name, _monthlyAmount, _monthlyPercent, notes)
+        public SavingsBalanceItem(PaycheckStore paycheck, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, string notes = "")
+            : base(paycheck ,name, _monthlyAmount, _monthlyPercent, notes)
         {
 
         }
