@@ -1,6 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using FinancialCalculator.Model;
 using FinancialCalculator.Stores;
+using FinancialCalculator.Commands;
+using System.Windows.Controls;
+using System.Windows;
+using System.Diagnostics;
 
 namespace FinancialCalculator.ViewModel
 {
@@ -35,6 +39,14 @@ namespace FinancialCalculator.ViewModel
             }
         }
 
+
+        private bool addBalanceItemVisible = false;
+        public Visibility AddBalanceItemBoxVisible { get => addBalanceItemVisible? Visibility.Visible: Visibility.Collapsed; }
+
+        private string addBalanceItemName = "";
+        public string AddBalanceItemName { get => addBalanceItemName; set { addBalanceItemName = value; OnPropertyChanged("AddBalanceItemName"); } }
+
+
         private PaycheckStore _paycheck;
         public BalanceSheetViewModel(PaycheckStore paycheck, string balanceSheetName)
         {
@@ -43,6 +55,27 @@ namespace FinancialCalculator.ViewModel
             BalanceSheetName = balanceSheetName;
 
 
+            OpenAddBalanceItemBoxCommand = new RelayCommand(execute => ToggleAddBalanceItemBox());
+            CreateBalanceItemCommand = new RelayCommand(execute => CreateBalanceSheetItem(), canExecute => { return addBalanceItemVisible && AddBalanceItemName != ""; });
+
+        }
+
+
+        public RelayCommand OpenAddBalanceItemBoxCommand { get; }
+        public RelayCommand CreateBalanceItemCommand { get; }
+
+        private void ToggleAddBalanceItemBox()
+        {
+
+            AddBalanceItemName = "";
+            addBalanceItemVisible = !addBalanceItemVisible;
+            OnPropertyChanged("AddBalanceItemBoxVisible");
+        }
+
+        public void CreateBalanceSheetItem()
+        {
+            AddBalanceSheetItem(new BalanceItem(_paycheck, AddBalanceItemName));
+            ToggleAddBalanceItemBox();
         }
 
 

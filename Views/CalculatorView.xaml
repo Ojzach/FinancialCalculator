@@ -113,7 +113,31 @@
 
                                 </ListBox>
 
-                                <Button Content="Add"/>
+                                <Grid Margin="5" Visibility="{Binding AddBalanceItemBoxVisible}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--<Grid.Style>
+                                        <Style TargetType="{x:Type Grid}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}},Path=IsSelected}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>-->
+
+
+                                    <TextBlock Text="Name:" Grid.Column="0"/>
+                                    <TextBox Text="{Binding AddBalanceItemName}" Grid.Column="1"/>
+                                    <Button Content="Submit" Command="{Binding CreateBalanceItemCommand}" Grid.Column="2"/>
+                                </Grid>
+
+                                <Button Content="Add" Command="{Binding OpenAddBalanceItemBoxCommand}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
