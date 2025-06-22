@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using FinancialCalculator.Model;
 using FinancialCalculator.Stores;
+using FinancialCalculator.ViewModels.Models;
 
 namespace FinancialCalculator.ViewModel
 {
@@ -68,7 +69,7 @@ namespace FinancialCalculator.ViewModel
 
             BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Investments"));
             BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Fixed Costs"));
-            BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Savings"));
+            BalanceSheets.Add(new SavingsBalanceSheetViewModel(_paycheck, "Savings"));
             BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Free Spending"));
 
             BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, "401K", _monthlyAmount: 933.36f));

@@ -10,7 +10,7 @@ namespace FinancialCalculator.ViewModel
 {
     internal class BalanceSheetViewModel : ViewModelBase
     {
-        private BalanceSheet balanceSheet;
+        protected BalanceSheet balanceSheet;
 
         public string BalanceSheetName { get => balanceSheet.name; set { balanceSheet.name = value; OnPropertyChanged("BalanceSheetName"); } }
 
@@ -29,25 +29,15 @@ namespace FinancialCalculator.ViewModel
         public ObservableCollection<BalanceItem> BalanceSheetItems
         {  get => balanceSheet.BalanceItems; set { balanceSheet.BalanceItems = value; } }
 
-        public string MaxTotalSavingsPercentStr {
-            get => (balanceSheet.maxTotalSavingsPercent * 100).ToString("0.00") + "%";
-            set
-            {
-                float p = float.Parse(value.Trim(new Char[] { '%' }));
-                balanceSheet.maxTotalSavingsPercent = p <= 100 ? p / 100 : 1;
-                OnPropertyChanged("MaxTotalSavingsPercentStr");
-            }
-        }
 
-
-        private bool addBalanceItemVisible = false;
+        protected bool addBalanceItemVisible = false;
         public Visibility AddBalanceItemBoxVisible { get => addBalanceItemVisible? Visibility.Visible: Visibility.Collapsed; }
 
-        private string addBalanceItemName = "";
+        protected string addBalanceItemName = "";
         public string AddBalanceItemName { get => addBalanceItemName; set { addBalanceItemName = value; OnPropertyChanged("AddBalanceItemName"); } }
 
 
-        private PaycheckStore _paycheck;
+        protected PaycheckStore _paycheck;
         public BalanceSheetViewModel(PaycheckStore paycheck, string balanceSheetName)
         {
             _paycheck = paycheck;

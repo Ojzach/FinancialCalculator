@@ -7,6 +7,15 @@
              xmlns:model="clr-namespace:FinancialCalculator.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ResourceDictionaries/BalanceSheetsDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid Background="White">
 
         <ScrollViewer Margin="100, 0, 0, 0" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
@@ -62,136 +71,13 @@
                     <TextBlock Grid.Column="1" Text="{Binding TakeHomeAmount, StringFormat='c'}"/>
                 </Grid>
 
-                <ListBox ItemsSource="{Binding BalanceSheets}">
+                <ListBox ItemsSource="{Binding BalanceSheets}" ItemTemplateSelector="{Binding Source={StaticResource BalanceSheetTemplateSelector}}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                         </Style>
                     </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Vertical">
-
-                                <Grid Margin="5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition MaxWidth="75"/>
-                                        <ColumnDefinition MaxWidth="75"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Text="{Binding BalanceSheetName}" Grid.Column="0"/>
-                                    <TextBlock Text="Notes" Grid.Column="1"/>
-                                    <TextBlock Text="{Binding TotalBalanceSheetPercent, StringFormat='P2'}" Grid.Column="2"/>
-                                    <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3"/>
-                                </Grid>
-
-                                <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}">
-                                    <ListBox.ItemContainerStyle>
-                                        <Style TargetType="ListBoxItem">
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid HorizontalAlignment="Stretch">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition MaxWidth="75"/>
-                                                    <ColumnDefinition MaxWidth="75"/>
-                                                </Grid.ColumnDefinitions>
-
-                                                <TextBlock Text="{Binding Name}" Grid.Column="0"/>
-                                                <TextBox Text="{Binding Notes}" Grid.Column="1"/>
-                                                <TextBox Text="{Binding MonthlyPercentStr, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2"/>
-                                                <TextBox Text="{Binding MonthlyAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3"/>
-
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-
-                                </ListBox>
-
-                                <Grid Margin="5" Visibility="{Binding AddBalanceItemBoxVisible}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <!--<Grid.Style>
-                                        <Style TargetType="{x:Type Grid}">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}},Path=IsSelected}" Value="True">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Grid.Style>-->
-
-
-                                    <TextBlock Text="Name:" Grid.Column="0"/>
-                                    <TextBox Text="{Binding AddBalanceItemName}" Grid.Column="1"/>
-                                    <Button Content="Submit" Command="{Binding CreateBalanceItemCommand}" Grid.Column="2"/>
-                                </Grid>
-
-                                <Button Content="Add" Command="{Binding OpenAddBalanceItemBoxCommand}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
                 </ListBox>
-
-<!--
-                <Grid Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition MaxWidth="75"/>
-                        <ColumnDefinition MaxWidth="75"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Text="Total Savings" Grid.Column="0"/>
-                    <StackPanel Orientation="Horizontal" Grid.Column="1">
-                        <TextBlock Text="Max Percentage: "/>
-                        <TextBox Text="{Binding BalanceSheet.MaxTotalSavingsPercentStr, UpdateSourceTrigger=PropertyChanged}" Width="75"/>
-                    </StackPanel>
-                    <TextBlock Text="{Binding BalanceSheet.TotalSavingsPercent, StringFormat='P2'}" Grid.Column="2" Grid.Row="2"/>
-                    <TextBlock Text="{Binding BalanceSheet.TotalSavingsAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Grid.Row="2"/>
-                </Grid>
-
-                <ListBox Height="100" ItemsSource="{Binding BalanceSheet.SavingsBalanceItems}">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid HorizontalAlignment="Stretch">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition MaxWidth="75"/>
-                                    <ColumnDefinition MaxWidth="75"/>
-                                    <ColumnDefinition MaxWidth="75"/>
-                                    <ColumnDefinition MaxWidth="75"/>
-                                    <ColumnDefinition MaxWidth="100"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Text="{Binding Name}" Grid.Column="0"/>
-                                <TextBox Text="{Binding MonthlyPercentStr, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
-                                <TextBox Text="{Binding MonthlyAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="2"/>
-                                <TextBox Text="{Binding GoalSavingsAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3"/>
-                                <TextBox Text="{Binding CurrentSavingsAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="4"/>
-                                <DatePicker SelectedDate="{Binding GoalDate}" Grid.Column="5"/>
-                                <TextBox Text="{Binding Notes}" Grid.Column="6"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                -->
 
             </StackPanel>
         </ScrollViewer>
