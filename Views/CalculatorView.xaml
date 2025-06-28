@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FinancialCalculator.View"
-             xmlns:model="clr-namespace:FinancialCalculator.ViewModel"
+             xmlns:model="clr-namespace:FinancialCalculator.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -14,61 +14,70 @@
                 <ResourceDictionary Source="/ResourceDictionaries/BalanceSheetsDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
+        
     </UserControl.Resources>
 
     <Grid Background="White">
 
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="TextAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="TextAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+        </Grid.Resources>
+        
         <ScrollViewer Margin="100, 0, 0, 0" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="10, 10, 50, 10" Orientation="Vertical">
                 <TextBlock Height="40"/>
 
-                <Grid Height="25" Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition MaxWidth="75"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Text="Paycheck" Grid.Column="0"/>
-                    <TextBox Grid.Column="1" Text="{Binding PaycheckAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}"/>
-                </Grid>
-
                 <Grid Margin="5">
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
+                        <ColumnDefinition MaxWidth="150"/>
                         <ColumnDefinition MaxWidth="75"/>
                         <ColumnDefinition MaxWidth="75"/>
 
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="20"/>
-
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Total Tax" Grid.Column="0" Grid.Row="0"/>
-                    <TextBlock Text="{Binding TotalTaxPercent, StringFormat='P2'}" Grid.Column="1" Grid.Row="0"/>
-                    <TextBlock Text="{Binding TotalTaxAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Grid.Row="0"/>
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                        <TextBlock Text="Estimated Yearly Income: "/>
+                        <TextBox Text="{Binding EstimatedYearlyIncome, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+                    </StackPanel>
 
-                    <TextBlock Text="Federal Tax" Grid.Column="0" Grid.Row="1"/>
-                    <TextBlock Text="{Binding FederalTaxPercent, StringFormat='P2'}" Grid.Column="1" Grid.Row="1"/>
-                    <TextBox Text="{Binding FederalTaxAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Grid.Row="1"/>
+                    <TextBlock Text="{Binding MonthsCoveredByPaycheck, StringFormat='Months Covered By Paycheck Modifier: {0}'}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left"/>
 
-                    <TextBlock Text="State Tax" Grid.Column="0" Grid.Row="2"/>
-                    <TextBlock Text="{Binding StateTaxPercent, StringFormat='P2'}" Grid.Column="1" Grid.Row="2"/>
-                    <TextBox Text="{Binding StateTaxAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Grid.Row="2"/>
+                    <TextBlock Text="Paycheck" Grid.Column="1" Grid.Row="0"/>
+                    <TextBox  Text="{Binding PaycheckAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Grid.Row="0"/>
 
-                </Grid>
+                    <TextBlock Text="Total Tax" Grid.Column="1" Grid.Row="1"/>
+                    <TextBlock Text="{Binding TotalTaxPercent, StringFormat='P2'}" Grid.Column="2" Grid.Row="1"/>
+                    <TextBlock Text="{Binding TotalTaxAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Grid.Row="1"/>
 
-                <Grid Height="25" Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition MaxWidth="75"/>
-                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Federal Tax" Grid.Column="1" Grid.Row="2"/>
+                    <TextBlock Text="{Binding FederalTaxPercent, StringFormat='P2'}" Grid.Column="2" Grid.Row="2"/>
+                    <TextBox Text="{Binding FederalTaxAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Grid.Row="2"/>
 
-                    <TextBlock Text="Take Home Amount" Grid.Column="0"/>
-                    <TextBlock Grid.Column="1" Text="{Binding TakeHomeAmount, StringFormat='c'}"/>
+                    <TextBlock Text="State Tax" Grid.Column="1" Grid.Row="3"/>
+                    <TextBlock Text="{Binding StateTaxPercent, StringFormat='P2'}" Grid.Column="2" Grid.Row="3"/>
+                    <TextBox Text="{Binding StateTaxAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Grid.Row="3"/>
+
+                    <TextBlock Text="Take Home Amount" Grid.Column="1" Grid.Row="4"/>
+                    <TextBlock Text="{Binding TakeHomePercent, StringFormat='P2'}" Grid.Column="2" Grid.Row="4"/>
+                    <TextBlock Text="{Binding TakeHomeAmount, StringFormat='c'}" Grid.Column="3" Grid.Row="4"/>
+
                 </Grid>
 
                 <ListBox ItemsSource="{Binding BalanceSheets}" ItemTemplateSelector="{Binding Source={StaticResource BalanceSheetTemplateSelector}}">

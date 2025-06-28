@@ -1,6 +1,11 @@
-﻿using FinancialCalculator.Stores;
+﻿using FinancialCalculator.Models;
+using FinancialCalculator.Stores;
+using NodaTime;
+using NodaTime.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,30 +14,41 @@ namespace FinancialCalculator.Model
 {
     internal class SavingsBalanceItem : BalanceItem
     {
+        private float savingsGoalAmount;
+        private LocalDate goalDate = DateTime.Now.ToLocalDateTime().Date;
+        private BankAccount savingsAccount;
+        private SavingsBalanceItemPriority savingsPriority;
+        private float recommendedMonthlyAmount = 0;
 
-        private float currentSavingsAmount;
-        private float goalSavingsAmount;
-        private DateTime goalDate = DateTime.Today;
+        public float SavingsCurrentAmount { get => savingsAccount.currentBalance; set { savingsAccount.currentBalance = value; NumbersChanged.Invoke(); OnPropertyChanged("MonthlySavingsToReachGoal"); } }
+        public float SavingsGoalAmount { get => savingsGoalAmount; set { savingsGoalAmount = value; NumbersChanged.Invoke(); OnPropertyChanged("MonthlySavingsToReachGoal"); } }
+        public DateTime GoalDate { get => goalDate.ToDateTimeUnspecified(); set { goalDate = value < DateTime.Today ? DateTime.Today.ToLocalDateTime().Date : value.ToLocalDateTime().Date; NumbersChanged.Invoke(); OnPropertyChanged("MonthlySavingsToReachGoal"); } }
+        public SavingsBalanceItemPriority SavingsPriority { get => savingsPriority; set { savingsPriority = value; NumbersChanged.Invoke(); } }
+        
+        private readonly ObservableCollection<SavingsBalanceItemPriority> priorityLevels = new ObservableCollection<SavingsBalanceItemPriority>() { SavingsBalanceItemPriority.None, SavingsBalanceItemPriority.Low, SavingsBalanceItemPriority.Medium, SavingsBalanceItemPriority.High };
+        public ObservableCollection<SavingsBalanceItemPriority> PriorityLevels { get => priorityLevels; }
+        
+        public int MonthsTillGoalDate { get => (goalDate - DateTime.Now.ToLocalDateTime().Date).Months + 1;  }
+        public float AmountLeftToSave { get => (savingsGoalAmount - savingsAccount.currentBalance) < 0 ? 0 : savingsGoalAmount - savingsAccount.currentBalance;  }
+        public float MonthlySavingsToReachGoal { get => AmountLeftToSave / MonthsTillGoalDate; }
+        public float RecommendedMonthlyAmount { get => recommendedMonthlyAmount; set { recommendedMonthlyAmount = value; OnPropertyChanged("RecommendedMonthlyAmount"); } }
 
-        public float CurrentSavingsAmount { get => currentSavingsAmount; set { currentSavingsAmount = value; SetMonthlyAmount(); } }
-        public float GoalSavingsAmount { get => goalSavingsAmount; set { goalSavingsAmount = value; SetMonthlyAmount(); } }
-        public DateTime GoalDate { get => goalDate; set { goalDate = value < DateTime.Today ? DateTime.Today : value; SetMonthlyAmount(); } }
-
-        public SavingsBalanceItem(PaycheckStore paycheck, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, string notes = "")
-            : base(paycheck ,name, _monthlyAmount, _monthlyPercent, notes)
+        public SavingsBalanceItem(PaycheckStore paycheck, string name, BankAccount _savingsAccount, float _savingsGoalAmount = 0.0f, LocalDate _savingsGoalDate = default(LocalDate), SavingsBalanceItemPriority priority = SavingsBalanceItemPriority.Low, string notes = "")
+            : base(paycheck ,name, notes: notes)
         {
+            savingsGoalAmount = _savingsGoalAmount;
+            savingsAccount = _savingsAccount;
+            goalDate = _savingsGoalDate == default(LocalDate) ? DateTime.Now.ToLocalDateTime().Date : _savingsGoalDate;
+            savingsPriority = priority;
 
+            OnPropertyChanged("GoalDate");
         }
 
 
-        private void SetMonthlyAmount()
+        public void SetRecommendedMonthly(float amt)
         {
-            float amountLeft = GoalSavingsAmount - CurrentSavingsAmount;
-            float monthsTillGoal = (GoalDate.Year - DateTime.Today.Year) * 12 + GoalDate.Month - DateTime.Today.Month;
-            if (monthsTillGoal == 0) monthsTillGoal = 1;
-
-            if (amountLeft <= 0.0f) MonthlyAmount = 0;
-            else MonthlyAmount = amountLeft / monthsTillGoal;
+            RecommendedMonthlyAmount = amt;
+            SetAmountAndPercent(amount: amt);
         }
 
     }

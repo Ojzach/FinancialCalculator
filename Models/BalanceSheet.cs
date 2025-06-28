@@ -1,4 +1,4 @@
-﻿using FinancialCalculator.ViewModel;
+﻿using FinancialCalculator.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,11 +19,7 @@ namespace FinancialCalculator.Model
 
         public BalanceSheet() 
         {
-
-
-
             
-
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
-using FinancialCalculator.ViewModel;
+using FinancialCalculator.ViewModels;
 
 namespace FinancialCalculator
 {

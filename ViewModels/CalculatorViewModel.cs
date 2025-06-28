@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using FinancialCalculator.Model;
+using FinancialCalculator.Models;
 using FinancialCalculator.Stores;
-using FinancialCalculator.ViewModels.Models;
+using NodaTime;
 
-namespace FinancialCalculator.ViewModel
+namespace FinancialCalculator.ViewModels
 {
     internal class CalculatorViewModel : ViewModelBase
     {
@@ -20,7 +21,11 @@ namespace FinancialCalculator.ViewModel
             set { _paycheck.PaycheckAmount = value; UpdateCalculatedValues(); }
         }
 
+        public float EstimatedYearlyIncome { get => _paycheck.EstimatedyearlyIncome; set { _paycheck.EstimatedyearlyIncome = value; UpdateCalculatedValues(); } }
+        public int MonthsCoveredByPaycheck { get => _paycheck.MonthsCoveredByPaycheck; }
+
         public float TakeHomeAmount { get => _paycheck.TakeHomeAmount; }
+        public float TakeHomePercent { get => BalanceSheets.Sum(item => item.TotalBalanceSheetPercent); }
 
 
         #region Taxes
@@ -59,8 +64,8 @@ namespace FinancialCalculator.ViewModel
         private PaycheckStore _paycheck;
 
 
-        private ObservableCollection<BalanceSheetViewModel> balanceSheets = new ObservableCollection<BalanceSheetViewModel>();
-        public ObservableCollection<BalanceSheetViewModel> BalanceSheets { get => balanceSheets; set { balanceSheets = value; UpdateCalculatedValues(); } }
+        private ObservableCollection<BalanceSheetBaseViewModel> balanceSheets = new ObservableCollection<BalanceSheetBaseViewModel>();
+        public ObservableCollection<BalanceSheetBaseViewModel> BalanceSheets { get => balanceSheets; set { balanceSheets = value; UpdateCalculatedValues(); } }
 
 
         public CalculatorViewModel()
@@ -76,13 +81,13 @@ namespace FinancialCalculator.ViewModel
             BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, "RothIRA", _monthlyPercent: 0.05f));
             BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, "HSA"));
 
-            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "Studen Loans"));
-            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "Motorcycle Insurance"));
-            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "AMO Dues"));
+            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "Studen Loans", _monthlyAmount: 500.0f));
+            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "Motorcycle Insurance", _monthlyAmount: 43.32f));
+            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "AMO Dues", _monthlyAmount: 141.67f));
 
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Emergency Fund"));
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Rally Car"));
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "House"));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Emergency Fund", new BankAccount("EmergencyFund", BankAccountType.Savings, 2000), 10000, new LocalDate(2025, 8, 25)));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Rally Car", new BankAccount("RallyCar", BankAccountType.Savings, 0), 15000, new LocalDate(2026, 1, 1)));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "House", new BankAccount("House", BankAccountType.Savings, 0), 50000, new LocalDate(2026, 10, 20)));
 
             BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Food"));
             BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Gas"));
@@ -103,6 +108,9 @@ namespace FinancialCalculator.ViewModel
             OnPropertyChanged("TotalTaxAmount");
             OnPropertyChanged("TotalTaxPercent");
             OnPropertyChanged("TakeHomeAmount");
+            OnPropertyChanged("TakeHomePercent");
+            OnPropertyChanged("EstimatedYearlyIncome");
+            OnPropertyChanged("MonthsCoveredByPaycheck");
 
             OnPropertyChanged("BalanceSheets");
 

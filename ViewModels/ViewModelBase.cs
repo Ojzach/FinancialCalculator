@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinancialCalculator.ViewModel
+namespace FinancialCalculator.ViewModels
 {
     internal class ViewModelBase : INotifyPropertyChanged
     {

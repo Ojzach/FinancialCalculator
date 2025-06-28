@@ -1,11 +1,7 @@
-﻿using FinancialCalculator.Stores;
-using FinancialCalculator.ViewModel;
-using System;
-using System.Collections.Generic;
+﻿using FinancialCalculator.Models;
+using FinancialCalculator.Stores;
+using FinancialCalculator.ViewModels;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FinancialCalculator.Model
 {
@@ -18,14 +14,12 @@ namespace FinancialCalculator.Model
         protected float monthlyPercent = 0;
         protected bool setByAmount = true;
 
+        protected BankAccount bankAccount;
+
         public float MonthlyAmount { 
             get => monthlyAmount; 
             set {
-                setByAmount = true;
-                monthlyAmount = value; 
-                monthlyPercent = monthlyAmount / _paycheck.TakeHomeAmount;
-                OnPropertyChanged("MonthlyAmount");
-                OnPropertyChanged("MonthlyPercentStr");
+                SetAmountAndPercent(amount: value);
                 NumbersChanged?.Invoke();
             } 
         }
@@ -33,12 +27,8 @@ namespace FinancialCalculator.Model
         {
             get => (monthlyPercent * 100).ToString("0.00") + "%"; 
             set {
-                setByAmount = false;
                 float p = float.Parse(value.Trim(new Char[] { '%' }));
-                monthlyPercent = p <= 100 ? p / 100 : 1;
-                monthlyAmount = monthlyPercent * _paycheck.TakeHomeAmount;
-                OnPropertyChanged("MonthlyAmount");
-                OnPropertyChanged("MonthlyPercentStr");
+                SetAmountAndPercent(percent: p <= 100 ? p / 100 : 1);
                 NumbersChanged?.Invoke();
             }
         }
@@ -62,6 +52,26 @@ namespace FinancialCalculator.Model
         {
             if (setByAmount) MonthlyAmount = monthlyAmount;
             else MonthlyPercentStr = (monthlyPercent * 100).ToString();
+        }
+
+        public void SetAmountAndPercent(float amount = -1, float percent = -1)
+        {
+
+            if(amount != -1)
+            {
+                setByAmount = true;
+                monthlyAmount = amount;
+                monthlyPercent = monthlyAmount / _paycheck.TakeHomeAmount;
+            }
+            else if(percent != -1)
+            {
+                setByAmount = false;
+                monthlyPercent = percent;
+                monthlyAmount = monthlyPercent * _paycheck.TakeHomeAmount;
+            }
+
+            OnPropertyChanged("MonthlyAmount");
+            OnPropertyChanged("MonthlyPercentStr");
         }
 
 
