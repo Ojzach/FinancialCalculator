@@ -19,7 +19,7 @@ namespace FinancialCalculator.ViewModels
             get
             {
                 float amount = 0;
-                foreach(BalanceItem bi in balanceSheet.BalanceItems) amount += bi.MonthlyAmount;
+                foreach(BalanceItem bi in balanceSheet.BalanceItems) amount += bi.MonthlyAmt;
                 return amount;
             }
         }
@@ -36,8 +36,14 @@ namespace FinancialCalculator.ViewModels
         protected string addBalanceItemName = "";
         public string AddBalanceItemName { get => addBalanceItemName; set { addBalanceItemName = value; OnPropertyChanged("AddBalanceItemName"); } }
 
+        public Action BalanceSheetUpdated;
+
+        private BalanceItem selectedBalanceSheetItem;
+        public BalanceItem SelectedBalanceSheetItem { get => selectedBalanceSheetItem; set => selectedBalanceSheetItem = value; }
+
 
         protected PaycheckStore _paycheck;
+
         public BalanceSheetBaseViewModel(PaycheckStore paycheck, string balanceSheetName)
         {
             balanceSheet = new BalanceSheet();
@@ -46,6 +52,8 @@ namespace FinancialCalculator.ViewModels
 
             OpenAddBalanceItemBoxCommand = new RelayCommand(execute => ToggleAddBalanceItemBox());
             CreateBalanceItemCommand = new RelayCommand(execute => CreateBalanceSheetItem(), canExecute => { return addBalanceItemVisible && AddBalanceItemName != ""; });
+
+            DeleteItemCommand = new RelayCommand(DeleteItem, canExecute => SelectedBalanceSheetItem != null);
 
         }
 
@@ -73,6 +81,23 @@ namespace FinancialCalculator.ViewModels
             balanceSheet.BalanceItems[balanceSheet.BalanceItems.Count - 1].NumbersChanged += BalanceItemChanged;
         }
 
-        protected abstract void BalanceItemChanged();
+        protected virtual void BalanceItemChanged()
+        {
+            OnPropertyChanged("TotalBalanceSheetAmount");
+            OnPropertyChanged("TotalBalanceSheetPercent");
+
+            BalanceSheetUpdated?.Invoke();
+        }
+
+
+        public RelayCommand DeleteItemCommand { get; }
+
+        protected void DeleteItem(object sender)
+        {
+            SelectedBalanceSheetItem.NumbersChanged -= BalanceItemChanged;
+            BalanceSheetItems.Remove(SelectedBalanceSheetItem);
+
+            BalanceItemChanged();
+        }
     }
 }

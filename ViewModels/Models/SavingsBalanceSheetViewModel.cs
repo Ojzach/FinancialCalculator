@@ -179,8 +179,7 @@ namespace FinancialCalculator.ViewModels
             Debug.Print("None Priority Used: " + (totalUsedAmt - highAmt - medLowAmt) + "  Amount Left: " + (maxAmount - totalUsedAmt));
 
 
-            OnPropertyChanged("TotalBalanceSheetAmount");
-            OnPropertyChanged("TotalBalanceSheetPercent");
+            base.BalanceItemChanged();
         }
     }
 }

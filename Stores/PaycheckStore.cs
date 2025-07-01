@@ -34,9 +34,9 @@ namespace FinancialCalculator.Stores
 
         public PaycheckStore()
         {
-            paycheckAmount = 9333.56f;
-            federalTaxAmount = 2333.39f;
-            stateTaxAmount = 746.68f;
+            paycheckAmount = 10000;//9333.56f;
+            federalTaxAmount = 0;//2333.39f;
+            stateTaxAmount = 0;//746.68f;
         }
 
 

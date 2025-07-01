@@ -15,11 +15,5 @@ namespace FinancialCalculator.ViewModels
         public BalanceSheetViewModel(PaycheckStore paycheck, string balanceSheetName) : base(paycheck, balanceSheetName)
         {
         }
-
-        protected override void BalanceItemChanged()
-        {
-            OnPropertyChanged("TotalBalanceSheetAmount");
-            OnPropertyChanged("TotalBalanceSheetPercent");
-        }
     }
 }

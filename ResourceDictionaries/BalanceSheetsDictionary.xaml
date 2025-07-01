@@ -35,7 +35,12 @@
                 <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Style="{StaticResource tbListHeader}"/>
             </Grid>
 
-            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}">
+            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" CommandParameter="{Binding Path=SelectedItem}" Command="{Binding DeleteItemCommand}" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
@@ -53,8 +58,8 @@
 
                             <TextBlock Text="{Binding Name}" Grid.Column="0" Margin="3"/>
                             <TextBox Text="{Binding Notes}" Grid.Column="1" Margin="3"/>
-                            <TextBox Text="{Binding MonthlyPercentStr, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Margin="3"/>
-                            <TextBox Text="{Binding MonthlyAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Margin="3"/>
+                            <TextBox Text="{Binding MonthlyPctStr, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Margin="3"/>
+                            <TextBox Text="{Binding MonthlyAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Margin="3"/>
 
                         </Grid>
                     </DataTemplate>
@@ -121,7 +126,12 @@
                 <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="9" Style="{StaticResource tbListHeader}" Margin="3"/>
             </Grid>
 
-            <ListBox Height="100" ItemsSource="{Binding BalanceSheetItems}">
+            <ListBox Height="100" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" CommandParameter="Hello" Command="{Binding DeleteItemCommand}" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
@@ -151,8 +161,8 @@
                             <DatePicker SelectedDate="{Binding GoalDate}" Grid.Column="5" Margin="3" Width="100"/>
                             <TextBlock Text="{Binding MonthlySavingsToReachGoal, StringFormat='c'}" TextAlignment="Center" Grid.Column="6" Margin="3"/>
                             <TextBlock Text="{Binding RecommendedMonthlyAmount, StringFormat='c'}" TextAlignment="Center" Grid.Column="7" Margin="3"/>
-                            <TextBox Text="{Binding MonthlyPercentStr, UpdateSourceTrigger=PropertyChanged}" Grid.Column="8" Margin="3"/>
-                            <TextBox Text="{Binding MonthlyAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="9" Margin="3"/>
+                            <TextBox Text="{Binding MonthlyPctStr, UpdateSourceTrigger=PropertyChanged}" Grid.Column="8" Margin="3"/>
+                            <TextBox Text="{Binding MonthlyAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="9" Margin="3"/>
 
                         </Grid>
                     </DataTemplate>

@@ -75,7 +75,7 @@
                     <TextBox Text="{Binding StateTaxAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Grid.Row="3"/>
 
                     <TextBlock Text="Take Home Amount" Grid.Column="1" Grid.Row="4"/>
-                    <TextBlock Text="{Binding TakeHomePercent, StringFormat='P2'}" Grid.Column="2" Grid.Row="4"/>
+                    <TextBlock Text="{Binding TakeHomePercent, StringFormat='{}Used: {0:P2}'}" Grid.Column="2" Grid.Row="4"/>
                     <TextBlock Text="{Binding TakeHomeAmount, StringFormat='c'}" Grid.Column="3" Grid.Row="4"/>
 
                 </Grid>
