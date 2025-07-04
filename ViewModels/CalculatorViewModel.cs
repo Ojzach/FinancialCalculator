@@ -28,38 +28,6 @@ namespace FinancialCalculator.ViewModels
         public float TakeHomePercent { get => BalanceSheets.Sum(item => item.TotalBalanceSheetPercent); }
 
 
-        #region Taxes
-
-        public float TotalTaxAmount
-        {
-            get
-            {
-                return _paycheck is null ? 0f : _paycheck.FederalTaxAmount + _paycheck.StateTaxAmount;
-            }
-        }
-
-        public float TotalTaxPercent { get => TotalTaxAmount / PaycheckAmount; }
-        public float FederalTaxPercent { get => FederalTaxAmount / PaycheckAmount; }
-        public float StateTaxPercent { get => StateTaxAmount / PaycheckAmount; }
-
-        public float FederalTaxAmount
-        {
-            get => _paycheck is null ? 0f : _paycheck.FederalTaxAmount;
-            set
-            {
-                _paycheck.FederalTaxAmount = value; UpdateCalculatedValues();
-            }
-        }
-
-        public float StateTaxAmount
-        {
-            get => _paycheck is null ? 0f : _paycheck.StateTaxAmount;
-            set { _paycheck.StateTaxAmount = value; UpdateCalculatedValues(); }
-        }
-
-
-        #endregion
-
 
         private PaycheckStore _paycheck;
 
@@ -67,15 +35,33 @@ namespace FinancialCalculator.ViewModels
         private ObservableCollection<BalanceSheetBaseViewModel> balanceSheets = new ObservableCollection<BalanceSheetBaseViewModel>();
         public ObservableCollection<BalanceSheetBaseViewModel> BalanceSheets { get => balanceSheets; set { balanceSheets = value; UpdateCalculatedValues(); } }
 
+        public BalanceSheetBaseViewModel PaycheckDeductionsBalanceSheet { get; set; }
 
         public CalculatorViewModel()
         {
             _paycheck = new PaycheckStore();
 
+            PaycheckDeductionsBalanceSheet = new BalanceSheetViewModel(_paycheck, "Paycheck Deductions", preTaxBalanceSheet: true);
+            PaycheckDeductionsBalanceSheet.BalanceSheetUpdated +=
+                () =>
+                {
+                    _paycheck.PaycheckDeductions = PaycheckDeductionsBalanceSheet.TotalBalanceSheetAmount;
+                    UpdateCalculatedValues();
+                };
+
+
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "Federal Tax"));
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "Medicare"));
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "Social Security"));
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "State Tax"));
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "401K"));
+
+
             BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Investments"));
             BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Fixed Costs"));
             BalanceSheets.Add(new SavingsBalanceSheetViewModel(_paycheck, "Savings"));
             BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Free Spending"));
+            
 
             BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, "401K", _monthlyAmount: 0.00f/*933.36f*/));
             BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, "RothIRA", _monthlyPercent: 0.05f));
@@ -105,10 +91,6 @@ namespace FinancialCalculator.ViewModels
 
         public void UpdateCalculatedValues()
         {
-            OnPropertyChanged("FederalTaxPercent");
-            OnPropertyChanged("StateTaxPercent");
-            OnPropertyChanged("TotalTaxAmount");
-            OnPropertyChanged("TotalTaxPercent");
             OnPropertyChanged("TakeHomeAmount");
             OnPropertyChanged("TakeHomePercent");
             OnPropertyChanged("EstimatedYearlyIncome");

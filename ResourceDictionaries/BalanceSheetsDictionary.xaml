@@ -58,8 +58,14 @@
 
                             <TextBlock Text="{Binding Name}" Grid.Column="0" Margin="3"/>
                             <TextBox Text="{Binding Notes}" Grid.Column="1" Margin="3"/>
-                            <TextBox Text="{Binding MonthlyPctStr, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Margin="3"/>
-                            <TextBox Text="{Binding MonthlyAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Margin="3"/>
+                            
+                            <Border BorderBrush="Green" BorderThickness="1" Grid.Column="2" Margin="3">
+                                <TextBox Text="{Binding MonthlyPctStr, UpdateSourceTrigger=PropertyChanged}" />
+                            </Border>
+                            <Border BorderBrush="Green" BorderThickness="1" Grid.Column="3" Margin="3">
+                                <TextBox Text="{Binding MonthlyAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}"/>
+                            </Border>
+                            
 
                         </Grid>
                     </DataTemplate>
@@ -75,7 +81,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="Name:" Grid.Column="0"/>
-                <TextBox Text="{Binding AddBalanceItemName}" Grid.Column="1"/>
+                <TextBox Text="{Binding AddBalanceItemName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
                 <Button Content="Submit" Command="{Binding CreateBalanceItemCommand}" Grid.Column="2"/>
             </Grid>
 
@@ -126,7 +132,7 @@
                 <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="9" Style="{StaticResource tbListHeader}" Margin="3"/>
             </Grid>
 
-            <ListBox Height="100" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}">
+            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Delete" CommandParameter="Hello" Command="{Binding DeleteItemCommand}" />
@@ -168,6 +174,20 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+
+            <Grid Margin="5" Visibility="{Binding AddBalanceItemBoxVisible}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Name:" Grid.Column="0"/>
+                <TextBox Text="{Binding AddBalanceItemName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                <Button Content="Submit" Command="{Binding CreateBalanceItemCommand}" Grid.Column="2"/>
+            </Grid>
+
+            <Button Content="Add" Command="{Binding OpenAddBalanceItemBoxCommand}"/>
         </StackPanel>
     </DataTemplate>
     

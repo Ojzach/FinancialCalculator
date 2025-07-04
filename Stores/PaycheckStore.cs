@@ -12,15 +12,15 @@ namespace FinancialCalculator.Stores
 
         private float paycheckAmount = 0;
         private float estimatedYearlyIncome = 0;
-        private float federalTaxAmount = 0;
-        private float stateTaxAmount = 0;
+        private float paycheckDeductions = 0;
         
 
         public float EstimatedyearlyIncome { get => estimatedYearlyIncome; set { estimatedYearlyIncome = value; OnPaycheckChanged(); } }
         public float PaycheckAmount { get => paycheckAmount; set {  paycheckAmount = value; OnPaycheckChanged(); } }
-        public float FederalTaxAmount { get => federalTaxAmount; set { federalTaxAmount = value; OnPaycheckChanged(); } }
-        public float StateTaxAmount { get => stateTaxAmount; set { stateTaxAmount = value; OnPaycheckChanged(); } }
-        public float TakeHomeAmount { get => paycheckAmount - federalTaxAmount - stateTaxAmount; }
+        public float PaycheckDeductions { get => paycheckDeductions; set { paycheckDeductions = value; OnPaycheckChanged(); } }
+        public float TakeHomeAmount { get => paycheckAmount - paycheckDeductions; }
+
+
         public int MonthsCoveredByPaycheck { get 
             { 
                 if(estimatedYearlyIncome == 0) return 0;
@@ -34,9 +34,14 @@ namespace FinancialCalculator.Stores
 
         public PaycheckStore()
         {
-            paycheckAmount = 10000;//9333.56f;
-            federalTaxAmount = 0;//2333.39f;
-            stateTaxAmount = 0;//746.68f;
+            paycheckAmount = 10000;
+        }
+
+
+        public float GetPaycheckAmount(bool preTaxAmount = false)
+        {
+            if (preTaxAmount) return PaycheckAmount;
+            else return TakeHomeAmount;
         }
 
 

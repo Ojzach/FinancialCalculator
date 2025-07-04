@@ -16,6 +16,7 @@ namespace FinancialCalculator.Model
         public ObservableCollection<BalanceItem> BalanceItems = new ObservableCollection<BalanceItem>();
 
         public float maxTotalSavingsPercent;
+        public bool isPreTaxBalanceSheet = false;
 
         public BalanceSheet() 
         {

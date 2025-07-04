@@ -14,6 +14,7 @@ namespace FinancialCalculator.Model
         protected float monthlyAmt = 0;
         protected float monthlyPct = 0;
         protected bool setByAmt = true;
+        public bool isPreTaxBalanceItem = false;
 
         protected BankAccount bankAccount;
 
@@ -43,21 +44,22 @@ namespace FinancialCalculator.Model
 
         private PaycheckStore _paycheck;
 
-        public BalanceItem(PaycheckStore paycheck, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, string notes = "") 
+        public BalanceItem(PaycheckStore paycheck, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, bool _preTaxBalanceItem = false, string notes = "") 
         {
             _paycheck = paycheck;
             Name = name;
             if (_monthlyAmount != -1) MonthlyAmt = _monthlyAmount;
             else if (_monthlyPercent != -1) MonthlyPctStr = (_monthlyPercent * 100).ToString();
             Notes = notes;
+            isPreTaxBalanceItem = _preTaxBalanceItem;
 
             _paycheck.PaycheckChanged += UpdateNumbers;
         }
 
         private void UpdateNumbers()
         {
-            if (setByAmt) MonthlyAmt = monthlyAmt;
-            else MonthlyPctStr = (monthlyPct * 100).ToString();
+            if (setByAmt) SetAmountAndPercent(amount: monthlyAmt);
+            else SetAmountAndPercent(percent: monthlyPct);
         }
 
         public void SetAmountAndPercent(float amount = -1, float percent = -1)
@@ -67,13 +69,13 @@ namespace FinancialCalculator.Model
             {
                 setByAmt = true;
                 monthlyAmt = amount;
-                monthlyPct = monthlyAmt / _paycheck.TakeHomeAmount;
+                monthlyPct = monthlyAmt / _paycheck.GetPaycheckAmount(isPreTaxBalanceItem);
             }
             else if(percent != -1)
             {
                 setByAmt = false;
                 monthlyPct = percent;
-                monthlyAmt = monthlyPct * _paycheck.TakeHomeAmount;
+                monthlyAmt = monthlyPct * _paycheck.GetPaycheckAmount(isPreTaxBalanceItem);
             }
 
             OnPropertyChanged(nameof(MonthlyAmt));

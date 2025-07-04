@@ -24,7 +24,7 @@ namespace FinancialCalculator.ViewModels
             }
         }
 
-        public float TotalBalanceSheetPercent { get => TotalBalanceSheetAmount / _paycheck.TakeHomeAmount; }
+        public float TotalBalanceSheetPercent { get => TotalBalanceSheetAmount / _paycheck.GetPaycheckAmount(balanceSheet.isPreTaxBalanceSheet); }
 
         public ObservableCollection<BalanceItem> BalanceSheetItems
         {  get => balanceSheet.BalanceItems; set { balanceSheet.BalanceItems = value; } }
@@ -44,11 +44,12 @@ namespace FinancialCalculator.ViewModels
 
         protected PaycheckStore _paycheck;
 
-        public BalanceSheetBaseViewModel(PaycheckStore paycheck, string balanceSheetName)
+        public BalanceSheetBaseViewModel(PaycheckStore paycheck, string balanceSheetName, bool preTaxBalanceSheet = false)
         {
             balanceSheet = new BalanceSheet();
             _paycheck = paycheck;
             BalanceSheetName = balanceSheetName;
+            balanceSheet.isPreTaxBalanceSheet = preTaxBalanceSheet;
 
             OpenAddBalanceItemBoxCommand = new RelayCommand(execute => ToggleAddBalanceItemBox());
             CreateBalanceItemCommand = new RelayCommand(execute => CreateBalanceSheetItem(), canExecute => { return addBalanceItemVisible && AddBalanceItemName != ""; });
@@ -61,22 +62,23 @@ namespace FinancialCalculator.ViewModels
         public RelayCommand OpenAddBalanceItemBoxCommand { get; }
         public RelayCommand CreateBalanceItemCommand { get; }
 
-        private void ToggleAddBalanceItemBox()
+        protected void ToggleAddBalanceItemBox()
         {
             AddBalanceItemName = "";
             addBalanceItemVisible = !addBalanceItemVisible;
             OnPropertyChanged("AddBalanceItemBoxVisible");
         }
 
-        public void CreateBalanceSheetItem()
+        public virtual void CreateBalanceSheetItem()
         {
             AddBalanceSheetItem(new BalanceItem(_paycheck, AddBalanceItemName));
             ToggleAddBalanceItemBox();
         }
 
 
-        public virtual void AddBalanceSheetItem(BalanceItem item)
+        public void AddBalanceSheetItem(BalanceItem item)
         {
+            if(balanceSheet.isPreTaxBalanceSheet) item.isPreTaxBalanceItem = true;
             balanceSheet.BalanceItems.Add(item);
             balanceSheet.BalanceItems[balanceSheet.BalanceItems.Count - 1].NumbersChanged += BalanceItemChanged;
         }
