@@ -47,138 +47,77 @@ namespace FinancialCalculator.ViewModels
         protected override void BalanceItemChanged()
         {
 
-            float maxAmount = _paycheck.TakeHomeAmount * balanceSheet.maxTotalSavingsPercent;
+            float amountLeft = _paycheck.TakeHomeAmount * balanceSheet.maxTotalSavingsPercent;
 
             SavingsBalanceItem[] savingsBalanceItems = balanceSheet.BalanceItems.Cast<SavingsBalanceItem>().ToArray();
 
-            float totalUsedAmt = 0;
+            List<List<SavingsBalanceItem>> balanceItemsByPriorityTier = new List<List<SavingsBalanceItem>>()
+            {
+                savingsBalanceItems.Where(item => item.SavingsPriority == SavingsBalanceItemPriority.High).OrderBy(item => item.MonthsTillGoalDate).ToList(),
+                savingsBalanceItems.Where(item => (item.SavingsPriority == SavingsBalanceItemPriority.Medium || item.SavingsPriority == SavingsBalanceItemPriority.Low)).OrderBy(item => item.SavingsPriority).ToList(),
+                savingsBalanceItems.Where(item => item.SavingsPriority == SavingsBalanceItemPriority.None).ToList()
+            };
 
-
-            SavingsBalanceItem[] highPriorityItems = savingsBalanceItems.Where(item => item.SavingsPriority == SavingsBalanceItemPriority.High).OrderBy(item => item.MonthsTillGoalDate).ToArray();
-            SavingsBalanceItem[] mediumLowPriorityItems = savingsBalanceItems.Where(item => (item.SavingsPriority == SavingsBalanceItemPriority.Medium || item.SavingsPriority == SavingsBalanceItemPriority.Low)).OrderBy(item => item.SavingsPriority).ToArray();
-            SavingsBalanceItem[] nonePriorityItems = savingsBalanceItems.Where(item => item.SavingsPriority == SavingsBalanceItemPriority.None).ToArray();
-
-            Debug.Print("\nHigh: " + highPriorityItems.Count().ToString() +
-                " Med/Low: " + mediumLowPriorityItems.Count().ToString() +
-                " None: " + nonePriorityItems.Count().ToString());
-
-            Debug.Print("Max Amount Towards Savings: " + maxAmount.ToString());
-
-            if (highPriorityItems.Count() > 0)
+            foreach(List<SavingsBalanceItem> tierItems in balanceItemsByPriorityTier)
             {
 
-                if (highPriorityItems.Sum(item => item.MonthlySavingsToReachGoal) > maxAmount)
+                if (tierItems.Count > 0)
                 {
-                    Debug.Print("High Priority Items Are More Then Max Amount");
+                    float totalUsed = 0;
 
-                    float ratio = highPriorityItems.Sum(item => (1f / (float)item.MonthsTillGoalDate));
+                    if (amountLeft <= 0)
+                    {
+                        foreach (SavingsBalanceItem item in tierItems) item.SetRecommendedMonthly(0);
 
-                    foreach (SavingsBalanceItem item in highPriorityItems)
+                    }
+                    else if (tierItems.Sum(item => item.MonthlySavingsToReachGoal) < amountLeft)
                     {
 
-                        float amt = MathF.Min(maxAmount * ((1f / (float)item.MonthsTillGoalDate) / ratio), item.MonthlySavingsToReachGoal);
-                        Debug.Print("Monthly Amount: " + item.MonthlySavingsToReachGoal + " Amount: " + amt);
+                        foreach (SavingsBalanceItem item in tierItems)
+                        {
+                            item.SetRecommendedMonthly(item.MonthlySavingsToReachGoal);
+                            totalUsed += item.MonthlySavingsToReachGoal;
+                        }
 
-                        item.SetRecommendedMonthly(amt);
-                        totalUsedAmt = totalUsedAmt + amt;
                     }
-                }
-                else
-                {
-                    foreach (SavingsBalanceItem item in highPriorityItems)
-                    {
-                        item.SetRecommendedMonthly(item.MonthlySavingsToReachGoal);
-                        totalUsedAmt = totalUsedAmt + item.MonthlySavingsToReachGoal;
-                    }
-
-                }
-
-
-            }
-
-            float highAmt = totalUsedAmt;
-            maxAmount = maxAmount - totalUsedAmt;
-            Debug.Print("High Priority Used: " + highAmt + "  Amount Left: " + maxAmount);
-
-            if (maxAmount - totalUsedAmt == 0) foreach(SavingsBalanceItem item in mediumLowPriorityItems) item.SetRecommendedMonthly(0);
-            else if(mediumLowPriorityItems.Count() > 0)
-            {
-                if (mediumLowPriorityItems.Sum(item => item.MonthlySavingsToReachGoal) > maxAmount)
-                {
-                    Debug.Print("Medium/Low Priority Items Are More Then Max Amount");
-
-                    float ratio = mediumLowPriorityItems.Where(item => item.SavingsPriority == SavingsBalanceItemPriority.Medium).Sum(item => (2f / (float)item.MonthsTillGoalDate))
-                        + mediumLowPriorityItems.Where(item => item.SavingsPriority == SavingsBalanceItemPriority.Low).Sum(item => (1f / (float)item.MonthsTillGoalDate));
-                    
-
-                    foreach (SavingsBalanceItem item in mediumLowPriorityItems)
+                    else
                     {
 
-                        float amt = item.SavingsPriority == SavingsBalanceItemPriority.Low ?
-                            MathF.Min(maxAmount * ((1f / (float)item.MonthsTillGoalDate) / ratio), item.MonthlySavingsToReachGoal) :
-                            MathF.Min(maxAmount * ((2f / (float)item.MonthsTillGoalDate) / ratio), item.MonthlySavingsToReachGoal);
-                        
-                        Debug.Print("Monthly Amount: " + item.MonthlySavingsToReachGoal + " Amount: " + amt);
+                        bool finishedAllocation = false;
 
-                        item.SetRecommendedMonthly(amt);
-                        totalUsedAmt = totalUsedAmt + amt;
+
+                        while (finishedAllocation == false)
+                        {
+                            finishedAllocation = true;
+
+                            float ratioTotal = tierItems.Sum(item => (float)item.SavingsPriority / (float)item.MonthsTillGoalDate);
+
+                            foreach (SavingsBalanceItem item in tierItems)
+                            {
+                                float calculatedAmt = (amountLeft - totalUsed) * ((float)item.SavingsPriority / (float)item.MonthsTillGoalDate / ratioTotal);
+
+                                if (calculatedAmt >= item.MonthlySavingsToReachGoal)
+                                {
+                                    item.SetRecommendedMonthly(item.MonthlySavingsToReachGoal);
+                                    totalUsed += item.MonthlySavingsToReachGoal;
+                                    tierItems.Remove(item);
+                                    finishedAllocation = false;
+                                    break;
+                                }
+                                else item.SetRecommendedMonthly(calculatedAmt);
+                            }
+
+                        }
+
+                        foreach(SavingsBalanceItem item in tierItems)
+                        {
+                            totalUsed += item.MonthlyAmt;
+                        }
                     }
 
-
-                }
-                else
-                {
-                    foreach (SavingsBalanceItem item in mediumLowPriorityItems)
-                    {
-                        item.SetRecommendedMonthly(item.MonthlySavingsToReachGoal);
-                        totalUsedAmt = totalUsedAmt + item.MonthlySavingsToReachGoal;
-                    }
-
+                    amountLeft = amountLeft - totalUsed;
                 }
             }
-
-            float medLowAmt = totalUsedAmt - highAmt;
-            maxAmount = maxAmount - totalUsedAmt;
-            Debug.Print("Medium/Low Priority Used: " + medLowAmt + "  Amount Left: " + maxAmount);
-
-
-            if (maxAmount - totalUsedAmt == 0) foreach (SavingsBalanceItem item in nonePriorityItems) item.SetRecommendedMonthly(0);
-            else if (nonePriorityItems.Count() > 0)
-            {
-
-                if (nonePriorityItems.Sum(item => item.MonthlySavingsToReachGoal) > maxAmount)
-                {
-                    Debug.Print("High Priority Items Are More Then Max Amount");
-
-                    float ratio = nonePriorityItems.Sum(item => (1f / (float)item.MonthsTillGoalDate));
-
-                    foreach (SavingsBalanceItem item in nonePriorityItems)
-                    {
-
-                        float amt = MathF.Min(maxAmount * ((1f / (float)item.MonthsTillGoalDate) / ratio), item.MonthlySavingsToReachGoal);
-                        Debug.Print("Monthly Amount: " + item.MonthlySavingsToReachGoal + " Amount: " + amt);
-
-                        item.SetRecommendedMonthly(amt);
-                        totalUsedAmt = totalUsedAmt + amt;
-                    }
-
-                }
-                else
-                {
-                    foreach (SavingsBalanceItem item in nonePriorityItems)
-                    {
-                        item.SetRecommendedMonthly(item.MonthlySavingsToReachGoal);
-                        totalUsedAmt = totalUsedAmt + item.MonthlySavingsToReachGoal;
-                    }
-
-                }
-
-
-            }
-
-
-            Debug.Print("None Priority Used: " + (totalUsedAmt - highAmt - medLowAmt) + "  Amount Left: " + (maxAmount - totalUsedAmt));
-
 
             base.BalanceItemChanged();
         }

@@ -68,12 +68,13 @@ namespace FinancialCalculator.ViewModels
             BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, "HSA"));
 
             BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "Studen Loans", _monthlyAmount: 500.0f));
-            //BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "Motorcycle Insurance", _monthlyAmount: 43.32f));
+            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "Motorcycle Insurance", _monthlyAmount: 43.32f));
             BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "AMO Dues", _monthlyAmount: 141.67f));
 
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Emergency Fund", new BankAccount("EmergencyFund", BankAccountType.Savings, 2000), 10000, new LocalDate(2025, 8, 25)));
-            //BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Rally Car", new BankAccount("RallyCar", BankAccountType.Savings, 0), 15000, new LocalDate(2026, 1, 1)));
-            //BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "House", new BankAccount("House", BankAccountType.Savings, 0), 50000, new LocalDate(2026, 10, 20)));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Emergency Fund", new BankAccount("EmergencyFund", BankAccountType.Savings, 2000), 10000, new LocalDate(2025, 8, 25), priority: SavingsBalanceItemPriority.High));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Rally Car", new BankAccount("RallyCar", BankAccountType.Savings, 0), 15000, new LocalDate(2026, 3, 1)));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "House", new BankAccount("House", BankAccountType.Savings, 0), 50000, new LocalDate(2026, 10, 20)));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Travel", new BankAccount("Travel", BankAccountType.Savings, 0), 3000, new LocalDate(2025, 8, 20), priority: SavingsBalanceItemPriority.Medium));
 
             BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Food"));
             BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Gas"));

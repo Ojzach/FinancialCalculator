@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace FinancialCalculator.Model
 {
@@ -28,7 +29,15 @@ namespace FinancialCalculator.Model
         private readonly ObservableCollection<SavingsBalanceItemPriority> priorityLevels = new ObservableCollection<SavingsBalanceItemPriority>() { SavingsBalanceItemPriority.None, SavingsBalanceItemPriority.Low, SavingsBalanceItemPriority.Medium, SavingsBalanceItemPriority.High };
         public ObservableCollection<SavingsBalanceItemPriority> PriorityLevels { get => priorityLevels; }
         
-        public int MonthsTillGoalDate { get => (goalDate - DateTime.Now.ToLocalDateTime().Date).Months + 1;  }
+        public int MonthsTillGoalDate
+        {
+            get
+            {
+                Period timeSpan = (goalDate - DateTime.Now.ToLocalDateTime().Date);
+                return (timeSpan.Months + timeSpan.Years * 12) + 1;
+            }
+        }
+
         public float AmountLeftToSave { get => (savingsGoalAmount - savingsAccount.currentBalance) < 0 ? 0 : savingsGoalAmount - savingsAccount.currentBalance;  }
         public float MonthlySavingsToReachGoal { get => AmountLeftToSave / MonthsTillGoalDate; }
         public float RecommendedMonthlyAmount { get => recommendedMonthlyAmount; set { recommendedMonthlyAmount = value; OnPropertyChanged("RecommendedMonthlyAmount"); } }
@@ -53,12 +62,17 @@ namespace FinancialCalculator.Model
 
     }
 
-    public enum SavingsBalanceItemPriority
+    public enum SavingsBalanceItemPriority //Numbers are Set for the ratios within a tier
     { 
-        None = 0,
-        Low = 1,
-        Medium = 2,
-        High = 3,
+        //Tier 0
+        None = 1,
+
+        //Tier 1
+        Low = 2,
+        Medium = 4,
+
+        //Tier 2
+        High = 5,
     }
 
 }
