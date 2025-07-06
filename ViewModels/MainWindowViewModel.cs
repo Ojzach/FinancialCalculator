@@ -1,6 +1,4 @@
 ﻿
-
-
 namespace FinancialCalculator.ViewModels
 {
     internal class MainWindowViewModel

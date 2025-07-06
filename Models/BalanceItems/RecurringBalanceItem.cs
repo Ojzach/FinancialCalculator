@@ -1,11 +1,5 @@
 ﻿using FinancialCalculator.Model;
 using FinancialCalculator.Stores;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using NodaTime;
 
 namespace FinancialCalculator.Models.BalanceItems
@@ -18,7 +12,7 @@ namespace FinancialCalculator.Models.BalanceItems
         public RecurringFrequency Frequency;
         public LocalDate RecurringDate;
 
-        RecurringBalanceItem(PaycheckStore paycheck, string name, BankAccount _savingsAccount, string notes = "") : base (paycheck, name, notes: notes)
+        RecurringBalanceItem(PaycheckStore paycheck, string name, BankAccount _savingsAccount, string notes = "") : base (paycheck, _savingsAccount, name, notes: notes)
         {
 
         }

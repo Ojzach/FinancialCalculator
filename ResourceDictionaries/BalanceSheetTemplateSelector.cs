@@ -1,10 +1,4 @@
 ﻿using FinancialCalculator.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,10 +11,7 @@ namespace FinancialCalculator.ResourceDictionaries
             FrameworkElement element = (FrameworkElement)container;
             if(element != null)
             {
-                if (item is SavingsBalanceSheetViewModel)
-                {
-                    return element.FindResource("SavingsBalanceSheet") as DataTemplate;
-                }
+                if (item is SavingsBalanceSheetViewModel) return element.FindResource("SavingsBalanceSheet") as DataTemplate;
                 else if (item is BalanceSheetBaseViewModel) return element.FindResource("BalanceSheet") as DataTemplate;
             }
 

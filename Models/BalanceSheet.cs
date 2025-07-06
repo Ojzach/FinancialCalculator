@@ -1,10 +1,4 @@
-﻿using FinancialCalculator.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace FinancialCalculator.Model
 {
@@ -15,12 +9,14 @@ namespace FinancialCalculator.Model
 
         public ObservableCollection<BalanceItem> BalanceItems = new ObservableCollection<BalanceItem>();
 
-        public float maxTotalSavingsPercent;
-        public bool isPreTaxBalanceSheet = false;
+        public float maxUsagePercent;
+        public bool isPreTax = false;
 
-        public BalanceSheet() 
+        public BalanceSheet(string _name, float _maxUsagePercent = 1.00f, bool _isPreTax = false) 
         {
-            
+            name = _name;
+            maxUsagePercent = _maxUsagePercent;
+            isPreTax = _isPreTax;
         }
     }
 }

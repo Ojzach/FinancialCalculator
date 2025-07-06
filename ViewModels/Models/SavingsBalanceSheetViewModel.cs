@@ -1,14 +1,6 @@
 ﻿using FinancialCalculator.Model;
 using FinancialCalculator.Stores;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Printing.IndexedProperties;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FinancialCalculator.ViewModels
 {
@@ -17,11 +9,11 @@ namespace FinancialCalculator.ViewModels
 
         public string MaxTotalSavingsPercentStr
         {
-            get => (balanceSheet.maxTotalSavingsPercent * 100).ToString("0.00") + "%";
+            get => (balanceSheet.maxUsagePercent * 100).ToString("0.00") + "%";
             set
             {
                 float p = float.Parse(value.Trim(new Char[] { '%' }));
-                balanceSheet.maxTotalSavingsPercent = p <= 100 ? p / 100 : 1;
+                balanceSheet.maxUsagePercent = p <= 100 ? p / 100 : 1;
                 OnPropertyChanged("MaxTotalSavingsPercentStr");
                 BalanceItemChanged();
             }
@@ -29,11 +21,8 @@ namespace FinancialCalculator.ViewModels
 
         public SavingsBalanceSheetViewModel(PaycheckStore paycheck, string balanceSheetName) : base(paycheck, balanceSheetName)
         {
-
-            balanceSheet = new BalanceSheet();
             MaxTotalSavingsPercentStr = "60";
-
-            
+        
         }
 
         public override void CreateBalanceSheetItem()
@@ -47,7 +36,7 @@ namespace FinancialCalculator.ViewModels
         protected override void BalanceItemChanged()
         {
 
-            float amountLeft = _paycheck.TakeHomeAmount * balanceSheet.maxTotalSavingsPercent;
+            float amountLeft = _paycheck.TakeHomeAmount * balanceSheet.maxUsagePercent;
 
             SavingsBalanceItem[] savingsBalanceItems = balanceSheet.BalanceItems.Cast<SavingsBalanceItem>().ToArray();
 

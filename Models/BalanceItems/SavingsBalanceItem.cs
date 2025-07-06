@@ -2,14 +2,7 @@
 using FinancialCalculator.Stores;
 using NodaTime;
 using NodaTime.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace FinancialCalculator.Model
 {
@@ -17,11 +10,10 @@ namespace FinancialCalculator.Model
     {
         private float savingsGoalAmount;
         private LocalDate goalDate = DateTime.Now.ToLocalDateTime().Date;
-        private BankAccount savingsAccount;
         private SavingsBalanceItemPriority savingsPriority;
         private float recommendedMonthlyAmount = 0;
 
-        public float SavingsCurrentAmount { get => savingsAccount.currentBalance; set { savingsAccount.currentBalance = value; NumbersChanged.Invoke(); OnPropertyChanged("MonthlySavingsToReachGoal"); } }
+        public float SavingsCurrentAmount { get => _bankAccount.currentBalance; set { _bankAccount.currentBalance = value; NumbersChanged.Invoke(); OnPropertyChanged("MonthlySavingsToReachGoal"); } }
         public float SavingsGoalAmount { get => savingsGoalAmount; set { savingsGoalAmount = value; NumbersChanged.Invoke(); OnPropertyChanged("MonthlySavingsToReachGoal"); } }
         public DateTime GoalDate { get => goalDate.ToDateTimeUnspecified(); set { goalDate = value < DateTime.Today ? DateTime.Today.ToLocalDateTime().Date : value.ToLocalDateTime().Date; NumbersChanged.Invoke(); OnPropertyChanged("MonthlySavingsToReachGoal"); } }
         public SavingsBalanceItemPriority SavingsPriority { get => savingsPriority; set { savingsPriority = value; NumbersChanged.Invoke(); } }
@@ -38,15 +30,14 @@ namespace FinancialCalculator.Model
             }
         }
 
-        public float AmountLeftToSave { get => (savingsGoalAmount - savingsAccount.currentBalance) < 0 ? 0 : savingsGoalAmount - savingsAccount.currentBalance;  }
+        public float AmountLeftToSave { get => (savingsGoalAmount - _bankAccount.currentBalance) < 0 ? 0 : savingsGoalAmount - _bankAccount.currentBalance;  }
         public float MonthlySavingsToReachGoal { get => AmountLeftToSave / MonthsTillGoalDate; }
         public float RecommendedMonthlyAmount { get => recommendedMonthlyAmount; set { recommendedMonthlyAmount = value; OnPropertyChanged("RecommendedMonthlyAmount"); } }
 
-        public SavingsBalanceItem(PaycheckStore paycheck, string name, BankAccount _savingsAccount, float _savingsGoalAmount = 0.0f, LocalDate _savingsGoalDate = default(LocalDate), SavingsBalanceItemPriority priority = SavingsBalanceItemPriority.Low, string notes = "")
-            : base(paycheck ,name, notes: notes)
+        public SavingsBalanceItem(PaycheckStore paycheck, string name, BankAccount bankAccount, float _savingsGoalAmount = 0.0f, LocalDate _savingsGoalDate = default(LocalDate), SavingsBalanceItemPriority priority = SavingsBalanceItemPriority.Low, string notes = "")
+            : base(paycheck, bankAccount ,name, notes: notes)
         {
             savingsGoalAmount = _savingsGoalAmount;
-            savingsAccount = _savingsAccount;
             goalDate = _savingsGoalDate == default(LocalDate) ? DateTime.Now.ToLocalDateTime().Date : _savingsGoalDate;
             savingsPriority = priority;
 

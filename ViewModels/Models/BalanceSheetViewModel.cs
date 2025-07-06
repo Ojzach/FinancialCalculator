@@ -1,11 +1,4 @@
-﻿using FinancialCalculator.Model;
-using FinancialCalculator.Stores;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FinancialCalculator.Stores;
 
 namespace FinancialCalculator.ViewModels
 {

@@ -16,6 +16,10 @@
         <Setter Property="Background" Value="LightGray"/>
     </Style>
 
+    <Style x:Key="lbiStyle" TargetType="ListBoxItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+    </Style>
+
 
     <DataTemplate x:Key="BalanceSheet">
 
@@ -35,17 +39,13 @@
                 <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Style="{StaticResource tbListHeader}"/>
             </Grid>
 
-            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}">
+            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}" ItemContainerStyle="{StaticResource lbiStyle}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Delete" CommandParameter="{Binding Path=SelectedItem}" Command="{Binding DeleteItemCommand}" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
+
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid HorizontalAlignment="Stretch">
@@ -132,17 +132,13 @@
                 <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="9" Style="{StaticResource tbListHeader}" Margin="3"/>
             </Grid>
 
-            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}">
+            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}" ItemContainerStyle="{StaticResource lbiStyle}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Delete" CommandParameter="Hello" Command="{Binding DeleteItemCommand}" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
+                
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid HorizontalAlignment="Stretch">

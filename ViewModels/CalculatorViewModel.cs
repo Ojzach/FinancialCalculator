@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.Collections.ObjectModel;
 using FinancialCalculator.Model;
 using FinancialCalculator.Models;
 using FinancialCalculator.Stores;
@@ -50,11 +43,13 @@ namespace FinancialCalculator.ViewModels
                 };
 
 
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "Federal Tax"));
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "Medicare"));
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "Social Security"));
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "State Tax"));
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, "401K"));
+            BankAccount usaaIncomeAccount = new BankAccount("USAA Income", BankAccountType.Checking, _currentBalance: 0);
+
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Federal Tax"));
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Medicare"));
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Social Security"));
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "State Tax"));
+            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "401K"));
 
 
             BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Investments"));
@@ -63,26 +58,26 @@ namespace FinancialCalculator.ViewModels
             BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Free Spending"));
             
 
-            BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, "401K", _monthlyAmount: 0.00f/*933.36f*/));
-            BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, "RothIRA", _monthlyPercent: 0.05f));
-            BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, "HSA"));
+            BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "401K", _monthlyAmount: 0.00f/*933.36f*/));
+            BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "RothIRA", _monthlyPercent: 0.05f));
+            BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "HSA"));
 
-            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "Studen Loans", _monthlyAmount: 500.0f));
-            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "Motorcycle Insurance", _monthlyAmount: 43.32f));
-            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, "AMO Dues", _monthlyAmount: 141.67f));
+            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Studen Loans", _monthlyAmount: 500.0f));
+            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Motorcycle Insurance", _monthlyAmount: 43.32f));
+            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "AMO Dues", _monthlyAmount: 141.67f));
 
             BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Emergency Fund", new BankAccount("EmergencyFund", BankAccountType.Savings, 2000), 10000, new LocalDate(2025, 8, 25), priority: SavingsBalanceItemPriority.High));
             BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Rally Car", new BankAccount("RallyCar", BankAccountType.Savings, 0), 15000, new LocalDate(2026, 3, 1)));
             BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "House", new BankAccount("House", BankAccountType.Savings, 0), 50000, new LocalDate(2026, 10, 20)));
             BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Travel", new BankAccount("Travel", BankAccountType.Savings, 0), 3000, new LocalDate(2025, 8, 20), priority: SavingsBalanceItemPriority.Medium));
 
-            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Food"));
-            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Gas"));
-            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Food"));
-            //BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Spotify", _monthlyAmount: 12.71f));
-            //BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Adobe", _monthlyAmount: 15.89f));
-            //BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Google Photos", _monthlyAmount: 2.11f));
-            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, "Other"));
+            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Food"));
+            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Gas"));
+            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Food"));
+            //BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Spotify", _monthlyAmount: 12.71f));
+            //BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Adobe", _monthlyAmount: 15.89f));
+            //BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Google Photos", _monthlyAmount: 2.11f));
+            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Other"));
 
             foreach (BalanceSheetBaseViewModel balanceSheet in BalanceSheets) balanceSheet.BalanceSheetUpdated += UpdateCalculatedValues;
 

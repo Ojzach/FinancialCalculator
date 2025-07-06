@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+
+using System.Data.Common;
+using System.Reflection.Metadata;
 
 namespace FinancialCalculator.Commands
 {
@@ -17,14 +16,7 @@ namespace FinancialCalculator.Commands
             _canExecute = canExecute;
         }
 
-        public override void Execute(object parameter)
-        {
-            _execute(parameter);
-        }
-
-        public override bool CanExecute(object parameter)
-        {
-            return _canExecute == null || _canExecute(parameter);
-        }
+        public override void Execute(object parameter) => _execute(parameter);
+        public override bool CanExecute(object parameter) => (_canExecute == null || _canExecute(parameter));
     }
 }

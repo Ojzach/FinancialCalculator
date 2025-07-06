@@ -1,8 +1,6 @@
-﻿using FinancialCalculator.Commands;
-using FinancialCalculator.Models;
+﻿using FinancialCalculator.Models;
 using FinancialCalculator.Stores;
 using FinancialCalculator.ViewModels;
-using System.Diagnostics;
 
 namespace FinancialCalculator.Model
 {
@@ -16,7 +14,7 @@ namespace FinancialCalculator.Model
         protected bool setByAmt = true;
         public bool isPreTaxBalanceItem = false;
 
-        protected BankAccount bankAccount;
+        protected BankAccount _bankAccount;
 
         public float MonthlyAmt { 
             get => monthlyAmt; 
@@ -44,14 +42,16 @@ namespace FinancialCalculator.Model
 
         private PaycheckStore _paycheck;
 
-        public BalanceItem(PaycheckStore paycheck, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, bool _preTaxBalanceItem = false, string notes = "") 
+        public BalanceItem(PaycheckStore paycheck, BankAccount bankAccount, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, bool _preTaxBalanceItem = false, string notes = "") 
         {
             _paycheck = paycheck;
+            _bankAccount = bankAccount;
             Name = name;
             if (_monthlyAmount != -1) MonthlyAmt = _monthlyAmount;
             else if (_monthlyPercent != -1) MonthlyPctStr = (_monthlyPercent * 100).ToString();
             Notes = notes;
             isPreTaxBalanceItem = _preTaxBalanceItem;
+
 
             _paycheck.PaycheckChanged += UpdateNumbers;
         }
