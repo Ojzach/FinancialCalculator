@@ -1,5 +1,6 @@
-﻿using System.Windows;
+﻿using FinancialCalculator.Stores;
 using FinancialCalculator.ViewModels;
+using System.Windows;
 
 
 namespace FinancialCalculator
@@ -17,7 +18,10 @@ namespace FinancialCalculator
         protected override void OnStartup(StartupEventArgs e)
         {
 
-            MainWindow = new MainWindow() { DataContext = new MainWindowViewModel() };
+            NavigationStore _navigationStore = new NavigationStore();
+            _navigationStore.CurrentViewModel = new CalculatorViewModel();
+
+            MainWindow = new MainWindow() { DataContext = new MainWindowViewModel(_navigationStore) };
             MainWindow.Show();
 
             base.OnStartup(e);

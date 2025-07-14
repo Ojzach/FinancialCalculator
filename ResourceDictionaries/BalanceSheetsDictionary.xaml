@@ -6,24 +6,9 @@
 
     <local:BalanceSheetTemplateSelector x:Key="BalanceSheetTemplateSelector"/>
 
-
-    <Style x:Key="tbListHeader" TargetType="TextBlock">
-        <Setter Property="TextAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Bottom"/>
-    </Style>
-
-    <Style x:Key="spListHeader" TargetType="StackPanel">
-        <Setter Property="Background" Value="LightGray"/>
-    </Style>
-
-    <Style x:Key="lbiStyle" TargetType="ListBoxItem">
-        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-    </Style>
-
-
     <DataTemplate x:Key="BalanceSheet">
 
-        <StackPanel Orientation="Vertical" Margin="0, 0, 0, 15" Style="{StaticResource spListHeader}">
+        <StackPanel Orientation="Vertical" Margin="0, 0, 0, 15">
 
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
@@ -33,13 +18,13 @@
                     <ColumnDefinition MaxWidth="75"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="{Binding BalanceSheetName}" FontWeight="Bold" Grid.Column="0" Style="{StaticResource tbListHeader}"/>
-                <TextBlock Text="Notes" Grid.Column="1" Style="{StaticResource tbListHeader}"/>
-                <TextBlock Text="{Binding TotalBalanceSheetPercent, StringFormat='P2'}" Grid.Column="2" Style="{StaticResource tbListHeader}"/>
-                <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Style="{StaticResource tbListHeader}"/>
+                <TextBlock Text="{Binding BalanceSheetName}" FontWeight="Bold" Grid.Column="0" />
+                <TextBlock Text="Notes" Grid.Column="1" />
+                <TextBlock Text="{Binding TotalBalanceSheetPercent, StringFormat='P2'}" Grid.Column="2"/>
+                <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3"/>
             </Grid>
 
-            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}" ItemContainerStyle="{StaticResource lbiStyle}">
+            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Delete" CommandParameter="{Binding Path=SelectedItem}" Command="{Binding DeleteItemCommand}" />
@@ -58,18 +43,19 @@
 
                             <TextBlock Text="{Binding Name}" Grid.Column="0" Margin="3"/>
                             <TextBox Text="{Binding Notes}" Grid.Column="1" Margin="3"/>
-                            
+
                             <Border BorderBrush="Green" BorderThickness="1" Grid.Column="2" Margin="3">
                                 <TextBox Text="{Binding MonthlyPctStr, UpdateSourceTrigger=PropertyChanged}" />
                             </Border>
                             <Border BorderBrush="Green" BorderThickness="1" Grid.Column="3" Margin="3">
                                 <TextBox Text="{Binding MonthlyAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}"/>
                             </Border>
-                            
+
 
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+
 
             </ListBox>
 
@@ -93,7 +79,7 @@
     <DataTemplate x:Key="SavingsBalanceSheet" >
 
 
-        <StackPanel Orientation="Vertical" Margin="0, 0, 0, 15" Style="{StaticResource spListHeader}">
+        <StackPanel Orientation="Vertical" Margin="0, 0, 0, 15">
             <Grid Margin="5">
 
                 <Grid.ColumnDefinitions>
@@ -115,30 +101,30 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Savings" FontWeight="Bold" Grid.Row="0" Style="{StaticResource tbListHeader}"/>
+                    <TextBlock Text="Savings" FontWeight="Bold" Grid.Row="0"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <TextBlock Text="Max Percentage: "/>
                         <TextBox Text="{Binding MaxTotalSavingsPercentStr, UpdateSourceTrigger=PropertyChanged}" Width="75"/>
                     </StackPanel>
                 </Grid>
-                <TextBlock Text="Notes" Grid.Column="1" Style="{StaticResource tbListHeader}" Margin="3"/>
-                <TextBlock Text="Priority" Grid.Column="2" Style="{StaticResource tbListHeader}" Margin="3"/>
-                <TextBlock Text="Goal Amt" Grid.Column="3" Style="{StaticResource tbListHeader}" Margin="3"/>
-                <TextBlock Text="Current Amt"  Grid.Column="4" Style="{StaticResource tbListHeader}" Margin="3"/>
-                <TextBlock Text="Goal Date" Grid.Column="5" Style="{StaticResource tbListHeader}" Margin="3"/>
-                <TextBlock Text="Ideal&#10;Monthly Amt" Grid.Column="6" Style="{StaticResource tbListHeader}" Margin="3"/>
-                <TextBlock Text="Recomended&#10;Monthly Amt" Grid.Column="7" Style="{StaticResource tbListHeader}" Margin="3"/>
-                <TextBlock Text="{Binding TotalBalanceSheetPercent, StringFormat='P2'}" Grid.Column="8" Style="{StaticResource tbListHeader}" Margin="3"/>
-                <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="9" Style="{StaticResource tbListHeader}" Margin="3"/>
+                <TextBlock Text="Notes" Grid.Column="1" Margin="3"/>
+                <TextBlock Text="Priority" Grid.Column="2" Margin="3"/>
+                <TextBlock Text="Goal Amt" Grid.Column="3" Margin="3"/>
+                <TextBlock Text="Current Amt"  Grid.Column="4" Margin="3"/>
+                <TextBlock Text="Goal Date" Grid.Column="5" Margin="3"/>
+                <TextBlock Text="Ideal&#10;Monthly Amt" Grid.Column="6" Margin="3"/>
+                <TextBlock Text="Recomended&#10;Monthly Amt" Grid.Column="7" Margin="3"/>
+                <TextBlock Text="{Binding TotalBalanceSheetPercent, StringFormat='P2'}" Grid.Column="8" Margin="3"/>
+                <TextBlock Text="{Binding TotalBalanceSheetAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="9" Margin="3"/>
             </Grid>
 
-            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}" ItemContainerStyle="{StaticResource lbiStyle}">
+            <ListBox Height="150" ItemsSource="{Binding BalanceSheetItems}" SelectedItem="{Binding SelectedBalanceSheetItem}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Delete" CommandParameter="Hello" Command="{Binding DeleteItemCommand}" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
-                
+
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid HorizontalAlignment="Stretch">
@@ -186,7 +172,9 @@
             <Button Content="Add" Command="{Binding OpenAddBalanceItemBoxCommand}"/>
         </StackPanel>
     </DataTemplate>
-    
-    
-    
+
+
+
+
+
 </ResourceDictionary>
