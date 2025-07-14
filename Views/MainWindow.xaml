@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FinancialCalculator"
-        xmlns:views="clr-namespace:FinancialCalculator.View"
+        xmlns:views="clr-namespace:FinancialCalculator.Views"
         xmlns:vms="clr-namespace:FinancialCalculator.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">

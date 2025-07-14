@@ -12,7 +12,7 @@ namespace FinancialCalculator.Models.BalanceItems
         public RecurringFrequency Frequency;
         public LocalDate RecurringDate;
 
-        RecurringBalanceItem(PaycheckStore paycheck, string name, BankAccount _savingsAccount, string notes = "") : base (paycheck, _savingsAccount, name, notes: notes)
+        RecurringBalanceItem(PaycheckStore paycheck, string name, FinancialAccount _savingsAccount, string notes = "") : base (paycheck, _savingsAccount, name, notes: notes)
         {
 
         }

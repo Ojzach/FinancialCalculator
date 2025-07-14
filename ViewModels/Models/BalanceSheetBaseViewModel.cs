@@ -51,7 +51,7 @@ namespace FinancialCalculator.ViewModels
             OpenAddBalanceItemBoxCommand = new RelayCommand(execute => ToggleAddBalanceItemBox());
             CreateBalanceItemCommand = new RelayCommand(execute => CreateBalanceSheetItem(), canExecute => { return addBalanceItemVisible && AddBalanceItemName != ""; });
 
-            DeleteItemCommand = new RelayCommand(DeleteItem, canExecute => SelectedBalanceSheetItem != null);
+            DeleteItemCommand = new RelayCommand(execute => DeleteItem(), canExecute => SelectedBalanceSheetItem != null);
 
         }
 
@@ -68,12 +68,12 @@ namespace FinancialCalculator.ViewModels
 
         public virtual void CreateBalanceSheetItem()
         {
-            AddBalanceSheetItem(new BalanceItem(_paycheck, new BankAccount(AddBalanceItemName, BankAccountType.Checking), AddBalanceItemName));
+            AddBalanceSheetItem(new BalanceItem(_paycheck, new FinancialAccount(AddBalanceItemName, BankAccountType.Checking), AddBalanceItemName));
             ToggleAddBalanceItemBox();
         }
 
 
-        public void AddBalanceSheetItem(BalanceItem item)
+        public virtual void AddBalanceSheetItem(BalanceItem item)
         {
             if(balanceSheet.isPreTax) item.isPreTaxBalanceItem = true;
             balanceSheet.BalanceItems.Add(item);
@@ -91,7 +91,7 @@ namespace FinancialCalculator.ViewModels
 
         public RelayCommand DeleteItemCommand { get; }
 
-        protected void DeleteItem(object sender)
+        protected void DeleteItem()
         {
             SelectedBalanceSheetItem.NumbersChanged -= BalanceItemChanged;
             BalanceSheetItems.Remove(SelectedBalanceSheetItem);

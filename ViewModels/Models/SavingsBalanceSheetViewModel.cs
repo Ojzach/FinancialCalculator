@@ -27,7 +27,7 @@ namespace FinancialCalculator.ViewModels
 
         public override void CreateBalanceSheetItem()
         {
-            base.AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, AddBalanceItemName, new Models.BankAccount(AddBalanceItemName, Models.BankAccountType.Checking)));
+            base.AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, AddBalanceItemName, new Models.FinancialAccount(AddBalanceItemName, Models.BankAccountType.Checking)));
             ToggleAddBalanceItemBox();
             BalanceItemChanged();
         }
@@ -109,6 +109,12 @@ namespace FinancialCalculator.ViewModels
             }
 
             base.BalanceItemChanged();
+        }
+
+        public override void AddBalanceSheetItem(BalanceItem item)
+        {
+            base.AddBalanceSheetItem(item);
+            BalanceItemChanged();
         }
     }
 }

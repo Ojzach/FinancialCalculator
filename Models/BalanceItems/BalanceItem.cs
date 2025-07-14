@@ -14,7 +14,7 @@ namespace FinancialCalculator.Model
         protected bool setByAmt = true;
         public bool isPreTaxBalanceItem = false;
 
-        protected BankAccount _bankAccount;
+        protected FinancialAccount _bankAccount;
 
         public float MonthlyAmt { 
             get => monthlyAmt; 
@@ -42,7 +42,7 @@ namespace FinancialCalculator.Model
 
         private PaycheckStore _paycheck;
 
-        public BalanceItem(PaycheckStore paycheck, BankAccount bankAccount, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, bool _preTaxBalanceItem = false, string notes = "") 
+        public BalanceItem(PaycheckStore paycheck, FinancialAccount bankAccount, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, bool _preTaxBalanceItem = false, string notes = "") 
         {
             _paycheck = paycheck;
             _bankAccount = bankAccount;
