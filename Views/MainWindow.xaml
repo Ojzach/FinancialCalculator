@@ -9,13 +9,37 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
 
-    <Grid>
-        <Grid.Resources>
-            <DataTemplate DataType="{x:Type vms:CalculatorViewModel}">
-                <views:CalculatorView/>
-            </DataTemplate>
-        </Grid.Resources>
+    <DockPanel>
 
-        <ContentControl Content="{Binding CurrentViewModel}"/>
-    </Grid>
+        <Grid DockPanel.Dock="Top" Height="25" Background="DimGray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
+
+        <Grid Width="200" DockPanel.Dock="Left">
+            <Grid.Resources>
+                <DataTemplate DataType="{x:Type vms:NavigationPanelViewModel}">
+                    <views:NavigationPanel/>
+                </DataTemplate>
+            </Grid.Resources>
+
+            <ContentControl Content="{Binding CurrentNavigationPanelViewModel}"/>
+        </Grid>
+
+        <Grid>
+            <Grid.Resources>
+                <DataTemplate DataType="{x:Type vms:CalculatorViewModel}">
+                    <views:CalculatorView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:FinancialAccountsPageViewModel}">
+                    <views:FinancialAccountsPageView/>
+                </DataTemplate>
+            </Grid.Resources>
+
+            <ContentControl Content="{Binding CurrentViewModel}"/>
+        </Grid>
+    </DockPanel>
 </Window>

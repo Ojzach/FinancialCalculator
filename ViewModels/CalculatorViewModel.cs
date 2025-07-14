@@ -20,6 +20,8 @@ namespace FinancialCalculator.ViewModels
         public float TakeHomeAmount { get => _paycheck.TakeHomeAmount; }
         public float TakeHomePercent { get => BalanceSheets.Sum(item => item.TotalBalanceSheetPercent); }
 
+        public float UnusedAmount { get => _paycheck.TakeHomeAmount - BalanceSheets.Sum(item => item.TotalBalanceSheetAmount); }
+
 
 
         private PaycheckStore _paycheck;
@@ -43,7 +45,7 @@ namespace FinancialCalculator.ViewModels
                 };
 
 
-            BankAccount usaaIncomeAccount = new BankAccount("USAA Income", BankAccountType.Checking, _currentBalance: 0);
+            FinancialAccount usaaIncomeAccount = new FinancialAccount("USAA Income", BankAccountType.Checking, _currentBalance: 0);
 
             PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Federal Tax"));
             PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Medicare"));
@@ -66,10 +68,10 @@ namespace FinancialCalculator.ViewModels
             BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Motorcycle Insurance", _monthlyAmount: 43.32f));
             BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "AMO Dues", _monthlyAmount: 141.67f));
 
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Emergency Fund", new BankAccount("EmergencyFund", BankAccountType.Savings, 2000), 10000, new LocalDate(2025, 8, 25), priority: SavingsBalanceItemPriority.High));
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Rally Car", new BankAccount("RallyCar", BankAccountType.Savings, 0), 15000, new LocalDate(2026, 3, 1)));
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "House", new BankAccount("House", BankAccountType.Savings, 0), 50000, new LocalDate(2026, 10, 20)));
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Travel", new BankAccount("Travel", BankAccountType.Savings, 0), 3000, new LocalDate(2025, 8, 20), priority: SavingsBalanceItemPriority.Medium));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Emergency Fund", new FinancialAccount("EmergencyFund", BankAccountType.Savings, 2000), 10000, new LocalDate(2025, 8, 25), priority: SavingsBalanceItemPriority.High));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Rally Car", new FinancialAccount("RallyCar", BankAccountType.Savings, 0), 15000, new LocalDate(2026, 3, 1)));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "House", new FinancialAccount("House", BankAccountType.Savings, 0), 50000, new LocalDate(2026, 10, 20)));
+            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Travel", new FinancialAccount("Travel", BankAccountType.Savings, 0), 3000, new LocalDate(2025, 8, 20), priority: SavingsBalanceItemPriority.Medium));
 
             BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Food"));
             BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Gas"));
@@ -93,6 +95,7 @@ namespace FinancialCalculator.ViewModels
             OnPropertyChanged("MonthsCoveredByPaycheck");
 
             OnPropertyChanged("BalanceSheets");
+            OnPropertyChanged("UnusedAmount");
 
         }
     }

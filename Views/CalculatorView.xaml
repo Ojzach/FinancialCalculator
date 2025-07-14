@@ -19,17 +19,6 @@
 
     <Grid>
 
-        <Grid.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="TextAlignment" Value="Center"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-            <Style TargetType="TextBox">
-                <Setter Property="TextAlignment" Value="Center"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-        </Grid.Resources>
-        
         <ScrollViewer Margin="100, 0, 0, 0" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="10, 10, 50, 10" Orientation="Vertical">
                 <TextBlock Height="40"/>
@@ -76,6 +65,27 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
                 </ListBox>
+
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition MaxWidth="150"/>
+                        <ColumnDefinition MaxWidth="75"/>
+
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="25"/>
+
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Unused Amount: " Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding UnusedAmount, StringFormat='c'}" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center"/>
+
+                    <Button Content="Submit" Grid.Column="1" Grid.Row="1"/>
+                </Grid>
 
             </StackPanel>
         </ScrollViewer>
