@@ -27,18 +27,37 @@
                 <TextBlock Height="40" Text="Financial Accounts" FontSize="25" FontWeight="DemiBold"/>
 
 
-                <ListBox ItemsSource="{Binding FinancialInstitutions}" ItemTemplate="{StaticResource lbFinancialInstitution}">
+                <ListBox ItemsSource="{Binding FinancialInstitutions}" SelectedItem="{Binding SelectedFinancialInstitution}" ItemTemplate="{StaticResource lbFinancialInstitution}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                         </Style>
                     </ListBox.ItemContainerStyle>
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete" Command="{Binding DeleteFinancialInstitutionCommand}" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
                 </ListBox>
+
+                <Grid Margin="5" Visibility="{Binding AddFinancialInstitutionVisible}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Name:" Grid.Column="0"/>
+                    <TextBox Text="{Binding AddFinancialInstitutionName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                    <Button Content="Submit" Command="{Binding AddFinancialInstitutionCommand}" Grid.Column="2"/>
+                </Grid>
+
+                <Button Content="Add" Command="{Binding ToggleAddBoxCommand}" Margin="0, 5, 0, 0"/>
 
             </StackPanel>
         </ScrollViewer>
 
-        <Grid Visibility="{Binding EditAccountVisibility}">
+        <Grid Visibility="{Binding EditAccountVisibility}" d:Visibility="Collapsed">
             <Border Background="Gray" Opacity="0.5"/>
 
             <Grid>
@@ -60,15 +79,15 @@
                             <RowDefinition Height="25"/>
                         </Grid.RowDefinitions>
 
-                        <Grid>
-                            
-                        </Grid>
+                        <ContentControl Content="{Binding CurrentlyEditingAccount}" ContentTemplate="{StaticResource FinancialAccountEditBox}" Grid.Row="0"/>
 
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="150"/>
                             </Grid.ColumnDefinitions>
+
+                            
 
                             <Button Content="Close" Command="{Binding CloseEditMenuCommand}" Grid.Column="1"/>
                         </Grid>

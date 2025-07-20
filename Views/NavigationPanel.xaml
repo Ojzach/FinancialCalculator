@@ -19,9 +19,9 @@
 
             <StackPanel Grid.Row="1">
                 <Button Height="30" Command="{Binding LoadDepositCalculatorViewCommand}" Content="Deposit Calculator" HorizontalContentAlignment="Left"/>
-                <Button Height="30" Command="" Content="Expenses" HorizontalContentAlignment="Left"/>
-                <Button Height="30" Command="" Content="Spending Budgets" HorizontalContentAlignment="Left"/>
-                <Button Height="30" Command="" Content="Savings Goals" HorizontalContentAlignment="Left"/>
+                <Button Height="30" IsEnabled="False" Command="" Content="Expenses" HorizontalContentAlignment="Left"/>
+                <Button Height="30" IsEnabled="False" Command="" Content="Spending Budgets" HorizontalContentAlignment="Left"/>
+                <Button Height="30" IsEnabled="False" Command="" Content="Savings Goals" HorizontalContentAlignment="Left"/>
                 <Button Height="30" Command="{Binding LoadFinancialAccountsViewCommand}"  Content="Banks" HorizontalContentAlignment="Left"/>
                 
             </StackPanel>

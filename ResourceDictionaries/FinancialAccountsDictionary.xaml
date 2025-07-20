@@ -13,6 +13,8 @@
 
             <TextBlock Text="{Binding AccountName}"/>
 
+            <TextBlock Text="{Binding AccountType}" Grid.Column="1"/>
+
             <TextBlock Text="{Binding AccountBalance, StringFormat='c'}" Grid.Column="2"/>
 
             <Button Command="{Binding OpenEditAccountCommand}" Grid.Column="3"/>
@@ -35,8 +37,39 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
+
+            <Button Content="Add" Command="{Binding OpenAddFinancialAccountMenuCommand}" Margin="0, 5, 0, 0"/>
         </StackPanel>
 
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="FinancialAccountEditBox">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Account Name: " Grid.Row="0" Grid.Column="0"/>
+            <TextBox Text="{Binding AccountName}" Grid.Row="0" Grid.Column="1"/>
+
+            <TextBlock Text="Account Type: " Grid.Row="1" Grid.Column="0"/>
+            <ComboBox ItemsSource="{Binding FinancialAccountTypes}" SelectedItem="{Binding AccountType}" Height="20" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="1"/>
+ 
+            <TextBlock Text="Current Balance" Grid.Row="2" Grid.Column="0"/>
+            <TextBox  Text="{Binding AccountBalance, StringFormat='c'}" Grid.Row="2" Grid.Column="1"/>
+
+
+        </Grid>
     </DataTemplate>
 
 </ResourceDictionary>

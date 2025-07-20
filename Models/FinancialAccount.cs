@@ -1,5 +1,7 @@
 ﻿
 
+using FinancialCalculator.ViewModels;
+
 namespace FinancialCalculator.Models
 {
     public class FinancialAccount
@@ -20,6 +22,13 @@ namespace FinancialCalculator.Models
             accountType = _accountType;
             currentBalance = _currentBalance;
             transactions = _transactions is null? new List<Transaction>() : _transactions;
+        }
+
+        public FinancialAccount(FinancialAccountViewModel accountViewModel)
+        {
+            accountName = accountViewModel.AccountName;
+            accountType = accountViewModel.AccountType;
+            currentBalance = accountViewModel.AccountBalance;
         }
 
     }
