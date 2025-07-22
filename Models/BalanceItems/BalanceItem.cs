@@ -37,19 +37,17 @@ namespace FinancialCalculator.Model
                 NumbersChanged?.Invoke();
             }
         }
-        public string Notes { get; set; }
 
 
         private PaycheckStore _paycheck;
 
-        public BalanceItem(PaycheckStore paycheck, FinancialAccount bankAccount, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, bool _preTaxBalanceItem = false, string notes = "") 
+        public BalanceItem(PaycheckStore paycheck, FinancialAccount bankAccount, string name, float _monthlyAmount = -1.0f, float _monthlyPercent = -1.0f, bool _preTaxBalanceItem = false) 
         {
             _paycheck = paycheck;
             _bankAccount = bankAccount;
             Name = name;
             if (_monthlyAmount != -1) MonthlyAmt = _monthlyAmount;
             else if (_monthlyPercent != -1) MonthlyPctStr = (_monthlyPercent * 100).ToString();
-            Notes = notes;
             isPreTaxBalanceItem = _preTaxBalanceItem;
 
 

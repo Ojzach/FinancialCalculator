@@ -21,7 +21,7 @@ namespace FinancialCalculator
 
             NavigationStore _navigationStore = new NavigationStore();
             FinancialInstitutionsStore _financialInstitutionsStore = new FinancialInstitutionsStore();
-            _navigationStore.CurrentViewModel = new CalculatorViewModel();
+            _navigationStore.CurrentViewModel = new DepositCalculatorViewModel();
 
             _financialInstitutionsStore.AddFinancialInstitution(new FinancialInstitution("USAA"));
             _financialInstitutionsStore.AddFinancialInstitution(new FinancialInstitution("Discover"));

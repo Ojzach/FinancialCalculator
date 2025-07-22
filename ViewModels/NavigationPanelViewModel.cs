@@ -18,7 +18,7 @@ namespace FinancialCalculator.ViewModels
         {
             _navigationStore = navigationStore;
 
-            LoadDepositCalculatorViewCommand = new NavigateCommand(navigationStore, () => new CalculatorViewModel());
+            LoadDepositCalculatorViewCommand = new NavigateCommand(navigationStore, () => new DepositCalculatorViewModel());
             LoadFinancialAccountsViewCommand = new NavigateCommand(navigationStore, () => new FinancialAccountsPageViewModel(financialInstitutionsStore));
         }
 

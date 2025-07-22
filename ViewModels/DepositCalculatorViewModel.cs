@@ -6,7 +6,7 @@ using NodaTime;
 
 namespace FinancialCalculator.ViewModels
 {
-    internal class CalculatorViewModel : ViewModelBase
+    internal class DepositCalculatorViewModel : ViewModelBase
     {
         public float PaycheckAmount
         {
@@ -30,10 +30,27 @@ namespace FinancialCalculator.ViewModels
         private ObservableCollection<BalanceSheetBaseViewModel> balanceSheets = new ObservableCollection<BalanceSheetBaseViewModel>();
         public ObservableCollection<BalanceSheetBaseViewModel> BalanceSheets { get => balanceSheets; set { balanceSheets = value; UpdateCalculatedValues(); } }
 
+        private DepositCalculatorBudgetViewModel depositBudgets;
+        public DepositCalculatorBudgetViewModel DepositBudgets { get => depositBudgets; set { depositBudgets = value; OnPropertyChanged(nameof(DepositBudgets)); } }
+
+
         public BalanceSheetBaseViewModel PaycheckDeductionsBalanceSheet { get; set; }
 
-        public CalculatorViewModel()
+        public DepositCalculatorViewModel()
         {
+
+            Budget budget = new Budget("Paycheck");
+
+            budget.ChildBudgets.Add(new Budget("Investments"));
+            budget.ChildBudgets.Add(new Budget("Fixed Costs"));
+            budget.ChildBudgets.Add(new Budget("Savings"));
+            budget.ChildBudgets.Add(new Budget("Free Spending"));
+            budget.ChildBudgets[budget.ChildBudgets.Count - 1].ChildBudgets.Add(new Budget("Test"));
+
+            DepositBudgets = new DepositCalculatorBudgetViewModel(budget);
+
+
+
             _paycheck = new PaycheckStore();
 
             PaycheckDeductionsBalanceSheet = new BalanceSheetViewModel(_paycheck, "Paycheck Deductions", preTaxBalanceSheet: true);

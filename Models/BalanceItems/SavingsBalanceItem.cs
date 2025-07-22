@@ -35,7 +35,7 @@ namespace FinancialCalculator.Model
         public float RecommendedMonthlyAmount { get => recommendedMonthlyAmount; set { recommendedMonthlyAmount = value; OnPropertyChanged("RecommendedMonthlyAmount"); } }
 
         public SavingsBalanceItem(PaycheckStore paycheck, string name, FinancialAccount bankAccount, float _savingsGoalAmount = 0.0f, LocalDate _savingsGoalDate = default(LocalDate), SavingsBalanceItemPriority priority = SavingsBalanceItemPriority.Low, string notes = "")
-            : base(paycheck, bankAccount ,name, notes: notes)
+            : base(paycheck, bankAccount ,name)
         {
             savingsGoalAmount = _savingsGoalAmount;
             goalDate = _savingsGoalDate == default(LocalDate) ? DateTime.Now.ToLocalDateTime().Date : _savingsGoalDate;
