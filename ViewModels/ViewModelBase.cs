@@ -10,5 +10,9 @@ namespace FinancialCalculator.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public virtual void OpenViewModel() { }
+
+        public virtual void CloseViewModel() { }
     }
 }

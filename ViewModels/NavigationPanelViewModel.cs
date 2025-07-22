@@ -14,12 +14,12 @@ namespace FinancialCalculator.ViewModels
 
         private readonly NavigationStore _navigationStore;
 
-        public NavigationPanelViewModel(NavigationStore navigationStore)
+        public NavigationPanelViewModel(NavigationStore navigationStore, FinancialInstitutionsStore financialInstitutionsStore)
         {
             _navigationStore = navigationStore;
 
             LoadDepositCalculatorViewCommand = new NavigateCommand(navigationStore, () => new CalculatorViewModel());
-            LoadFinancialAccountsViewCommand = new NavigateCommand(navigationStore, () => new FinancialAccountsPageViewModel());
+            LoadFinancialAccountsViewCommand = new NavigateCommand(navigationStore, () => new FinancialAccountsPageViewModel(financialInstitutionsStore));
         }
 
         public ICommand LoadDepositCalculatorViewCommand { get; }

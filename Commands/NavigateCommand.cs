@@ -18,7 +18,9 @@ namespace VehicleMaintenanceLog.Commands
 
         public override void Execute(object parameter)
         {
+            _navigationStore.CurrentViewModel.CloseViewModel();
             _navigationStore.CurrentViewModel = _createViewModel();
+            _navigationStore.CurrentViewModel.OpenViewModel();
         }
 
         public override bool CanExecute(object parameter)

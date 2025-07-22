@@ -1,4 +1,5 @@
-﻿using FinancialCalculator.Stores;
+﻿using FinancialCalculator.Models;
+using FinancialCalculator.Stores;
 using FinancialCalculator.ViewModels;
 using System.Windows;
 
@@ -19,9 +20,14 @@ namespace FinancialCalculator
         {
 
             NavigationStore _navigationStore = new NavigationStore();
+            FinancialInstitutionsStore _financialInstitutionsStore = new FinancialInstitutionsStore();
             _navigationStore.CurrentViewModel = new CalculatorViewModel();
 
-            MainWindow = new MainWindow() { DataContext = new MainWindowViewModel(_navigationStore) };
+            _financialInstitutionsStore.AddFinancialInstitution(new FinancialInstitution("USAA"));
+            _financialInstitutionsStore.AddFinancialInstitution(new FinancialInstitution("Discover"));
+            _financialInstitutionsStore.AddFinancialInstitution(new FinancialInstitution("Fidelity"));
+
+            MainWindow = new MainWindow() { DataContext = new MainWindowViewModel(_navigationStore, _financialInstitutionsStore) };
             MainWindow.Show();
 
             base.OnStartup(e);

@@ -1,13 +1,7 @@
 ﻿using FinancialCalculator.Commands;
 using FinancialCalculator.Models;
 using FinancialCalculator.Stores;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -42,10 +36,6 @@ namespace FinancialCalculator.ViewModels
         {
             _financialInstituitonsStore = financialInstitutionsStore;
 
-            AddFinancialInstitution(new FinancialInstitution("USAA"));
-            AddFinancialInstitution(new FinancialInstitution("Discover"));
-            AddFinancialInstitution(new FinancialInstitution("Fidelity"));
-
             AddFinancialInstitutionCommand = new RelayCommand(
                 execute => { AddFinancialInstitution(new FinancialInstitution(AddFinancialInstitutionName)); ToggleAddBox(); }, 
                 canExecute => AddFinancialInstitutionName != "" && AddFinancialInstitutionName is not null);
@@ -59,18 +49,16 @@ namespace FinancialCalculator.ViewModels
             ToggleAddBoxCommand = new RelayCommand(execute => ToggleAddBox());
         }
 
-        public void OpenPage()
+        public override void OpenViewModel()
         {
-            foreach(FinancialInstitution fi in _financialInstituitonsStore.FinancialInstitutions)
+            foreach (FinancialInstitution fi in _financialInstituitonsStore.FinancialInstitutions)
             {
                 FinancialInstitutions.Add(new FinancialInstitutionViewModel(fi));
             }
         }
-
-        public void ClosePage()
+        public override void CloseViewModel()
         {
             _financialInstituitonsStore.UpdateFinancialInstitutionsList(FinancialInstitutions.ToList());
-
 
             FinancialInstitutions.Clear();
         }
