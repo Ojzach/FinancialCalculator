@@ -23,6 +23,22 @@ namespace FinancialCalculator.ViewModels
                 else return _budget.GetMaxMonthlyDepositAmt(_deposit.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount));
             } 
         }
+        public override float MinAmt
+        {
+            get
+            {
+                if (IsUsrSet) return DepositAmt;
+                else
+                {
+                    return MathF.Max(
+                        SubItems.Sum(item => item.MinAmt), 
+                        _budget.GetMinMonthlyDepositAmt(_deposit.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount)));
+                }
+            }
+        }
+
+
+        public override bool IsAmtEditable => base.IsAmtEditable && SubItems.Count <= 0;
 
         public FlexiblebudgetDepositViewModel(FlexibleBudget _budget, DepositStore _depositStore) : base(_budget, _depositStore)
         {

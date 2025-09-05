@@ -24,6 +24,18 @@ namespace FinancialCalculator.ViewModels
             } 
         }
 
+        public override float MinAmt
+        {
+            get
+            {
+                if (IsUsrSet) return DepositAmt;
+                else
+                {
+                    return _budget.GetMinMonthlyDepositAmt(_deposit.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount));
+                }
+            }
+        }
+
 
         public FixedBudgetDepositViewModel(FixedBudget _budget, DepositStore _depositStore) : base(_budget, _depositStore)
         {

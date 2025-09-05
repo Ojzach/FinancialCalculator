@@ -24,7 +24,7 @@ namespace FinancialCalculator.ViewModels
 
         protected BudgetDepositViewModel UnallocattedBudget;
 
-        public bool IsAmtEditable { get => ((SubItems.Count <= 0 || _budget is not FlexibleBudget) && _budget is not FillBudget && _budget.Name != "Deposit"); }
+        public virtual bool IsAmtEditable { get => (_budget is not FillBudget && _budget.Name != "Deposit"); }
         private bool _isVisible = true;
         private bool isVisible { get => _isVisible; set { _isVisible = value; OnPropertyChanged(nameof(IsVisible)); } }
         public Visibility IsVisible { get => isVisible ? Visibility.Visible : Visibility.Collapsed; }
@@ -80,26 +80,7 @@ namespace FinancialCalculator.ViewModels
 
         protected float TotalDepositAmt { get => _budget.AssociatedFinancialAccount.isPreTaxAccount ? _deposit.DepositAmount : _deposit.TakeHomeAmount; }
         public abstract float MaxAmt { get; }
-        public virtual float MinAmt {
-            get
-            {
-                if(IsUsrSet)
-                {
-                    return DepositAmt;
-                }
-                else
-                {
-                    if(_budget is FlexibleBudget)
-                    {
-                        return MathF.Max(SubItems.Sum(item => item.MinAmt), _budget.GetMinMonthlyDepositAmt(_deposit.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount)));
-                    }
-                    else
-                    {
-                        return _budget.GetMinMonthlyDepositAmt(_deposit.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount));
-                    }
-                }
-            }
-        }
+        public virtual float MinAmt { get; }
 
 
 
