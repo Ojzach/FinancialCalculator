@@ -13,6 +13,13 @@ namespace FinancialCalculator.Stores
         private List<FinancialInstitution> financialInstitutions = new List<FinancialInstitution>();
         public List<FinancialInstitution> FinancialInstitutions { get => financialInstitutions; set => financialInstitutions = value; }
 
+        public FinancialInstitutionsStore()
+        {
+            AddFinancialInstitution(new FinancialInstitution("USAA"));
+            AddFinancialInstitution(new FinancialInstitution("Discover"));
+            AddFinancialInstitution(new FinancialInstitution("Fidelity"));
+        }
+
 
         public void AddFinancialInstitution(FinancialInstitution fi)
         {

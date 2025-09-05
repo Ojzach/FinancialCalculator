@@ -1,4 +1,5 @@
 ﻿using FinancialCalculator.Stores;
+using FinancialCalculator.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,15 +15,27 @@ namespace FinancialCalculator.ViewModels
 
         private readonly NavigationStore _navigationStore;
 
-        public NavigationPanelViewModel(NavigationStore navigationStore, FinancialInstitutionsStore financialInstitutionsStore)
+        private DepositCalculatorViewModel _depositCalculatorView;
+        private FinancialAccountsPageViewModel _financialAccountsPageViewModel;
+        public ICommand LoadDepositCalculatorViewCommand { get; }
+        public ICommand LoadFinancialAccountsViewCommand { get; }
+
+        public NavigationPanelViewModel(NavigationStore navigationStore, FinancialInstitutionsStore financialInstitutionsStore, BudgetsStore budgetsStore)
         {
             _navigationStore = navigationStore;
 
-            LoadDepositCalculatorViewCommand = new NavigateCommand(navigationStore, () => new DepositCalculatorViewModel());
-            LoadFinancialAccountsViewCommand = new NavigateCommand(navigationStore, () => new FinancialAccountsPageViewModel(financialInstitutionsStore));
+            _depositCalculatorView = new DepositCalculatorViewModel(financialInstitutionsStore, budgetsStore);
+            _financialAccountsPageViewModel = new FinancialAccountsPageViewModel(financialInstitutionsStore);
+
+            LoadDepositCalculatorViewCommand = new NavigateCommand(navigationStore, () => _depositCalculatorView);
+            LoadFinancialAccountsViewCommand = new NavigateCommand(navigationStore, () => _financialAccountsPageViewModel);
+
+            _navigationStore.CurrentViewModel = _depositCalculatorView;
+
+
+            LoadDepositCalculatorViewCommand.Execute(null);
         }
 
-        public ICommand LoadDepositCalculatorViewCommand { get; }
-        public ICommand LoadFinancialAccountsViewCommand { get; }
+
     }
 }

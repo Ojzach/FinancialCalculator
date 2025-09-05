@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using FinancialCalculator.Model;
+﻿using FinancialCalculator.Commands;
 using FinancialCalculator.Models;
 using FinancialCalculator.Stores;
-using NodaTime;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Input;
 
 namespace FinancialCalculator.ViewModels
 {
@@ -10,95 +11,158 @@ namespace FinancialCalculator.ViewModels
     {
         public float PaycheckAmount
         {
-            get => _paycheck.PaycheckAmount;
-            set { _paycheck.PaycheckAmount = value; UpdateCalculatedValues(); }
+            get => _depositStore.DepositAmount;
+            set { _depositStore.DepositAmount = value; UpdateCalculatedValues(); }
         }
 
-        public float EstimatedYearlyIncome { get => _paycheck.EstimatedyearlyIncome; set { _paycheck.EstimatedyearlyIncome = value; UpdateCalculatedValues(); } }
-        public int MonthsCoveredByPaycheck { get => _paycheck.MonthsCoveredByPaycheck; }
-
-        public float TakeHomeAmount { get => _paycheck.TakeHomeAmount; }
-        public float TakeHomePercent { get => BalanceSheets.Sum(item => item.TotalBalanceSheetPercent); }
-
-        public float UnusedAmount { get => _paycheck.TakeHomeAmount - BalanceSheets.Sum(item => item.TotalBalanceSheetAmount); }
+        public float EstimatedYearlyIncome { get => _depositStore.EstimatedyearlyIncome; set { _depositStore.EstimatedyearlyIncome = value; UpdateCalculatedValues(); } }
+        public int MonthsCoveredByPaycheck { get => _depositStore.MonthsCoveredByDeposit; }
 
 
-
-        private PaycheckStore _paycheck;
-
-
-        private ObservableCollection<BalanceSheetBaseViewModel> balanceSheets = new ObservableCollection<BalanceSheetBaseViewModel>();
-        public ObservableCollection<BalanceSheetBaseViewModel> BalanceSheets { get => balanceSheets; set { balanceSheets = value; UpdateCalculatedValues(); } }
-
-        private DepositCalculatorBudgetViewModel depositBudgets;
-        public DepositCalculatorBudgetViewModel DepositBudgets { get => depositBudgets; set { depositBudgets = value; OnPropertyChanged(nameof(DepositBudgets)); } }
+        private DepositStore _depositStore;
 
 
-        public BalanceSheetBaseViewModel PaycheckDeductionsBalanceSheet { get; set; }
+        private AmtPct federalTaxAmtPct;
+        private AmtPct medicareAmtPct;
+        private AmtPct socialSecurityAmtPct;
+        private AmtPct stateTaxAmtPct;
 
-        public DepositCalculatorViewModel()
+        public float FederalTaxAmt { 
+            get => federalTaxAmtPct.DepositAmt;
+            set 
+            { 
+                federalTaxAmtPct.SetAmt(value, _depositStore.DepositAmount);
+                _depositStore.FederalTaxAmt = federalTaxAmtPct.DepositAmt;
+                OnPropertyChanged(nameof(FederalTaxAmt)); 
+                OnPropertyChanged(nameof(FederalTaxPct)); 
+            } 
+        }
+        public float FederalTaxPct { 
+            get => federalTaxAmtPct.DepositPct;
+            set 
+            { 
+                federalTaxAmtPct.SetPct(value, _depositStore.DepositAmount);
+                _depositStore.FederalTaxAmt = federalTaxAmtPct.DepositAmt;
+                OnPropertyChanged(nameof(FederalTaxAmt)); 
+                OnPropertyChanged(nameof(FederalTaxPct)); 
+            }
+        }
+
+        public float MedicareAmt
         {
+            get => medicareAmtPct.DepositAmt;
+            set 
+            { 
+                medicareAmtPct.SetAmt(value, _depositStore.DepositAmount);
+                _depositStore.MedicareAmt = medicareAmtPct.DepositAmt;
+                OnPropertyChanged(nameof(MedicareAmt)); 
+                OnPropertyChanged(nameof(MedicarePct)); 
+            }
+        }
+        public float MedicarePct
+        {
+            get => medicareAmtPct.DepositPct;
+            set 
+            { 
+                medicareAmtPct.SetPct(value, _depositStore.DepositAmount);
+                _depositStore.MedicareAmt = medicareAmtPct.DepositAmt;
+                OnPropertyChanged(nameof(MedicareAmt)); 
+                OnPropertyChanged(nameof(MedicarePct)); 
+            }
+        }
 
-            Budget budget = new Budget("Paycheck");
+        public float SocialSecurityAmt
+        {
+            get => socialSecurityAmtPct.DepositAmt;
+            set 
+            { 
+                socialSecurityAmtPct.SetAmt(value, _depositStore.DepositAmount);
+                _depositStore.SocialSecurityAmt = socialSecurityAmtPct.DepositAmt;
+                OnPropertyChanged(nameof(SocialSecurityAmt)); 
+                OnPropertyChanged(nameof(SocialSecurityPct)); 
+            }
+        }
+        public float SocialSecurityPct
+        {
+            get => socialSecurityAmtPct.DepositPct;
+            set 
+            { 
+                socialSecurityAmtPct.SetPct(value, _depositStore.DepositAmount);
+                _depositStore.SocialSecurityAmt = socialSecurityAmtPct.DepositAmt;
+                OnPropertyChanged(nameof(SocialSecurityAmt)); 
+                OnPropertyChanged(nameof(SocialSecurityPct)); 
+            }
+        }
 
-            budget.ChildBudgets.Add(new Budget("Investments"));
-            budget.ChildBudgets.Add(new Budget("Fixed Costs"));
-            budget.ChildBudgets.Add(new Budget("Savings"));
-            budget.ChildBudgets.Add(new Budget("Free Spending"));
-            budget.ChildBudgets[budget.ChildBudgets.Count - 1].ChildBudgets.Add(new Budget("Test"));
-
-            DepositBudgets = new DepositCalculatorBudgetViewModel(budget);
-
-
-
-            _paycheck = new PaycheckStore();
-
-            PaycheckDeductionsBalanceSheet = new BalanceSheetViewModel(_paycheck, "Paycheck Deductions", preTaxBalanceSheet: true);
-            PaycheckDeductionsBalanceSheet.BalanceSheetUpdated +=
-                () =>
-                {
-                    _paycheck.PaycheckDeductions = PaycheckDeductionsBalanceSheet.TotalBalanceSheetAmount;
-                    UpdateCalculatedValues();
-                };
-
-
-            FinancialAccount usaaIncomeAccount = new FinancialAccount("USAA Income", BankAccountType.Checking, _currentBalance: 0);
-
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Federal Tax"));
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Medicare"));
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Social Security"));
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "State Tax"));
-            PaycheckDeductionsBalanceSheet.AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "401K"));
+        public float StateTaxAmt
+        {
+            get => stateTaxAmtPct.DepositAmt;
+            set 
+            { 
+                stateTaxAmtPct.SetAmt(value, _depositStore.DepositAmount);
+                _depositStore.StateTaxAmt = stateTaxAmtPct.DepositAmt;
+                OnPropertyChanged(nameof(StateTaxAmt)); 
+                OnPropertyChanged(nameof(StateTaxPct)); }
+        }
+        public float StateTaxPct
+        {
+            get => stateTaxAmtPct.DepositPct;
+            set 
+            { 
+                stateTaxAmtPct.SetPct(value, _depositStore.DepositAmount);
+                _depositStore.StateTaxAmt = stateTaxAmtPct.DepositAmt;
+                OnPropertyChanged(nameof(StateTaxAmt)); 
+                OnPropertyChanged(nameof(StateTaxPct));
+            }
+        }
 
 
-            BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Investments"));
-            BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Fixed Costs"));
-            BalanceSheets.Add(new SavingsBalanceSheetViewModel(_paycheck, "Savings"));
-            BalanceSheets.Add(new BalanceSheetViewModel(_paycheck, "Free Spending"));
+
+        private BudgetDepositViewModel depositBudgets;
+        public BudgetDepositViewModel DepositBudgets { get => depositBudgets; set { depositBudgets = value; OnPropertyChanged(nameof(DepositBudgets)); } }
+
+
+
+        private bool editPanelOpen = false;
+        public Visibility EditPanelVisibility { get => editPanelOpen ? Visibility.Visible : Visibility.Collapsed; }
+
+        private ViewModelBase? currentlyEditingBudget;
+        public ViewModelBase? CurrentlyEditingBudget { get => currentlyEditingBudget; set { currentlyEditingBudget = value;  OnPropertyChanged(nameof(CurrentlyEditingBudget)); } }
+
+        private readonly FinancialInstitutionsStore _financialInstituitonsStore;
+
+        public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetsStore budgetsStore)
+        {
+            _financialInstituitonsStore = financialInstitutionsStore;
+
+            _depositStore = new DepositStore();
+
+            federalTaxAmtPct = new AmtPct();
+            medicareAmtPct = new AmtPct();
+            socialSecurityAmtPct = new AmtPct();
+            stateTaxAmtPct = new AmtPct();
+
+
+            FederalTaxPct = 0.145f;
+            MedicarePct = 0.0145f;
+            SocialSecurityPct = 0.062f;
+
+
+
+
+            DepositBudgets = new FixedBudgetDepositViewModel(budgetsStore.BaseBudget as FixedBudget, _depositStore);
+            DepositBudgets.DepositPct = 1;
+
+            DepositBudgets.BudgetValueChanged += (BudgetDepositViewModel bVM) => UpdateCalculatedValues();
+            DepositBudgets.EditBudgetAction += OpenEditMenu;
+            _depositStore.DepositChanged += UpdateCalculatedValues;
             
 
-            BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "401K", _monthlyAmount: 0.00f/*933.36f*/));
-            BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "RothIRA", _monthlyPercent: 0.05f));
-            BalanceSheets[0].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "HSA"));
 
-            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Studen Loans", _monthlyAmount: 500.0f));
-            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Motorcycle Insurance", _monthlyAmount: 43.32f));
-            BalanceSheets[1].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "AMO Dues", _monthlyAmount: 141.67f));
 
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Emergency Fund", new FinancialAccount("EmergencyFund", BankAccountType.Savings, 2000), 10000, new LocalDate(2025, 8, 25), priority: SavingsBalanceItemPriority.High));
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Rally Car", new FinancialAccount("RallyCar", BankAccountType.Savings, 0), 15000, new LocalDate(2026, 3, 1)));
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "House", new FinancialAccount("House", BankAccountType.Savings, 0), 50000, new LocalDate(2026, 10, 20)));
-            BalanceSheets[2].AddBalanceSheetItem(new SavingsBalanceItem(_paycheck, "Travel", new FinancialAccount("Travel", BankAccountType.Savings, 0), 3000, new LocalDate(2025, 8, 20), priority: SavingsBalanceItemPriority.Medium));
+            CloseEditMenuCommand = new RelayCommand(execute => CloseEditMenu());
 
-            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Food"));
-            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Gas"));
-            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Food"));
-            //BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Spotify", _monthlyAmount: 12.71f));
-            //BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Adobe", _monthlyAmount: 15.89f));
-            //BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Google Photos", _monthlyAmount: 2.11f));
-            BalanceSheets[3].AddBalanceSheetItem(new BalanceItem(_paycheck, usaaIncomeAccount, "Other"));
 
-            foreach (BalanceSheetBaseViewModel balanceSheet in BalanceSheets) balanceSheet.BalanceSheetUpdated += UpdateCalculatedValues;
 
         }
 
@@ -106,14 +170,47 @@ namespace FinancialCalculator.ViewModels
 
         public void UpdateCalculatedValues()
         {
-            OnPropertyChanged("TakeHomeAmount");
-            OnPropertyChanged("TakeHomePercent");
             OnPropertyChanged("EstimatedYearlyIncome");
             OnPropertyChanged("MonthsCoveredByPaycheck");
 
-            OnPropertyChanged("BalanceSheets");
-            OnPropertyChanged("UnusedAmount");
+            federalTaxAmtPct.UpdateSumAmt(PaycheckAmount);
+            medicareAmtPct.UpdateSumAmt(PaycheckAmount);
+            socialSecurityAmtPct.UpdateSumAmt(PaycheckAmount);
+            stateTaxAmtPct.UpdateSumAmt(PaycheckAmount);
 
+            _depositStore.UpdateDeductions(federalTaxAmtPct.DepositAmt, medicareAmtPct.DepositAmt, socialSecurityAmtPct.DepositAmt, stateTaxAmtPct.DepositAmt);
+
+            OnPropertyChanged(nameof(FederalTaxAmt));
+            OnPropertyChanged(nameof(FederalTaxPct));
+            OnPropertyChanged(nameof(MedicareAmt));
+            OnPropertyChanged(nameof(MedicarePct));
+            OnPropertyChanged(nameof(SocialSecurityAmt));
+            OnPropertyChanged(nameof(SocialSecurityPct));
+            OnPropertyChanged(nameof(StateTaxAmt));
+            OnPropertyChanged(nameof(StateTaxPct));
+
+            DepositBudgets.DepositAmt = _depositStore.TakeHomeAmount;
+
+        }
+
+
+        public ICommand CloseEditMenuCommand { get; set; }
+
+        private bool editingItem = false;
+
+        public void OpenEditMenu(ViewModelBase budget)
+        {
+            editingItem = true;
+            CurrentlyEditingBudget = budget;
+            editPanelOpen = true;
+            OnPropertyChanged(nameof(EditPanelVisibility));
+        }
+
+        public void CloseEditMenu()
+        {
+            editPanelOpen = false;
+            OnPropertyChanged(nameof(EditPanelVisibility));
+            CurrentlyEditingBudget = null;
         }
     }
 

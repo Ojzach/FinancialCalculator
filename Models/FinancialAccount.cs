@@ -11,11 +11,7 @@ namespace FinancialCalculator.Models
         public BankAccountType accountType;
         public float currentBalance = 0.0f;
         public List<Transaction> transactions = new List<Transaction>();
-        public bool preTaxAccount;
-
-
-        //public FinancialAccount parentAccount; --Future Idea To Create Network For Transfers
-
+        public bool isPreTaxAccount;
 
         public FinancialAccount(string _accountName, BankAccountType _accountType, float _currentBalance = 0, List<Transaction>? _transactions = null)
         {

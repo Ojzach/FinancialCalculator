@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:FinancialCalculator.ResourceDictionaries">
+
+    <local:EditPanelTemplateSelector x:Key="EditPanelTemplateSelector"/>
+
+    <DataTemplate x:Key="SavingsBudget_EditPanelTemplate">
+        
+        
+    </DataTemplate>
+    
+</ResourceDictionary>

@@ -2,6 +2,7 @@
 using FinancialCalculator.Models;
 using FinancialCalculator.Stores;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -51,10 +52,7 @@ namespace FinancialCalculator.ViewModels
 
         public override void OpenViewModel()
         {
-            foreach (FinancialInstitution fi in _financialInstituitonsStore.FinancialInstitutions)
-            {
-                FinancialInstitutions.Add(new FinancialInstitutionViewModel(fi));
-            }
+            foreach (FinancialInstitution fi in _financialInstituitonsStore.FinancialInstitutions) AddFinancialInstitution(fi);
         }
         public override void CloseViewModel()
         {
@@ -96,6 +94,7 @@ namespace FinancialCalculator.ViewModels
 
         public void OpenEditMenu(FinancialAccountViewModel account)
         {
+
             editingItem = true;
             CurrentlyEditingAccount = account;
             editAccountOpen = true;

@@ -21,13 +21,11 @@ namespace FinancialCalculator
 
             NavigationStore _navigationStore = new NavigationStore();
             FinancialInstitutionsStore _financialInstitutionsStore = new FinancialInstitutionsStore();
-            _navigationStore.CurrentViewModel = new DepositCalculatorViewModel();
+            BudgetsStore _budgetsStore = new BudgetsStore();
 
-            _financialInstitutionsStore.AddFinancialInstitution(new FinancialInstitution("USAA"));
-            _financialInstitutionsStore.AddFinancialInstitution(new FinancialInstitution("Discover"));
-            _financialInstitutionsStore.AddFinancialInstitution(new FinancialInstitution("Fidelity"));
+            
 
-            MainWindow = new MainWindow() { DataContext = new MainWindowViewModel(_navigationStore, _financialInstitutionsStore) };
+            MainWindow = new MainWindow() { DataContext = new MainWindowViewModel(_navigationStore, _financialInstitutionsStore, _budgetsStore) };
             MainWindow.Show();
 
             base.OnStartup(e);
