@@ -17,7 +17,7 @@
 
             <TextBlock Text="{Binding AccountBalance, StringFormat='c'}" Grid.Column="2"/>
 
-            <Button Command="{Binding OpenEditAccountCommand}" Grid.Column="3"/>
+            <Button Content="⋮" Command="{Binding OpenEditAccountCommand}" Grid.Column="3"/>
         </Grid>
         
     </DataTemplate>
