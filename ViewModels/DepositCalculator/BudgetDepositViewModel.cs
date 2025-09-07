@@ -45,7 +45,7 @@ namespace FinancialCalculator.ViewModels
         public bool IsUsrSet { get => isUsrSet; set { isUsrSet = value; OnPropertyChanged(nameof(isUsrSet)); } }
         public bool IsSetByAmt { get => depositAmtPct.IsSetByAmt; }
 
-        public float UsrDepositPct { get => DepositPct; set { IsUsrSet = true; DepositPct = value; OnPropertyChanged(nameof(IsSetByAmt)); } }
+        public float UsrDepositPct { get => DepositPct; set { IsUsrSet = true; DepositPct = value; OnPropertyChanged(nameof(IsSetByAmt)); BudgetValueChanged?.Invoke(this); } }
         public float DepositPct { 
             get => depositAmtPct.DepositPct; 
             set {
@@ -57,7 +57,7 @@ namespace FinancialCalculator.ViewModels
                 if(startAmt != depositAmtPct.DepositAmt) ValueChanged();
             } 
         }
-        public float UsrDepositAmt { get => DepositAmt; set { IsUsrSet = true; DepositAmt = value; OnPropertyChanged(nameof(IsSetByAmt)); } }
+        public float UsrDepositAmt { get => DepositAmt; set { IsUsrSet = true; DepositAmt = value; OnPropertyChanged(nameof(IsSetByAmt)); BudgetValueChanged?.Invoke(this); } }
         public float DepositAmt { 
             get => depositAmtPct.DepositAmt; 
             set {
@@ -68,13 +68,18 @@ namespace FinancialCalculator.ViewModels
                 if (startAmt != depositAmtPct.DepositAmt) ValueChanged();
             } 
         }
-        public void TotatlDepositAmtChanged()
+        public void TotalDepositAmtChanged()
         {
+            float startAmt = depositAmtPct.DepositAmt;
             depositAmtPct.UpdateSumAmt(TotalDepositAmt);
             OnPropertyChanged(nameof(UsrDepositPct));
             OnPropertyChanged(nameof(UsrDepositAmt));
+
+            if(startAmt != depositAmtPct.DepositAmt)
+            {
             ValueChanged();
             budgetDebugColor = Color.Black;
+        }
         }
 
 
@@ -115,8 +120,6 @@ namespace FinancialCalculator.ViewModels
         {
 
             if (SubItems.Count > 0) RebalanceSubItems();
-
-            if (IsUsrSet) BudgetValueChanged?.Invoke(this);
 
         }
 
@@ -179,7 +182,7 @@ namespace FinancialCalculator.ViewModels
 
             foreach(BudgetDepositViewModel budget in unAssignedBudgets.Where(b => b.IsUsrSet))
             {
-                budget.TotatlDepositAmtChanged();
+                budget.TotalDepositAmtChanged();
                 availableSum = availableSum - budget.DepositAmt;
             }
             unAssignedBudgets.RemoveAll(b => b.IsUsrSet);
