@@ -237,7 +237,7 @@ namespace FinancialCalculator.ViewModels
                 if (availableSum >= savingBudgets.Sum(item => item.MinAmt) + flexibleBudgets.Sum(item => item.MinAmt))
                 {
 
-                    availableSum = availableSum - savingBudgets.Sum(item => item.MinAmt) + flexibleBudgets.Sum(item => item.MinAmt);
+                    availableSum = availableSum - savingBudgets.Sum(item => item.MinAmt) - flexibleBudgets.Sum(item => item.MinAmt);
 
                     //Max Out Savings
                     if (availableSum >= 0)
