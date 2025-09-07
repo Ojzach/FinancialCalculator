@@ -235,14 +235,11 @@ namespace FinancialCalculator.ViewModels
             {
 
 
-
-                //Put Min Into All Flexible Accounts
                 if (availableSum >= savingBudgets.Sum(item => item.MinAmt) + flexibleBudgets.Sum(item => item.MinAmt))
                 {
 
                     availableSum = availableSum - savingBudgets.Sum(item => item.MinAmt) - flexibleBudgets.Sum(item => item.MinAmt);
 
-                    //Max Out Savings
                     if (availableSum >= 0)
                     {
 
@@ -254,8 +251,6 @@ namespace FinancialCalculator.ViewModels
                         }
                     }
 
-
-                    //Max Out Flexible Budget
                     if (availableSum >= 0)
                     {
                         foreach (KeyValuePair<BudgetDepositViewModel, float> keyValue in DistributeAmtAmongBudgets(unAssignedBudgets.Where(budget => budget._budget is FlexibleBudget).ToList(), availableSum, (budget) => 1, (budget) => budget.MinAmt))
