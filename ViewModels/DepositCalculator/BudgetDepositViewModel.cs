@@ -100,8 +100,8 @@ namespace FinancialCalculator.ViewModels
                 if (childBudget is FixedBudget) SubItems.Add(new FixedBudgetDepositViewModel(childBudget as FixedBudget, _depositStore));
                 else SubItems.Add(new FlexiblebudgetDepositViewModel(childBudget as FlexibleBudget, _depositStore));
 
-                //SubItems[SubItems.Count - 1].BudgetValueChanged += SubItemValueChanged;
-                //SubItems[SubItems.Count - 1].EditBudgetAction += (ViewModelBase viewModel) => EditBudgetAction?.Invoke(viewModel);
+                SubItems[SubItems.Count - 1].BudgetValueChanged += SubItemValueChanged;
+                SubItems[SubItems.Count - 1].EditBudgetAction += (ViewModelBase viewModel) => EditBudgetAction?.Invoke(viewModel);
             }
 
 
@@ -206,6 +206,12 @@ namespace FinancialCalculator.ViewModels
             else
             {
                 BudgetError();
+                foreach (KeyValuePair<BudgetDepositViewModel, float> keyValue in DistributeAmtAmongBudgets(unAssignedBudgets.Where(item => item._budget is FixedBudget || item._budget is RecurringExpenseBudget).ToList(), availableSum, (budget) => 1, (budget) => 0))
+                {
+                    keyValue.Key.DepositAmt = keyValue.Value;
+                    availableSum = availableSum - keyValue.Value;
+                    unAssignedBudgets.Remove(keyValue.Key);
+                }
                 availableSum = 0;
             }
 
@@ -237,7 +243,7 @@ namespace FinancialCalculator.ViewModels
                     if (availableSum >= 0)
                     {
 
-                        foreach (KeyValuePair<BudgetDepositViewModel, float> keyValue in DistributeAmtAmongBudgets(unAssignedBudgets.Where(budget => budget._budget is SavingsBudget).ToList(), availableSum, (budget) => 1))
+                        foreach (KeyValuePair<BudgetDepositViewModel, float> keyValue in DistributeAmtAmongBudgets(unAssignedBudgets.Where(budget => budget._budget is SavingsBudget).ToList(), availableSum, (budget) => 1, (budget) => budget.MinAmt))
                         {
                             keyValue.Key.DepositAmt = keyValue.Key.MinAmt + keyValue.Value;
                             availableSum = availableSum - keyValue.Value;
@@ -249,7 +255,7 @@ namespace FinancialCalculator.ViewModels
                     //Max Out Flexible Budget
                     if (availableSum >= 0)
                     {
-                        foreach (KeyValuePair<BudgetDepositViewModel, float> keyValue in DistributeAmtAmongBudgets(unAssignedBudgets.Where(budget => budget._budget is FlexibleBudget).ToList(), availableSum, (budget) => 1))
+                        foreach (KeyValuePair<BudgetDepositViewModel, float> keyValue in DistributeAmtAmongBudgets(unAssignedBudgets.Where(budget => budget._budget is FlexibleBudget).ToList(), availableSum, (budget) => 1, (budget) => budget.MinAmt))
                         {
                             keyValue.Key.DepositAmt = keyValue.Key.MinAmt + keyValue.Value;
                             availableSum = availableSum - keyValue.Value;
@@ -282,7 +288,7 @@ namespace FinancialCalculator.ViewModels
 
         }
 
-        private Dictionary<BudgetDepositViewModel, float> DistributeAmtAmongBudgets(List<BudgetDepositViewModel> budgets, float amt, Func<BudgetDepositViewModel, float> ratioWeight)
+        private Dictionary<BudgetDepositViewModel, float> DistributeAmtAmongBudgets(List<BudgetDepositViewModel> budgets, float amt, Func<BudgetDepositViewModel, float> ratioWeight, Func<BudgetDepositViewModel, float> preAllocatedAmt)
         {
             Dictionary<BudgetDepositViewModel, float> distributedAmts = budgets.ToDictionary(b => b, b => 0f);
             bool finishedAllocation = false;
@@ -297,10 +303,10 @@ namespace FinancialCalculator.ViewModels
                 {
                     float calculatedAmt = (amt - totalUsed) * (ratioWeight(budget) / ratioTotal);
 
-                    if (calculatedAmt + budget.MinAmt >= budget.MaxAmt)
+                    if (calculatedAmt + preAllocatedAmt(budget) >= budget.MaxAmt)
                     {
-                        distributedAmts[budget] = budget.MaxAmt - budget.MinAmt;
-                        totalUsed += budget.MaxAmt - budget.MinAmt;
+                        distributedAmts[budget] = budget.MaxAmt - preAllocatedAmt(budget);
+                        totalUsed += budget.MaxAmt - preAllocatedAmt(budget);
                         budgets.Remove(budget);
                         finishedAllocation = false;
                         break;
