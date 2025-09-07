@@ -84,10 +84,6 @@ namespace FinancialCalculator.ViewModels
 
 
 
-        private Color _budgetDebugColor = Color.Gray;
-        private Color budgetDebugColor { set { _budgetDebugColor = value; OnPropertyChanged(nameof(BudgetDebugColor)); } }
-        public SolidColorBrush BudgetDebugColor { get => new SolidColorBrush(System.Windows.Media.Color.FromRgb(_budgetDebugColor.R, _budgetDebugColor.G, _budgetDebugColor.B)); }
-        private void BudgetError() => budgetDebugColor = Color.Red;
 
         public ICommand EditBudgetCommand { get; set; }
 
@@ -117,7 +113,6 @@ namespace FinancialCalculator.ViewModels
 
         public void ValueChanged()
         {
-            //Debug.Print(BudgetName);
 
             if (SubItems.Count > 0) RebalanceSubItems();
 
@@ -129,7 +124,6 @@ namespace FinancialCalculator.ViewModels
         //Only Applies To Fixed And Flexible Budgets
         private void SubItemValueChanged(BudgetDepositViewModel changedBudget)
         {
-
             /*budgetDebugColor = Color.Gray;
 
             List<DepositCalculatorBudgetViewModel> usrSetValueBudgets = SubItems.Where(item => item.DepositAmtPct.IsUsrSetValue).ToList();
@@ -224,7 +218,6 @@ namespace FinancialCalculator.ViewModels
 
             if(availableSum >= savingBudgets.Sum(item => item.MaxAmt) + flexibleBudgets.Sum(item => item.MaxAmt))
             {
-                budgetDebugColor = Color.Blue;
                 availableSum = availableSum - savingBudgets.Sum(item => item.MaxAmt) + flexibleBudgets.Sum(item => item.MaxAmt);
                 foreach (BudgetDepositViewModel budget in savingBudgets) { budget.DepositAmt = budget.MaxAmt; unAssignedBudgets.Remove(budget); }
                 foreach (BudgetDepositViewModel budget in flexibleBudgets) { budget.DepositAmt = budget.MaxAmt; unAssignedBudgets.Remove(budget); }
@@ -237,7 +230,6 @@ namespace FinancialCalculator.ViewModels
                 //Put Min Into All Flexible Accounts
                 if (availableSum >= savingBudgets.Sum(item => item.MinAmt) + flexibleBudgets.Sum(item => item.MinAmt))
                 {
-                    budgetDebugColor = Color.Purple;
 
                     availableSum = availableSum - savingBudgets.Sum(item => item.MinAmt) + flexibleBudgets.Sum(item => item.MinAmt);
 
@@ -286,12 +278,7 @@ namespace FinancialCalculator.ViewModels
             }
 
 
-
-            foreach (BudgetDepositViewModel budget in unAssignedBudgets)
-            {
-                budget.DepositAmt = 0;
-                budget.budgetDebugColor = Color.DarkRed;
-            }
+            foreach (BudgetDepositViewModel budget in unAssignedBudgets) budget.DepositAmt = 0;
 
         }
 
@@ -328,6 +315,11 @@ namespace FinancialCalculator.ViewModels
 
 
 
+
+        private Color _budgetDebugColor = Color.Gray;
+        private Color budgetDebugColor { set { _budgetDebugColor = value; OnPropertyChanged(nameof(BudgetDebugColor)); } }
+        public SolidColorBrush BudgetDebugColor { get => new SolidColorBrush(System.Windows.Media.Color.FromRgb(_budgetDebugColor.R, _budgetDebugColor.G, _budgetDebugColor.B)); }
+        private void BudgetError() => budgetDebugColor = Color.Red;
 
     }
 
