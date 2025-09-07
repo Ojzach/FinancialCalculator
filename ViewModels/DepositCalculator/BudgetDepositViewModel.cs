@@ -127,49 +127,49 @@ namespace FinancialCalculator.ViewModels
         //Only Applies To Fixed And Flexible Budgets
         private void SubItemValueChanged(BudgetDepositViewModel changedBudget)
         {
-            /*budgetDebugColor = Color.Gray;
 
-            List<DepositCalculatorBudgetViewModel> usrSetValueBudgets = SubItems.Where(item => item.DepositAmtPct.IsUsrSetValue).ToList();
 
-            float UsrSetSum = usrSetValueBudgets.Sum(item => item.DepositAmtPct.DepositAmount);
+            budgetDebugColor = Color.Gray;
+
+            List<BudgetDepositViewModel> usrSetValueBudgets = SubItems.Where(item => item.isUsrSet).ToList();
+
+            float UsrSetSum = usrSetValueBudgets.Sum(item => item.DepositAmt);
             float OtherItemsMinSum = SubItems.Except(usrSetValueBudgets).Sum(item => item.MinAmt);
 
-            if (UsrSetSum + OtherItemsMinSum > budget.MaxMonthlyDeposit)
+
+            /*string t = "";
+            foreach (BudgetDepositViewModel item in SubItems) t += "\n\t" + item.BudgetName + " " + item.MinAmt;
+
+            Debug.Print(BudgetName + " UsrSet: " + UsrSetSum + " MinSum: " + OtherItemsMinSum + " DepositAmt: " + DepositAmt + t);*/
+
+            if (UsrSetSum + OtherItemsMinSum > DepositAmt)
             {
-                if (UsrSetSum + OtherItemsMinSum - changedBudget.DepositAmtPct.DepositAmount > budget.MaxMonthlyDeposit) BudgetError();
+                if (UsrSetSum + OtherItemsMinSum - changedBudget.DepositAmt > MaxAmt) BudgetError();
+                else
+                {
+                    if(_budget is FlexibleBudget)
+            {
+                        BudgetValueChanged.Invoke(this);
+                    }
                 else
                 {
                     budgetDebugColor = Color.Orange;
-                    changedBudget.DepositAmtPct.SilentSetAmountAndPercent(budget.MaxMonthlyDeposit - (UsrSetSum + OtherItemsMinSum - changedBudget.DepositAmtPct.DepositAmount));
+                        changedBudget.DepositAmt = (DepositAmt - (UsrSetSum + OtherItemsMinSum - changedBudget.DepositAmt));
                     RebalanceSubItems();
                 }
             }
-            else
-            {
-                if(budget is FlexibleBudget)
-                {
-                    budgetDebugColor = Color.Purple;
-                    if (!DepositAmtPct.IsUsrSetValue)
-                    {
-                        DepositAmtPct.SilentSetAmountAndPercent(amount: UsrSetSum + OtherItemsMinSum);
-                        BudgetValueChanged?.Invoke(this);
-                    }
-                    else BudgetError();
                 }
                 else
                 {
-                    budgetDebugColor = Color.Pink;
                     RebalanceSubItems();
                 }
-
-            }*/
 
         }
 
         private void RebalanceSubItems()
         {
 
-            budgetDebugColor = Color.Gray;
+            //budgetDebugColor = Color.Gray;
             foreach (BudgetDepositViewModel si in SubItems) si.budgetDebugColor = Color.Gray;
 
             float availableSum = DepositAmt;
