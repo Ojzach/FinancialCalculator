@@ -77,9 +77,9 @@ namespace FinancialCalculator.ViewModels
 
             if(startAmt != depositAmtPct.DepositAmt)
             {
-            ValueChanged();
-            budgetDebugColor = Color.Black;
-        }
+                ValueChanged();
+                budgetDebugColor = Color.Black;
+            }    
         }
 
 
@@ -127,7 +127,7 @@ namespace FinancialCalculator.ViewModels
         //Only Applies To Fixed And Flexible Budgets
         private void SubItemValueChanged(BudgetDepositViewModel changedBudget)
         {
-
+            
 
             budgetDebugColor = Color.Gray;
 
@@ -148,21 +148,21 @@ namespace FinancialCalculator.ViewModels
                 else
                 {
                     if(_budget is FlexibleBudget)
-            {
+                    {
                         BudgetValueChanged.Invoke(this);
                     }
-                else
-                {
-                    budgetDebugColor = Color.Orange;
+                    else
+                    {
+                        budgetDebugColor = Color.Orange;
                         changedBudget.DepositAmt = (DepositAmt - (UsrSetSum + OtherItemsMinSum - changedBudget.DepositAmt));
-                    RebalanceSubItems();
+                        RebalanceSubItems();
+                    }      
                 }
             }
-                }
-                else
-                {
-                    RebalanceSubItems();
-                }
+            else
+            {
+                RebalanceSubItems();
+            }
 
         }
 
@@ -233,7 +233,7 @@ namespace FinancialCalculator.ViewModels
             }
             else
             {
-
+                
 
                 if (availableSum >= savingBudgets.Sum(item => item.MinAmt) + flexibleBudgets.Sum(item => item.MinAmt))
                 {
@@ -284,6 +284,14 @@ namespace FinancialCalculator.ViewModels
 
             foreach (BudgetDepositViewModel budget in unAssignedBudgets) budget.DepositAmt = 0;
 
+
+            if (MathF.Round(SubItems.Sum(item => item.DepositAmt), 2) != MathF.Round(DepositAmt, 2))
+            {
+                string t = "";
+                //foreach (BudgetDepositViewModel item in SubItems) t += "\n\t" + item.BudgetName + " " + item.DepositAmt;
+                Debug.Print(BudgetName + " " + SubItems.Sum(item => item.DepositAmt) + " " + DepositAmt + " " + t);
+                BudgetError();
+            }
         }
 
         private Dictionary<BudgetDepositViewModel, float> DistributeAmtAmongBudgets(List<BudgetDepositViewModel> budgets, float amt, Func<BudgetDepositViewModel, float> ratioWeight, Func<BudgetDepositViewModel, float> preAllocatedAmt)
