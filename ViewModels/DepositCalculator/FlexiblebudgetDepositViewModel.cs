@@ -50,9 +50,6 @@ namespace FinancialCalculator.ViewModels
                 
                 UnallocattedBudget = new FlexiblebudgetDepositViewModel(new FlexibleBudget("Unallocated " + budget.Name, budget.AssociatedFinancialAccount), _depositStore);
                 SubItems.Add(UnallocattedBudget);
-
-
-                //RebalanceSubItems();
             }
         }
     }
