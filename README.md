@@ -7,8 +7,6 @@ Financial Calculator is a Windows desktop app built with WPF and the MVVM patter
 - **Paycheck deposit calculator** – Enter your paycheck amount and withholding percentages to instantly see take-home pay, tax totals, and the monthly coverage provided by the deposit.
 - **Budget allocation workspace** – Organize fixed and flexible budgets, adjust their recommended deposit percentages, and review how each category affects your available income.
 - **Financial institution management** – Track the banks and accounts that hold your funds, including quick add/edit flows with inline validation.
-- **Contextual editing panels** – Edit accounts or budgets without leaving the main views thanks to modal-style overlays powered by shared stores.
-- **Extensible architecture** – Core domain logic lives in the `Models` layer, UI state is coordinated through `Stores`, and `ViewModels` expose strongly-typed bindings for XAML views.
 
 ## Project Structure
 
