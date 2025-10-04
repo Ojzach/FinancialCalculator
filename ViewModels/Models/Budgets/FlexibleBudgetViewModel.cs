@@ -9,6 +9,9 @@ namespace FinancialCalculator.ViewModels
 {
     public class FlexibleBudgetViewModel : BudgetViewModel
     {
+
+        public override string BudgetType => "Flexible Budget";
+
         public FlexibleBudgetViewModel(FlexibleBudget budget) : base(budget)
         {
         }

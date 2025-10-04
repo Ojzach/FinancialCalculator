@@ -1,4 +1,5 @@
 ﻿using FinancialCalculator.Models;
+using FinancialCalculator.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Windows.Controls;
 
 namespace FinancialCalculator.ResourceDictionaries
 {
-    internal class EditPanelTemplateSelector : DataTemplateSelector
+    internal class BudgetEditPanelTemplateSelector : DataTemplateSelector
     {
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -17,9 +18,11 @@ namespace FinancialCalculator.ResourceDictionaries
 
             if (element != null && item != null)
             {
-                if(item is Budget)
+
+                if (item is BudgetViewModel)
                 {
-                    if (item is SavingsBudget) return element.FindResource("SavingsBudget_EditPanelTemplate") as DataTemplate;
+                    if (item is SavingsBudgetViewModel) return element.FindResource("SavingsBudget_EditPanelTemplate") as DataTemplate;
+                    else if (item is FixedBudgetViewModel) return element.FindResource("FixedBudget_EditPanelTemplate") as DataTemplate;
                 }
             }
 

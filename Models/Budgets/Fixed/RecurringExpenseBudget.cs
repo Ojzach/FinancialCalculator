@@ -25,9 +25,6 @@ namespace FinancialCalculator.Models
         public override float GetMaxMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt();
         public override float GetRecommendedMonthlyDepositAmt(float totalDeposit = 0) => ExpenseAmt / FreqMonths;
 
-        public override ViewModelBase ToViewModel()
-        {
-            throw new NotImplementedException();
-        }
+        public override ViewModelBase ToViewModel() => new RecurringExpenseBudgetViewModel(this);
     }
 }

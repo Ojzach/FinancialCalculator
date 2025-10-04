@@ -11,6 +11,13 @@ namespace FinancialCalculator.ViewModels
     {
         protected Budget _budget;
 
+
+        public string BudgetName { get => _budget.Name; private set => _budget.Name = value; }
+
+        public abstract string BudgetType { get; }
+
+        public float CurrentBalance { get => _budget.CurrentBudgetBalance; }
+
         public BudgetViewModel(Budget budget)
         {
             _budget = budget;

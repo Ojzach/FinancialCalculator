@@ -1,0 +1,68 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:FinancialCalculator.ResourceDictionaries"
+                    xmlns:usercontrols="clr-namespace:FinancialCalculator.Controls">
+
+    <local:BudgetEditPanelTemplateSelector x:Key="BudgetEditPanelTemplateSelector"/>
+    <usercontrols:AmtOrPctSetter x:Key="AmtOrPctSetter"/>
+
+    <DataTemplate x:Key="BaseBudget_EditPanelTemplate">
+
+        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+            <TextBlock Text="{Binding BudgetName}" FontSize="20" HorizontalAlignment="Left"/>
+
+            
+            
+            <StackPanel Orientation="Horizontal" Margin="5, 0, 0, 0">
+                <TextBlock Text="Budget Type: " Margin="0, 0, 5, 0"/>
+                <TextBlock Text="{Binding BudgetType}"/>
+            </StackPanel>
+
+
+            <StackPanel Orientation="Horizontal" Margin="5, 0, 0, 0">
+                <TextBlock Text="Budget Balance: "/>
+                <TextBlock Text="{Binding CurrentBalance, StringFormat='c'}"/>
+            </StackPanel>
+
+            <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource BudgetEditPanelTemplateSelector}" Margin="0, 15, 0, 0"/>
+
+        </StackPanel>
+
+    </DataTemplate>
+
+    <DataTemplate x:Key="FixedBudget_EditPanelTemplate">
+
+        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+            <usercontrols:AmtOrPctSetter 
+                TitleText="Monthly Amount:" 
+                IsSetByAmt="{Binding IsSetByAmt, Mode=TwoWay}" 
+                SetAmount="{Binding SetMthlyDepositAmt, Mode=TwoWay}" 
+                SetPercent="{Binding SetMthlyDepositPct, Mode=TwoWay}"
+                />
+            
+            
+            
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FlexibleBudget_EditPanelTemplate">
+
+        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SavingsBudget_EditPanelTemplate">
+
+        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource FlexibleBudget_EditPanelTemplate}"/>
+
+        </StackPanel>
+
+    </DataTemplate>
+    
+</ResourceDictionary>

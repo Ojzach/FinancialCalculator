@@ -36,14 +36,6 @@ namespace FinancialCalculator.Models
         public abstract ViewModelBase ToViewModel();
     }
 
-
-    public enum BudgetType
-    {
-        FixedAmount,
-        VariableAmount,
-        SavingsGoal
-    }
-
     public enum BudgetPriority
     {
         None,

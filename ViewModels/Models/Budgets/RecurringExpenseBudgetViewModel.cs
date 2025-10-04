@@ -9,6 +9,9 @@ namespace FinancialCalculator.ViewModels
 {
     public class RecurringExpenseBudgetViewModel : FixedBudgetViewModel
     {
+
+        public override string BudgetType => "Recurring Expense Budget";
+
         public RecurringExpenseBudgetViewModel(RecurringExpenseBudget budget) : base(budget)
         {
         }
