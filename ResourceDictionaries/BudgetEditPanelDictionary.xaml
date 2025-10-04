@@ -6,7 +6,7 @@
     <local:BudgetEditPanelTemplateSelector x:Key="BudgetEditPanelTemplateSelector"/>
     <usercontrols:AmtOrPctSetter x:Key="AmtOrPctSetter"/>
 
-    <DataTemplate x:Key="BaseBudget_EditPanelTemplate">
+    <DataTemplate x:Key="BaseBudget_EditPanelTemplate" DataType="BudgetViewModel">
 
         <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
 
@@ -19,10 +19,19 @@
                 <TextBlock Text="{Binding BudgetType}"/>
             </StackPanel>
 
+            <StackPanel Orientation="Horizontal" Margin="5, 0, 0, 0">
+                <TextBlock Text="Associated Financial Account: " Margin="0, 0, 5, 0"/>
+                <TextBlock Text="{Binding AssociatedFinancialAccountName}"/>
+            </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="5, 0, 0, 0">
                 <TextBlock Text="Budget Balance: "/>
                 <TextBlock Text="{Binding CurrentBalance, StringFormat='c'}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="5, 0, 0, 0">
+                <TextBlock Text="Debug Info: "/>
+                <TextBlock Text="{Binding DebugInfo}"/>
             </StackPanel>
 
             <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource BudgetEditPanelTemplateSelector}" Margin="0, 15, 0, 0"/>
