@@ -7,7 +7,7 @@ namespace FinancialCalculator.Models
         public override string BudgetType { get => "Fixed"; }
 
         public bool IsSetByAmt { get; set; }
-        public float BudgetMonthlyAmt { private get; set; }
+        public float BudgetMonthlyAmt { get; set; }
         public float BudgetMonthlyPct { get; set; }
 
 
