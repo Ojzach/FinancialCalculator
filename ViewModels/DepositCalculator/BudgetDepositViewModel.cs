@@ -47,34 +47,34 @@ namespace FinancialCalculator.ViewModels
 
         public float UsrDepositPct { get => DepositPct; set { IsUsrSet = true; DepositPct = value; OnPropertyChanged(nameof(IsSetByAmt)); BudgetValueChanged?.Invoke(this); } }
         public float DepositPct { 
-            get => depositAmtPct.Percent; 
+            get => depositAmtPct.GetPercent(_deposit.DepositAmount); 
             set {
-                float startAmt = depositAmtPct.Amount;
+                float startAmt = depositAmtPct.GetAmount(_deposit.DepositAmount);
                 depositAmtPct.Percent = value; 
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
                 
-                if(startAmt != depositAmtPct.Amount) ValueChanged();
+                if(startAmt != depositAmtPct.GetAmount(_deposit.DepositAmount)) ValueChanged();
             } 
         }
         public float UsrDepositAmt { get => DepositAmt; set { IsUsrSet = true; DepositAmt = value; OnPropertyChanged(nameof(IsSetByAmt)); BudgetValueChanged?.Invoke(this); } }
         public float DepositAmt { 
-            get => depositAmtPct.Amount; 
+            get => depositAmtPct.GetAmount(_deposit.DepositAmount); 
             set {
-                float startAmt = depositAmtPct.Amount;
+                float startAmt = depositAmtPct.GetAmount(_deposit.DepositAmount);
                 depositAmtPct.Amount = value;
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
-                if (startAmt != depositAmtPct.Amount) ValueChanged();
+                if (startAmt != depositAmtPct.GetAmount(_deposit.DepositAmount)) ValueChanged();
             } 
         }
         public void TotalDepositAmtChanged()
         {
-            float startAmt = depositAmtPct.Amount;
+            float startAmt = depositAmtPct.GetAmount(_deposit.DepositAmount);
             OnPropertyChanged(nameof(UsrDepositPct));
             OnPropertyChanged(nameof(UsrDepositAmt));
 
-            if(startAmt != depositAmtPct.Amount)
+            if(startAmt != depositAmtPct.GetAmount(_deposit.DepositAmount))
             {
                 ValueChanged();
                 budgetDebugColor = Color.Black;

@@ -33,7 +33,7 @@ namespace FinancialCalculator.ViewModels
             set 
             {
                 federalTaxAmtPct.Amount = value;
-                _depositStore.FederalTaxAmt = federalTaxAmtPct.Amount;
+                _depositStore.FederalTaxAmt = federalTaxAmtPct.GetAmount(_depositStore.DepositAmount);
                 OnPropertyChanged(nameof(FederalTaxAmt)); 
                 OnPropertyChanged(nameof(FederalTaxPct)); 
             } 
@@ -43,7 +43,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 federalTaxAmtPct.Percent = value;
-                _depositStore.FederalTaxAmt = federalTaxAmtPct.Amount;
+                _depositStore.FederalTaxAmt = federalTaxAmtPct.GetAmount(_depositStore.DepositAmount);
                 OnPropertyChanged(nameof(FederalTaxAmt)); 
                 OnPropertyChanged(nameof(FederalTaxPct)); 
             }
@@ -55,7 +55,7 @@ namespace FinancialCalculator.ViewModels
             set 
             {
                 medicareAmtPct.Amount = value;
-                _depositStore.MedicareAmt = medicareAmtPct.Amount;
+                _depositStore.MedicareAmt = medicareAmtPct.GetAmount(_depositStore.DepositAmount);
                 OnPropertyChanged(nameof(MedicareAmt)); 
                 OnPropertyChanged(nameof(MedicarePct)); 
             }
@@ -66,7 +66,7 @@ namespace FinancialCalculator.ViewModels
             set 
             {
                 medicareAmtPct.Percent = value;
-                _depositStore.MedicareAmt = medicareAmtPct.Amount;
+                _depositStore.MedicareAmt = medicareAmtPct.GetAmount(_depositStore.DepositAmount);
                 OnPropertyChanged(nameof(MedicareAmt)); 
                 OnPropertyChanged(nameof(MedicarePct)); 
             }
@@ -78,7 +78,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 socialSecurityAmtPct.Amount = value;
-                _depositStore.SocialSecurityAmt = socialSecurityAmtPct.Amount;
+                _depositStore.SocialSecurityAmt = socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount);
                 OnPropertyChanged(nameof(SocialSecurityAmt)); 
                 OnPropertyChanged(nameof(SocialSecurityPct)); 
             }
@@ -89,7 +89,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 socialSecurityAmtPct.Percent = value;
-                _depositStore.SocialSecurityAmt = socialSecurityAmtPct.Amount;
+                _depositStore.SocialSecurityAmt = socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount);
                 OnPropertyChanged(nameof(SocialSecurityAmt)); 
                 OnPropertyChanged(nameof(SocialSecurityPct)); 
             }
@@ -101,7 +101,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 stateTaxAmtPct.Amount = value;
-                _depositStore.StateTaxAmt = stateTaxAmtPct.Amount;
+                _depositStore.StateTaxAmt = stateTaxAmtPct.GetAmount(_depositStore.DepositAmount);
                 OnPropertyChanged(nameof(StateTaxAmt)); 
                 OnPropertyChanged(nameof(StateTaxPct)); }
         }
@@ -111,7 +111,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 stateTaxAmtPct.Percent = value;
-                _depositStore.StateTaxAmt = stateTaxAmtPct.Amount;
+                _depositStore.StateTaxAmt = stateTaxAmtPct.GetAmount(_depositStore.DepositAmount);
                 OnPropertyChanged(nameof(StateTaxAmt)); 
                 OnPropertyChanged(nameof(StateTaxPct));
             }
@@ -173,7 +173,7 @@ namespace FinancialCalculator.ViewModels
             OnPropertyChanged("EstimatedYearlyIncome");
             OnPropertyChanged("MonthsCoveredByPaycheck");
 
-            _depositStore.UpdateDeductions(federalTaxAmtPct.Amount, medicareAmtPct.Amount, socialSecurityAmtPct.Amount, stateTaxAmtPct.Amount);
+            _depositStore.UpdateDeductions(federalTaxAmtPct.GetAmount(_depositStore.DepositAmount), medicareAmtPct.GetAmount(_depositStore.DepositAmount), socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount), stateTaxAmtPct.GetAmount(_depositStore.DepositAmount));
 
             OnPropertyChanged(nameof(FederalTaxAmt));
             OnPropertyChanged(nameof(FederalTaxPct));
