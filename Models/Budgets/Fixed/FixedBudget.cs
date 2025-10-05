@@ -11,7 +11,7 @@ namespace FinancialCalculator.Models
         public float BudgetMonthlyPct { get; set; }
 
 
-        public FixedBudget(string name, FinancialAccount associatedFinancialAccount, bool isSetByAmt = true, float setAmt = 0f, float setPct = 0.0f) : base(name, associatedFinancialAccount)
+        public FixedBudget(int id, string name, FinancialAccount associatedFinancialAccount, bool isSetByAmt = true, float setAmt = 0f, float setPct = 0.0f) : base(id, name, associatedFinancialAccount)
         {
             IsSetByAmt = isSetByAmt;
             BudgetMonthlyAmt = setAmt;

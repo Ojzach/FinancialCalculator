@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FinancialCalculator.ViewModels
 {
-    public class FlexiblebudgetDepositViewModel : BudgetDepositViewModel
+    internal class FlexiblebudgetDepositViewModel : BudgetDepositViewModel
     {
 
         protected FlexibleBudget budget { get => _budget as FlexibleBudget; }
@@ -40,7 +40,7 @@ namespace FinancialCalculator.ViewModels
 
         public override bool IsAmtEditable => base.IsAmtEditable && SubItems.Count <= 0;
 
-        public FlexiblebudgetDepositViewModel(FlexibleBudget _budget, DepositStore _depositStore) : base(_budget, _depositStore)
+        public FlexiblebudgetDepositViewModel(FlexibleBudget _budget, BudgetStore budgetStore, DepositStore _depositStore) : base(_budget, budgetStore, _depositStore)
         {
 
             DepositAmt = BudgetRecommendedAmtPerMonth;
@@ -48,7 +48,7 @@ namespace FinancialCalculator.ViewModels
             if (budget.ChildBudgets.Count > 0)
             {
                 
-                UnallocattedBudget = new FlexiblebudgetDepositViewModel(new FlexibleBudget("Unallocated " + budget.Name, budget.AssociatedFinancialAccount), _depositStore);
+                UnallocattedBudget = new FlexiblebudgetDepositViewModel(new FlexibleBudget(10, "Unallocated " + budget.Name, budget.AssociatedFinancialAccount), budgetStore, _depositStore);
                 SubItems.Add(UnallocattedBudget);
             }
         }

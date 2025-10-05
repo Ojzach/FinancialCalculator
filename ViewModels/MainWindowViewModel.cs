@@ -14,7 +14,7 @@ namespace FinancialCalculator.ViewModels
         public ViewModelBase CurrentNavigationPanelViewModel => _currentNavigationPanelViewModel;
 
 
-        public MainWindowViewModel(NavigationStore navigationStore, FinancialInstitutionsStore financialInstitutionsStore, BudgetsStore budgetsStore) 
+        public MainWindowViewModel(NavigationStore navigationStore, FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore) 
         { 
             _navigationStore = navigationStore;
             _financialInstitutionsStore = financialInstitutionsStore;

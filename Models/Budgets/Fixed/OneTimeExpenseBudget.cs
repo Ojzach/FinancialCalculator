@@ -13,7 +13,7 @@ namespace FinancialCalculator.Models.Budgets.Fixed
 
         public float ExpenseAmt = 0f;
 
-        public OneTimeExpenseBudget(string name, FinancialAccount associatedFinancialAccount, float _expenseAmt = 0) : base(name, associatedFinancialAccount)
+        public OneTimeExpenseBudget(int id, string name, FinancialAccount associatedFinancialAccount, float _expenseAmt = 0) : base(id, name, associatedFinancialAccount)
         {
             ExpenseAmt = _expenseAmt;
         }

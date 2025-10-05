@@ -25,7 +25,7 @@ namespace FinancialCalculator.Models
         }
 
 
-        public SavingsBudget(string name, FinancialAccount associatedFinancialAccount, float _savingsGoalAmt = 0f, LocalDate _goalDate = default(LocalDate), BudgetPriority _priority = BudgetPriority.Low) : base(name, associatedFinancialAccount)
+        public SavingsBudget(int id, string name, FinancialAccount associatedFinancialAccount, float _savingsGoalAmt = 0f, LocalDate _goalDate = default(LocalDate), BudgetPriority _priority = BudgetPriority.Low) : base(id, name, associatedFinancialAccount)
         {
             savingsGoalAmount = _savingsGoalAmt;
             goalDate = _goalDate == default(LocalDate) ? DateTime.Now.ToLocalDateTime().Date : _goalDate;

@@ -21,7 +21,7 @@ namespace FinancialCalculator
 
             NavigationStore _navigationStore = new NavigationStore();
             FinancialInstitutionsStore _financialInstitutionsStore = new FinancialInstitutionsStore();
-            BudgetsStore _budgetsStore = new BudgetsStore();
+            BudgetStore _budgetsStore = new BudgetStore();
 
             
 

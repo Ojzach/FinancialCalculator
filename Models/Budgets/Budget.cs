@@ -10,23 +10,23 @@ namespace FinancialCalculator.Models
     public abstract class Budget
     {
 
+        public int ID { get; private set; }
         public string Name = "";
         public abstract string BudgetType { get; }
         public FinancialAccount AssociatedFinancialAccount;
-        public List<Budget> ChildBudgets = new List<Budget>();
+        public List<int> ChildBudgets = new List<int>();
 
-        public float CurrentBudgetBalance { get => localCurrentBudgetBalance + ChildBudgets.Sum(budget => budget.CurrentBudgetBalance); }
         private float localCurrentBudgetBalance = 0;
 
-
-        public List<Transaction> BudgetTransactions = new List<Transaction>();
-
-
-        public Budget(string name, FinancialAccount associatedFinancialAccount)
+        public Budget(int id, string name, FinancialAccount associatedFinancialAccount)
         {
+            ID = id;
             Name = name;
             AssociatedFinancialAccount = associatedFinancialAccount;
         }
+
+        public void AddChildBudget(int budgetID) => ChildBudgets.Add(budgetID);
+        public void AddChildBudget(List<int> budgetIDs) => ChildBudgets.AddRange(budgetIDs);
 
         public abstract float GetMinMonthlyDepositAmt(float totalDeposit = 0);
         public abstract float GetMaxMonthlyDepositAmt(float totalDeposit = 0);

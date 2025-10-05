@@ -131,7 +131,7 @@ namespace FinancialCalculator.ViewModels
 
         private readonly FinancialInstitutionsStore _financialInstituitonsStore;
 
-        public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetsStore budgetsStore)
+        public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
         {
             _financialInstituitonsStore = financialInstitutionsStore;
 
@@ -150,8 +150,7 @@ namespace FinancialCalculator.ViewModels
 
 
 
-            DepositBudgets = new FixedBudgetDepositViewModel(budgetsStore.BaseBudget as FixedBudget, _depositStore);
-            DepositBudgets.DepositPct = 1;
+            DepositBudgets = new FixedBudgetDepositViewModel(budgetsStore.Budgets[1] as FixedBudget, budgetsStore, _depositStore);
 
             DepositBudgets.BudgetValueChanged += (BudgetDepositViewModel bVM) => UpdateCalculatedValues();
             DepositBudgets.EditBudgetAction += OpenEditMenu;

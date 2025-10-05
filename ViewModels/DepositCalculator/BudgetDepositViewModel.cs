@@ -11,7 +11,7 @@ using Color = System.Drawing.Color;
 
 namespace FinancialCalculator.ViewModels
 {
-    public abstract class BudgetDepositViewModel : ViewModelBase
+    internal abstract class BudgetDepositViewModel : ViewModelBase
     {
         private ObservableCollection<BudgetDepositViewModel> subItems = new ObservableCollection<BudgetDepositViewModel>();
         public ObservableCollection<BudgetDepositViewModel> SubItems { 
@@ -91,7 +91,7 @@ namespace FinancialCalculator.ViewModels
 
         public ICommand EditBudgetCommand { get; set; }
 
-        public BudgetDepositViewModel(Budget _budget, DepositStore _depositStore)
+        public BudgetDepositViewModel(Budget _budget, BudgetStore budgetStore, DepositStore _depositStore)
         {
             this._budget = _budget;
             _deposit = _depositStore;
@@ -99,10 +99,12 @@ namespace FinancialCalculator.ViewModels
             depositAmtPct = new AmountPercentModel(() => _depositStore.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount));
 
 
-            foreach (Budget childBudget in this._budget.ChildBudgets)
+            foreach (int childBudgetID in this._budget.ChildBudgets)
             {
-                if (childBudget is FixedBudget) SubItems.Add(new FixedBudgetDepositViewModel(childBudget as FixedBudget, _depositStore));
-                else SubItems.Add(new FlexiblebudgetDepositViewModel(childBudget as FlexibleBudget, _depositStore));
+                Budget childBudget = budgetStore.Budgets[childBudgetID];
+
+                if (childBudget is FixedBudget) SubItems.Add(new FixedBudgetDepositViewModel(childBudget as FixedBudget, budgetStore, _depositStore));
+                else SubItems.Add(new FlexiblebudgetDepositViewModel(childBudget as FlexibleBudget, budgetStore, _depositStore));
 
                 SubItems[SubItems.Count - 1].BudgetValueChanged += SubItemValueChanged;
                 SubItems[SubItems.Count - 1].EditBudgetAction += (ViewModelBase viewModel) => EditBudgetAction?.Invoke(viewModel);
