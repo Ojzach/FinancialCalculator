@@ -96,7 +96,7 @@ namespace FinancialCalculator.ViewModels
             this._budget = _budget;
             _deposit = _depositStore;
 
-            depositAmtPct = new AmountPercentModel(() => _depositStore.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount));
+            depositAmtPct = new AmountPercentModel();
 
 
             foreach (int childBudgetID in this._budget.ChildBudgets)

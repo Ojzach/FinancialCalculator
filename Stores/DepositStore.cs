@@ -1,8 +1,9 @@
-﻿using System.Diagnostics;
+﻿using FinancialCalculator.Models;
+using System.Diagnostics;
 
 namespace FinancialCalculator.Stores
 {
-    public class DepositStore
+    internal class DepositStore
     {
 
         private float depositAmount = 0;
@@ -48,7 +49,9 @@ namespace FinancialCalculator.Stores
 
 
 
-        public DepositStore()
+        Dictionary<int, DepositStore> budgets = new Dictionary<int, DepositStore>();
+
+        public DepositStore(BudgetStore budgetStore)
         {
             depositAmount = 10000;
         }
