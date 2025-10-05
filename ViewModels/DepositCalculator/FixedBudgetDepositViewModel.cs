@@ -40,7 +40,7 @@ namespace FinancialCalculator.ViewModels
         public FixedBudgetDepositViewModel(FixedBudget _budget, DepositStore _depositStore) : base(_budget, _depositStore)
         {
 
-            if (!budget.IsSetByAmt) depositAmtPct.SetPct(budget.BudgetMonthlyPct, TotalDepositAmt);
+            if (!budget.IsSetByAmt) depositAmtPct.Percent = budget.BudgetMonthlyPct;
 
 
 

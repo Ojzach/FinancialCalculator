@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FinancialCalculator.Models
 {
-    internal class AmountPercentModel
+    public class AmountPercentModel
     {
 
         public bool IsSetByAmount { get; private set; } = true;
@@ -26,7 +27,7 @@ namespace FinancialCalculator.Models
         private void SetAmount(float newAmount)
         {
             IsSetByAmount = true;
-            amount = newAmount;
+            amount = MathF.Round(newAmount, 2);
 
             if(referanceAmount != null && referanceAmount() != 0) percent = amount / referanceAmount();
             else percent = 0;
@@ -37,7 +38,7 @@ namespace FinancialCalculator.Models
             IsSetByAmount = false;
             percent = newPercent;
 
-            if (referanceAmount != null) amount = amount * referanceAmount();
+            if (referanceAmount != null) amount = MathF.Round(percent * referanceAmount(), 2);
             else amount = 0;
         }
     }

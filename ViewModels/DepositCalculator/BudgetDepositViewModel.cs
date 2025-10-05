@@ -40,42 +40,41 @@ namespace FinancialCalculator.ViewModels
         public float BudgetRecommendedAmtPerMonth { get => _budget.GetRecommendedMonthlyDepositAmt(_deposit.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount)); }
 
 
-        protected AmtPct depositAmtPct;
+        protected AmountPercentModel depositAmtPct;
         private bool isUsrSet = false;
         public bool IsUsrSet { get => isUsrSet; set { isUsrSet = value; OnPropertyChanged(nameof(isUsrSet)); } }
-        public bool IsSetByAmt { get => depositAmtPct.IsSetByAmt; }
+        public bool IsSetByAmt { get => depositAmtPct.IsSetByAmount; }
 
         public float UsrDepositPct { get => DepositPct; set { IsUsrSet = true; DepositPct = value; OnPropertyChanged(nameof(IsSetByAmt)); BudgetValueChanged?.Invoke(this); } }
         public float DepositPct { 
-            get => depositAmtPct.DepositPct; 
+            get => depositAmtPct.Percent; 
             set {
-                float startAmt = depositAmtPct.DepositAmt;
-                depositAmtPct.SetPct(value, TotalDepositAmt); 
+                float startAmt = depositAmtPct.Amount;
+                depositAmtPct.Percent = value; 
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
                 
-                if(startAmt != depositAmtPct.DepositAmt) ValueChanged();
+                if(startAmt != depositAmtPct.Amount) ValueChanged();
             } 
         }
         public float UsrDepositAmt { get => DepositAmt; set { IsUsrSet = true; DepositAmt = value; OnPropertyChanged(nameof(IsSetByAmt)); BudgetValueChanged?.Invoke(this); } }
         public float DepositAmt { 
-            get => depositAmtPct.DepositAmt; 
+            get => depositAmtPct.Amount; 
             set {
-                float startAmt = depositAmtPct.DepositAmt;
-                depositAmtPct.SetAmt(value, TotalDepositAmt);
+                float startAmt = depositAmtPct.Amount;
+                depositAmtPct.Amount = value;
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
-                if (startAmt != depositAmtPct.DepositAmt) ValueChanged();
+                if (startAmt != depositAmtPct.Amount) ValueChanged();
             } 
         }
         public void TotalDepositAmtChanged()
         {
-            float startAmt = depositAmtPct.DepositAmt;
-            depositAmtPct.UpdateSumAmt(TotalDepositAmt);
+            float startAmt = depositAmtPct.Amount;
             OnPropertyChanged(nameof(UsrDepositPct));
             OnPropertyChanged(nameof(UsrDepositAmt));
 
-            if(startAmt != depositAmtPct.DepositAmt)
+            if(startAmt != depositAmtPct.Amount)
             {
                 ValueChanged();
                 budgetDebugColor = Color.Black;
@@ -97,7 +96,7 @@ namespace FinancialCalculator.ViewModels
             this._budget = _budget;
             _deposit = _depositStore;
 
-            depositAmtPct = new AmtPct();
+            depositAmtPct = new AmountPercentModel(() => _depositStore.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount));
 
 
             foreach (Budget childBudget in this._budget.ChildBudgets)
@@ -332,41 +331,6 @@ namespace FinancialCalculator.ViewModels
         private Color budgetDebugColor { set { _budgetDebugColor = value; OnPropertyChanged(nameof(BudgetDebugColor)); } }
         public SolidColorBrush BudgetDebugColor { get => new SolidColorBrush(System.Windows.Media.Color.FromRgb(_budgetDebugColor.R, _budgetDebugColor.G, _budgetDebugColor.B)); }
         private void BudgetError() => budgetDebugColor = Color.Red;
-
-    }
-
-
-    public class AmtPct
-    {
-
-        private float depositAmount = 0;
-        private float depositPercent = 0;
-
-        public float DepositAmt { get => depositAmount; }
-        public float DepositPct { get => depositPercent; }
-
-        private bool isSetByAmt = true;
-        public bool IsSetByAmt { get => isSetByAmt; private set { isSetByAmt = value; } }
-
-        public void SetAmt(float amt, float sumAmt)
-        {
-            IsSetByAmt = true;
-            depositAmount = MathF.Max(0, amt);
-            depositPercent = depositAmount / sumAmt;
-        }
-
-        public void SetPct(float pct, float sumAmt)
-        {
-            IsSetByAmt = false;
-            depositPercent = MathF.Max(0, MathF.Min(1, pct));
-            depositAmount = depositPercent * sumAmt;
-        }
-
-        public void UpdateSumAmt(float newSum)
-        {
-            if (isSetByAmt) depositPercent = depositAmount / newSum;
-            else depositAmount = depositPercent * newSum;
-        }
 
     }
 }
