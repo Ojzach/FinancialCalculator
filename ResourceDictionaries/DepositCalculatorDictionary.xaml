@@ -10,7 +10,7 @@
 
         <StackPanel Orientation="Vertical">
 
-            <Border Background="LightGray" BorderBrush="{Binding BudgetDebugColor}" BorderThickness="2" Height="30" HorizontalAlignment="Stretch">
+            <Border Background="LightGray" BorderBrush="Gray" BorderThickness="2" Height="30" HorizontalAlignment="Stretch">
 
                 <Grid  HorizontalAlignment="Stretch">
                     <Grid.Resources>
@@ -37,10 +37,7 @@
                     <TextBlock Text="{Binding BudgetName}" FontWeight="Bold" Grid.Column="0" Margin="5, 0, 0, 0"/>
 
                     <TextBlock Text="{Binding BudgetType}" Grid.Column="1"/>
-
-                    <TextBlock Text="{Binding MinAmt, StringFormat='c'}" Grid.Column="2" HorizontalAlignment="Stretch"/>
-
-                    <TextBlock Text="{Binding BudgetRecommendedAmtPerMonth, StringFormat='c'}" HorizontalAlignment="Stretch" Grid.Column="3"/>
+                    
 
                     <Border BorderBrush="Green" Grid.Column="4" Margin="3">
                         <Border.Style>

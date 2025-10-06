@@ -13,7 +13,7 @@ namespace FinancialCalculator.ViewModels
         public float PaycheckAmount
         {
             get => _depositStore.DepositAmount;
-            set { _depositStore.DepositAmount = value; UpdateCalculatedValues(); }
+            set { depositService.UpdateDepositAmount(value); UpdateCalculatedValues(); }
         }
 
         public float EstimatedYearlyIncome { get => _depositStore.EstimatedyearlyIncome; set { _depositStore.EstimatedyearlyIncome = value; UpdateCalculatedValues(); } }
@@ -33,7 +33,7 @@ namespace FinancialCalculator.ViewModels
             set 
             {
                 federalTaxAmtPct.Amount = value;
-                _depositStore.FederalTaxAmt = federalTaxAmtPct.GetAmount(_depositStore.DepositAmount);
+                //_depositStore.SetDepositDeductionAmt(0, federalTaxAmtPct.GetAmount(_depositStore.DepositAmount));
                 OnPropertyChanged(nameof(FederalTaxAmt)); 
                 OnPropertyChanged(nameof(FederalTaxPct)); 
             } 
@@ -43,7 +43,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 federalTaxAmtPct.Percent = value;
-                _depositStore.FederalTaxAmt = federalTaxAmtPct.GetAmount(_depositStore.DepositAmount);
+                //_depositStore.SetDepositDeductionAmt(0, federalTaxAmtPct.GetAmount(_depositStore.DepositAmount));
                 OnPropertyChanged(nameof(FederalTaxAmt)); 
                 OnPropertyChanged(nameof(FederalTaxPct)); 
             }
@@ -55,7 +55,7 @@ namespace FinancialCalculator.ViewModels
             set 
             {
                 medicareAmtPct.Amount = value;
-                _depositStore.MedicareAmt = medicareAmtPct.GetAmount(_depositStore.DepositAmount);
+                //_depositStore.SetDepositDeductionAmt(1, medicareAmtPct.GetAmount(_depositStore.DepositAmount));
                 OnPropertyChanged(nameof(MedicareAmt)); 
                 OnPropertyChanged(nameof(MedicarePct)); 
             }
@@ -66,7 +66,7 @@ namespace FinancialCalculator.ViewModels
             set 
             {
                 medicareAmtPct.Percent = value;
-                _depositStore.MedicareAmt = medicareAmtPct.GetAmount(_depositStore.DepositAmount);
+                //_depositStore.SetDepositDeductionAmt(1, medicareAmtPct.GetAmount(_depositStore.DepositAmount));
                 OnPropertyChanged(nameof(MedicareAmt)); 
                 OnPropertyChanged(nameof(MedicarePct)); 
             }
@@ -78,7 +78,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 socialSecurityAmtPct.Amount = value;
-                _depositStore.SocialSecurityAmt = socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount);
+                //_depositStore.SetDepositDeductionAmt(2, socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount));
                 OnPropertyChanged(nameof(SocialSecurityAmt)); 
                 OnPropertyChanged(nameof(SocialSecurityPct)); 
             }
@@ -89,7 +89,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 socialSecurityAmtPct.Percent = value;
-                _depositStore.SocialSecurityAmt = socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount);
+                //_depositStore.SetDepositDeductionAmt(2, socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount));
                 OnPropertyChanged(nameof(SocialSecurityAmt)); 
                 OnPropertyChanged(nameof(SocialSecurityPct)); 
             }
@@ -101,7 +101,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 stateTaxAmtPct.Amount = value;
-                _depositStore.StateTaxAmt = stateTaxAmtPct.GetAmount(_depositStore.DepositAmount);
+                //_depositStore.SetDepositDeductionAmt(3, socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount));
                 OnPropertyChanged(nameof(StateTaxAmt)); 
                 OnPropertyChanged(nameof(StateTaxPct)); }
         }
@@ -111,7 +111,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 stateTaxAmtPct.Percent = value;
-                _depositStore.StateTaxAmt = stateTaxAmtPct.GetAmount(_depositStore.DepositAmount);
+                //_depositStore.SetDepositDeductionAmt(3, socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount));
                 OnPropertyChanged(nameof(StateTaxAmt)); 
                 OnPropertyChanged(nameof(StateTaxPct));
             }
@@ -128,8 +128,6 @@ namespace FinancialCalculator.ViewModels
         private ViewModelBase? currentlyEditingBudget;
         public ViewModelBase? CurrentlyEditingBudget { get => currentlyEditingBudget; set { currentlyEditingBudget = value;  OnPropertyChanged(nameof(CurrentlyEditingBudget)); } }
 
-        private readonly FinancialInstitutionsStore _financialInstituitonsStore;
-
         private DepositAllocationService depositService;
 
 
@@ -138,10 +136,7 @@ namespace FinancialCalculator.ViewModels
 
         public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
         {
-            _financialInstituitonsStore = financialInstitutionsStore;
-
             _depositStore = new DepositStore(budgetsStore);
-
             depositService = new DepositAllocationService(_depositStore, budgetsStore);
 
             depositService.UpdateDepositAmount(15000);
@@ -161,20 +156,22 @@ namespace FinancialCalculator.ViewModels
             foreach(BudgetDeposit depositBudget in _depositStore.BudgetDeposits.Values.Where(deposit => deposit.DepositParentID == -1))
             {
                 depositBudgets.Add(new BudgetDepositViewModel(depositBudget.DepositBudgetID, budgetsStore, _depositStore));
+                depositBudgets[depositBudgets.Count() - 1].EditBudgetAction += OpenEditMenu;
             }
-
-
-            /*DepositBudgets.BudgetValueChanged += (BudgetDepositViewModel bVM) => UpdateCalculatedValues();
-            DepositBudgets.EditBudgetAction += OpenEditMenu;*/
-            _depositStore.DepositChanged += UpdateCalculatedValues;
             
-
-
-
             CloseEditMenuCommand = new RelayCommand(execute => CloseEditMenu());
+        }
 
 
+        private void DepositChanged(List<int> depositsChanged)
+        {
+            if (depositsChanged.Count == 0) return;
 
+
+            if (depositsChanged.Contains(0))
+            {
+                foreach (BudgetDepositViewModel depositVM in depositBudgets) depositVM.UpdateUI();
+            }
         }
 
 
@@ -183,8 +180,8 @@ namespace FinancialCalculator.ViewModels
         {
             OnPropertyChanged("EstimatedYearlyIncome");
             OnPropertyChanged("MonthsCoveredByPaycheck");
-
-            _depositStore.UpdateDeductions(federalTaxAmtPct.GetAmount(_depositStore.DepositAmount), medicareAmtPct.GetAmount(_depositStore.DepositAmount), socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount), stateTaxAmtPct.GetAmount(_depositStore.DepositAmount));
+            OnPropertyChanged(nameof(TakeHomeAmount));
+            OnPropertyChanged(nameof(TakeHomePercent));
 
             OnPropertyChanged(nameof(FederalTaxAmt));
             OnPropertyChanged(nameof(FederalTaxPct));
@@ -195,7 +192,8 @@ namespace FinancialCalculator.ViewModels
             OnPropertyChanged(nameof(StateTaxAmt));
             OnPropertyChanged(nameof(StateTaxPct));
 
-            //DepositBudgets.DepositAmt = _depositStore.TakeHomeAmount;
+
+            foreach (BudgetDepositViewModel depositVM in depositBudgets) depositVM.UpdateUI();
 
         }
 
@@ -213,7 +211,6 @@ namespace FinancialCalculator.ViewModels
         public void CloseEditMenu()
         {
             IsEditPanelOpen = false;
-            if (CurrentlyEditingBudget is BudgetViewModel) DepositBudgets.ValueChanged();
             CurrentlyEditingBudget = null;
         }
     }

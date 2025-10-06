@@ -8,53 +8,28 @@ namespace FinancialCalculator.Stores
     internal class DepositStore
     {
 
-        private float depositAmount = 0;
-        private float estimatedYearlyIncome = 0;
-
-        private float federalTaxAmt;
-        private float medicareAmt;
-        private float socialSecurityAmt;
-        private float stateTaxAmt;
-
-
-        private List<BudgetDeposit> depositDeductions = new List<BudgetDeposit>();
-
-        public float FederalTaxAmt { get => federalTaxAmt; set { federalTaxAmt = MathF.Max(0, value); OnDepositChanged(); } }
-        public float MedicareAmt { get => medicareAmt; set { medicareAmt = MathF.Max(0, value); OnDepositChanged(); } }
-        public float SocialSecurityAmt { get => socialSecurityAmt; set { socialSecurityAmt = MathF.Max(0, value); OnDepositChanged(); } }
-        public float StateTaxAmt { get => stateTaxAmt; set { stateTaxAmt = MathF.Max(0, value); OnDepositChanged(); } }
-
-        public void UpdateDeductions(float _federalTaxAmt = -1, float _medicareAmt = -1, float _socialSecurityAmt = -1, float _stateTaxAmt = -1)
-        {
-            if (_federalTaxAmt >= 0) federalTaxAmt = _federalTaxAmt;
-            if (_medicareAmt >= 0) medicareAmt = _medicareAmt;
-            if (_socialSecurityAmt >= 0) socialSecurityAmt = _socialSecurityAmt;
-            if (_stateTaxAmt >= 0) stateTaxAmt = _stateTaxAmt;
-
-        }
-
-
-
-        public float EstimatedyearlyIncome { get => estimatedYearlyIncome; set { estimatedYearlyIncome = MathF.Max(0, value); OnDepositChanged(); } }
-        public float DepositAmount { get => depositAmount; set {  depositAmount = MathF.Max(0, value); OnDepositChanged(); } }
-        public float TakeHomeAmount { get {
-
-                return MathF.Max(0, depositAmount - depositDeductions.Sum(deduction => deduction.DepositAmtPct.GetAmount(DepositAmount)));
+        public float DepositAmount { get => depositAmount; set {  depositAmount = MathF.Max(0, value); } }
+        public float TakeHomeAmount { get
+            {
+                return MathF.Max(0, DepositAmount - depositDeductions.Sum(deduction => deduction.DepositAmtPct.GetAmount(DepositAmount)));
             }
         }
 
 
+        public float EstimatedyearlyIncome { get => estimatedYearlyIncome; set { estimatedYearlyIncome = MathF.Max(0, value); } }
         public int MonthsCoveredByDeposit { get 
             { 
                 if(estimatedYearlyIncome == 0) return 0;
-                else
-                {
-                    return (int)MathF.Ceiling((depositAmount / estimatedYearlyIncome) * 12);
-                }
+                else return (int)MathF.Ceiling((depositAmount / estimatedYearlyIncome) * 12);
             } }
 
 
-        Dictionary<int, BudgetDeposit> deposits = new Dictionary<int, BudgetDeposit>();
+        private float depositAmount = 0;
+        private Dictionary<int, BudgetDeposit> deposits = new Dictionary<int, BudgetDeposit>();
+        private List<BudgetDeposit> depositDeductions = new List<BudgetDeposit>();
+
+        
+        private float estimatedYearlyIncome = 0;
 
         public IReadOnlyDictionary<int, BudgetDeposit> BudgetDeposits { get => deposits; }
 
@@ -96,13 +71,8 @@ namespace FinancialCalculator.Stores
 
         public float SetBudgetDepositAmt(int depositID, float amount) => deposits[depositID].DepositAmtPct.Amount = amount;
         public float SetBudgetDepositPct(int depositID, float percent) => deposits[depositID].DepositAmtPct.Percent = percent;
+        public float SetDepositDeductionAmt(int deductionID, float amount) => depositDeductions[deductionID].DepositAmtPct.Amount = amount;
 
-
-        private void OnDepositChanged()
-        {
-            DepositChanged?.Invoke();
-        }
-
-        public Action DepositChanged;
+        public Action<List<int>> DepositsChanged;
     }
 }

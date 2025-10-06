@@ -16,6 +16,7 @@ namespace FinancialCalculator.Models
         public FinancialAccount AssociatedFinancialAccount;
         public List<int> ChildBudgets = new List<int>();
 
+        public float CurrentBudgetBalance => localCurrentBudgetBalance;
         private float localCurrentBudgetBalance = 0;
 
         public Budget(int id, string name, FinancialAccount associatedFinancialAccount)
