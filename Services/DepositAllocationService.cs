@@ -25,24 +25,21 @@ namespace FinancialCalculator.Services
         public void UpdateDepositAmount(float newDepositAmount)
         {
             depositStore.DepositAmount = newDepositAmount;
+
+            AllocateWholeDeposit();
         }
 
         public void AllocateWholeDeposit()
         {
-
-            foreach(BudgetDeposit deposit in depositStore.BudgetDeposits.Values.Where(deposit => deposit.DepositParentID == -1))
-            {
-                Debug.Print(budgetStore.Budgets[deposit.DepositBudgetID].Name);
-            }
-
-
-            Allocate(depositStore.TakeHomeAmount, depositStore.BudgetDeposits.Keys.Where(id => depositStore.BudgetDeposits[id].DepositParentID == -1).ToList());
+            Allocate(-1, depositStore.TakeHomeAmount, depositStore.BudgetDeposits.Keys.Where(id => depositStore.BudgetDeposits[id].DepositParentID == -1).ToList());
         }
 
-        public void Allocate(float allocationAmount, List<int> budgetsToAllocate)
-        {
+        public void Allocate(int parentDeposit, float allocationAmount, List<int> budgetsToAllocate)
+        {  
 
-            Debug.Print("Initial Condition  " + allocationAmount.ToString("c") + " " + budgetsToAllocate.Count);
+            if (parentDeposit != -1) depositStore.SetBudgetDepositAmt(parentDeposit, 0);
+
+            List<int> completedBudgets = new List<int>();
 
             //Find the sum of the budgets that are set by the user. These are not editable so they will be subtracted out of rebalance
             int[] userSetDeposits = budgetsToAllocate.Where(id => depositStore.BudgetDeposits[id].DepositIsUserSet).ToArray();
@@ -51,8 +48,6 @@ namespace FinancialCalculator.Services
                 allocationAmount = allocationAmount - depositStore.GetBudgetDepositAmount(depositID);
                 budgetsToAllocate.Remove(depositID);
             }
-
-            Debug.Print("User Set  " + allocationAmount.ToString("c") + " " + budgetsToAllocate.Count);
 
             if (allocationAmount < 0)
             {
@@ -71,6 +66,7 @@ namespace FinancialCalculator.Services
                     allocationAmount = allocationAmount - budget.GetMinMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(budget.ID));
                 }
 
+                completedBudgets.AddRange(budgetsToAllocate.Where(id => budgetStore.Budgets[id].GetMinMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(id)) == budgetStore.Budgets[id].GetMaxMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(id))));
                 budgetsToAllocate.RemoveAll(id => budgetStore.Budgets[id].GetMinMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(id)) == budgetStore.Budgets[id].GetMaxMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(id)));
             }
             else
@@ -79,9 +75,22 @@ namespace FinancialCalculator.Services
                 allocationAmount = 0;
             }
 
-            Debug.Print("Min Amounts Set  " + allocationAmount.ToString("c") + " " + budgetsToAllocate.Count);
 
 
+
+
+
+            if (parentDeposit != -1) depositStore.SetBudgetDepositAmt(parentDeposit, allocationAmount);
+
+
+            //Allocates The Children
+            foreach(int budget in completedBudgets)
+            {
+                if (budgetStore.Budgets[budget].ChildBudgets.Count > 0)
+                {
+                    Allocate(budget , depositStore.BudgetDeposits[budget].DepositAmtPct.GetAmount(depositStore.GetBudgetReferenceAmount(budget)), budgetStore.Budgets[budget].ChildBudgets.ToList());
+                }
+            }
             /*
             //Find the sum of the budgets that are fixed amounts. These are not editable so they will be subtracted out of rebalance
             //Where function does not add fixed cost budgets that are also user set as to not double subtract
@@ -181,6 +190,36 @@ namespace FinancialCalculator.Services
                 Debug.Print(BudgetName + " " + SubItems.Sum(item => item.DepositAmt) + " " + DepositAmt + " " + t);
                 BudgetError();
             }*/
+        }
+
+        private Dictionary<BudgetDepositViewModel, float> DistributeAmtAmongBudgets(List<BudgetDepositViewModel> budgets, float amt, Func<BudgetDepositViewModel, float> ratioWeight, Func<BudgetDepositViewModel, float> preAllocatedAmt)
+        {
+            Dictionary<BudgetDepositViewModel, float> distributedAmts = budgets.ToDictionary(b => b, b => 0f);
+            bool finishedAllocation = false;
+            float totalUsed = 0;
+
+            while (finishedAllocation == false)
+            {
+                finishedAllocation = true;
+                float ratioTotal = budgets.Count();
+
+                foreach (BudgetDepositViewModel budget in budgets)
+                {
+                    float calculatedAmt = (amt - totalUsed) * (ratioWeight(budget) / ratioTotal);
+
+                    if (calculatedAmt + preAllocatedAmt(budget) >= budget.MaxAmt)
+                    {
+                        distributedAmts[budget] = budget.MaxAmt - preAllocatedAmt(budget);
+                        totalUsed += budget.MaxAmt - preAllocatedAmt(budget);
+                        budgets.Remove(budget);
+                        finishedAllocation = false;
+                        break;
+                    }
+                    else distributedAmts[budget] = calculatedAmt;
+                }
+            }
+
+            return distributedAmts;
         }
 
         public void UpdateSpecificBudgetAmount()
