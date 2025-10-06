@@ -122,9 +122,8 @@ namespace FinancialCalculator.ViewModels
         public float TakeHomePercent => _depositStore.TakeHomeAmount / _depositStore.DepositAmount;
 
 
-
-        private bool editPanelOpen = false;
-        public Visibility EditPanelVisibility { get => editPanelOpen ? Visibility.Visible : Visibility.Collapsed; }
+        private bool isEditPanelOpen = false;
+        public bool IsEditPanelOpen { get => isEditPanelOpen; set { isEditPanelOpen = value; OnPropertyChanged(nameof(IsEditPanelOpen)); } }
 
         private ViewModelBase? currentlyEditingBudget;
         public ViewModelBase? CurrentlyEditingBudget { get => currentlyEditingBudget; set { currentlyEditingBudget = value;  OnPropertyChanged(nameof(CurrentlyEditingBudget)); } }
@@ -204,19 +203,17 @@ namespace FinancialCalculator.ViewModels
         public ICommand CloseEditMenuCommand { get; set; }
 
         private bool editingItem = false;
-
         public void OpenEditMenu(ViewModelBase budget)
         {
             editingItem = true;
             CurrentlyEditingBudget = budget;
-            editPanelOpen = true;
-            OnPropertyChanged(nameof(EditPanelVisibility));
+            IsEditPanelOpen = true;
         }
 
         public void CloseEditMenu()
         {
-            editPanelOpen = false;
-            OnPropertyChanged(nameof(EditPanelVisibility));
+            IsEditPanelOpen = false;
+            if (CurrentlyEditingBudget is BudgetViewModel) DepositBudgets.ValueChanged();
             CurrentlyEditingBudget = null;
         }
     }

@@ -116,6 +116,11 @@ namespace FinancialCalculator.ViewModels
 
         }
 
+        public void BudgetUpdated()
+        {
+            Debug.Print("Hello");
+        }
+
 
         //Only Applies To Fixed And Flexible Budgets
         private void SubItemValueChanged(BudgetDepositViewModel changedBudget)
@@ -162,7 +167,7 @@ namespace FinancialCalculator.ViewModels
         private void RebalanceSubItems()
         {
 
-            //budgetDebugColor = Color.Gray;
+            budgetDebugColor = Color.Gray;
             foreach (BudgetDepositViewModel si in SubItems) si.budgetDebugColor = Color.Gray;
 
             float availableSum = DepositAmt;

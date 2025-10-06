@@ -10,11 +10,10 @@ namespace FinancialCalculator.ViewModels
     public class SavingsBudgetViewModel : FlexibleBudgetViewModel
     {
 
-        private SavingsBudget _budget;
+        public override string BudgetType => "Savings Budget";
 
         public SavingsBudgetViewModel(SavingsBudget budget) : base(budget)
         {
-            _budget = budget;
         }
     }
 }
