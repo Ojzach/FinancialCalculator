@@ -6,25 +6,19 @@ namespace FinancialCalculator.Models
     {
         public override string BudgetType { get => "Fixed"; }
 
-        public bool IsSetByAmt { get; set; }
-        public float BudgetMonthlyAmt { private get; set; }
-        public float BudgetMonthlyPct { get; set; }
+        private AmountPercentModel setAmountPercent = new AmountPercentModel();
+        public AmountPercentModel SetAmountPercent { get => setAmountPercent; }
 
 
-        public FixedBudget(int id, string name, FinancialAccount associatedFinancialAccount, bool isSetByAmt = true, float setAmt = 0f, float setPct = 0.0f) : base(id, name, associatedFinancialAccount)
+        public FixedBudget(int id, string name, FinancialAccount associatedFinancialAccount, float setAmt = 0f, float setPct = 0.0f) : base(id, name, associatedFinancialAccount)
         {
-            IsSetByAmt = isSetByAmt;
-            BudgetMonthlyAmt = setAmt;
-            BudgetMonthlyPct = setPct;
+            if(setAmt != 0.0f) setAmountPercent.Amount = setAmt;
+            else if(setPct != 0.0f) setAmountPercent.Percent = setPct;
         }
 
         public override float GetMinMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt(totalDeposit);
         public override float GetMaxMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt(totalDeposit);
-        public override float GetRecommendedMonthlyDepositAmt(float totalDeposit = 0) 
-        {
-            if (IsSetByAmt) return BudgetMonthlyAmt;
-            else return BudgetMonthlyPct * totalDeposit;
-        }
+        public override float GetRecommendedMonthlyDepositAmt(float totalDeposit = 0) => SetAmountPercent.GetAmount(totalDeposit);
 
         public override ViewModelBase ToViewModel() => new FixedBudgetViewModel(this);
     }
