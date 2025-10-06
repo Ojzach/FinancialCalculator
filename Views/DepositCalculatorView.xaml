@@ -85,7 +85,63 @@
             </Grid>
 
             <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
-                <ContentPresenter VerticalAlignment="Stretch" ContentTemplate="{StaticResource DepositBudget}" Content="{Binding DepositBudgets}" Margin="10, 0, 50, 0"/>
+                <StackPanel Orientation="Vertical" Margin="3">
+
+                    <Border Background="LightGray" BorderBrush="Gray" BorderThickness="2" Height="30" HorizontalAlignment="Stretch">
+
+                        <Grid  HorizontalAlignment="Stretch">
+                            <Grid.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="TextAlignment" Value="Left"/>
+                                </Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="TextAlignment" Value="Center"/>
+                                </Style>
+                            </Grid.Resources>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="150"/>
+                                <ColumnDefinition MaxWidth="300" Width="10*"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition Width="75"/>
+                                <ColumnDefinition MaxWidth="30"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Take Home Amount" FontWeight="Bold" Grid.Column="0" Margin="5, 0, 0, 0"/>
+
+                            <TextBox Text="{Binding TakeHomePercent, Converter={StaticResource PercentConverter}, Mode=OneWay}" IsEnabled="False" Grid.Column="2" Margin="3"/>
+
+                            <TextBox Text="{Binding TakeHomeAmount, StringFormat='c', Mode=OneWay}" IsEnabled="False" Grid.Column="3" Margin="3"/>
+
+                        </Grid>
+                    </Border>
+
+
+                    <ListBox VerticalAlignment="Stretch" BorderThickness="0"  ItemsSource="{Binding DepositBudgets}" ItemTemplate="{DynamicResource DepositBudget}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0, 2, 0, 2"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+
+                        <ListBox.Template>
+                            <ControlTemplate TargetType="ListBox">
+                                <ScrollViewer Focusable="false"
+                          CanContentScroll="true"
+                          Padding="20, 2, 0, 2">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ListBox.Template>
+
+                    </ListBox>
+
+                </StackPanel>
             </ScrollViewer>
 
 

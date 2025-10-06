@@ -11,7 +11,7 @@ using Color = System.Drawing.Color;
 
 namespace FinancialCalculator.ViewModels
 {
-    internal abstract class BudgetDepositViewModel : ViewModelBase
+    internal class BudgetDepositViewModel : ViewModelBase
     {
         private ObservableCollection<BudgetDepositViewModel> subItems = new ObservableCollection<BudgetDepositViewModel>();
         public ObservableCollection<BudgetDepositViewModel> SubItems { 
@@ -32,6 +32,7 @@ namespace FinancialCalculator.ViewModels
 
 
         protected Budget _budget;
+        private int budgetID;
         protected DepositStore _deposit;
 
 
@@ -40,41 +41,40 @@ namespace FinancialCalculator.ViewModels
         public float BudgetRecommendedAmtPerMonth { get => _budget.GetRecommendedMonthlyDepositAmt(_deposit.GetDepositAmount(_budget.AssociatedFinancialAccount.isPreTaxAccount)); }
 
 
-        protected AmountPercentModel depositAmtPct;
-        private bool isUsrSet = false;
-        public bool IsUsrSet { get => isUsrSet; set { isUsrSet = value; OnPropertyChanged(nameof(isUsrSet)); } }
+        private AmountPercentModel depositAmtPct { get => _deposit.BudgetDeposits[budgetID].DepositAmtPct; } 
+        public bool IsUsrSet { get => _deposit.BudgetDeposits[budgetID].DepositIsUserSet; set { _deposit.BudgetDeposits[budgetID].DepositIsUserSet = value; OnPropertyChanged(nameof(IsUsrSet)); } }
         public bool IsSetByAmt { get => depositAmtPct.IsSetByAmount; }
 
         public float UsrDepositPct { get => DepositPct; set { IsUsrSet = true; DepositPct = value; OnPropertyChanged(nameof(IsSetByAmt)); BudgetValueChanged?.Invoke(this); } }
         public float DepositPct { 
-            get => depositAmtPct.GetPercent(_deposit.DepositAmount); 
+            get => depositAmtPct.GetPercent(_deposit.GetBudgetReferenceAmount(budgetID)); 
             set {
-                float startAmt = depositAmtPct.GetAmount(_deposit.DepositAmount);
+                float startAmt = depositAmtPct.GetAmount(_deposit.GetBudgetReferenceAmount(budgetID));
                 depositAmtPct.Percent = value; 
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
                 
-                if(startAmt != depositAmtPct.GetAmount(_deposit.DepositAmount)) ValueChanged();
+                if(startAmt != depositAmtPct.GetAmount(_deposit.GetBudgetReferenceAmount(budgetID))) ValueChanged();
             } 
         }
         public float UsrDepositAmt { get => DepositAmt; set { IsUsrSet = true; DepositAmt = value; OnPropertyChanged(nameof(IsSetByAmt)); BudgetValueChanged?.Invoke(this); } }
         public float DepositAmt { 
-            get => depositAmtPct.GetAmount(_deposit.DepositAmount); 
+            get => depositAmtPct.GetAmount(_deposit.GetBudgetReferenceAmount(budgetID)); 
             set {
                 float startAmt = depositAmtPct.GetAmount(_deposit.DepositAmount);
                 depositAmtPct.Amount = value;
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
-                if (startAmt != depositAmtPct.GetAmount(_deposit.DepositAmount)) ValueChanged();
+                if (startAmt != depositAmtPct.GetAmount(_deposit.GetBudgetReferenceAmount(budgetID))) ValueChanged();
             } 
         }
         public void TotalDepositAmtChanged()
         {
-            float startAmt = depositAmtPct.GetAmount(_deposit.DepositAmount);
+            float startAmt = depositAmtPct.GetAmount(_deposit.GetBudgetReferenceAmount(budgetID));
             OnPropertyChanged(nameof(UsrDepositPct));
             OnPropertyChanged(nameof(UsrDepositAmt));
 
-            if(startAmt != depositAmtPct.GetAmount(_deposit.DepositAmount))
+            if(startAmt != depositAmtPct.GetAmount(_deposit.GetBudgetReferenceAmount(budgetID)))
             {
                 ValueChanged();
                 budgetDebugColor = Color.Black;
@@ -83,31 +83,23 @@ namespace FinancialCalculator.ViewModels
 
 
         protected float TotalDepositAmt { get => _budget.AssociatedFinancialAccount.isPreTaxAccount ? _deposit.DepositAmount : _deposit.TakeHomeAmount; }
-        public abstract float MaxAmt { get; }
-        public virtual float MinAmt { get; }
+        public float MaxAmt { get => _budget.GetMaxMonthlyDepositAmt(_deposit.GetBudgetReferenceAmount(_budget.ID)); }
+        public float MinAmt { get => _budget.GetMinMonthlyDepositAmt(_deposit.GetBudgetReferenceAmount(_budget.ID)); }
 
 
 
 
         public ICommand EditBudgetCommand { get; set; }
 
-        public BudgetDepositViewModel(Budget _budget, BudgetStore budgetStore, DepositStore _depositStore)
+        public BudgetDepositViewModel(int _budgetID, BudgetStore budgetStore, DepositStore _depositStore)
         {
-            this._budget = _budget;
+            budgetID = _budgetID;
+            _budget = budgetStore.GetBudget(_budgetID);
             _deposit = _depositStore;
 
-            depositAmtPct = new AmountPercentModel();
-
-
-            foreach (int childBudgetID in this._budget.ChildBudgets)
+            foreach (int budgetID in _budget.ChildBudgets)
             {
-                Budget childBudget = budgetStore.Budgets[childBudgetID];
-
-                if (childBudget is FixedBudget) SubItems.Add(new FixedBudgetDepositViewModel(childBudget as FixedBudget, budgetStore, _depositStore));
-                else SubItems.Add(new FlexiblebudgetDepositViewModel(childBudget as FlexibleBudget, budgetStore, _depositStore));
-
-                SubItems[SubItems.Count - 1].BudgetValueChanged += SubItemValueChanged;
-                SubItems[SubItems.Count - 1].EditBudgetAction += (ViewModelBase viewModel) => EditBudgetAction?.Invoke(viewModel);
+                SubItems.Add(new BudgetDepositViewModel(budgetID, budgetStore, _depositStore));
             }
 
 
@@ -132,7 +124,7 @@ namespace FinancialCalculator.ViewModels
 
             budgetDebugColor = Color.Gray;
 
-            List<BudgetDepositViewModel> usrSetValueBudgets = SubItems.Where(item => item.isUsrSet).ToList();
+            List<BudgetDepositViewModel> usrSetValueBudgets = SubItems.Where(item => item.IsUsrSet).ToList();
 
             float UsrSetSum = usrSetValueBudgets.Sum(item => item.DepositAmt);
             float OtherItemsMinSum = SubItems.Except(usrSetValueBudgets).Sum(item => item.MinAmt);

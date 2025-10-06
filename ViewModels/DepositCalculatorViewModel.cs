@@ -118,9 +118,8 @@ namespace FinancialCalculator.ViewModels
         }
 
 
-
-        private BudgetDepositViewModel depositBudgets;
-        public BudgetDepositViewModel DepositBudgets { get => depositBudgets; set { depositBudgets = value; OnPropertyChanged(nameof(DepositBudgets)); } }
+        public float TakeHomeAmount => _depositStore.TakeHomeAmount;
+        public float TakeHomePercent => _depositStore.TakeHomeAmount / _depositStore.DepositAmount;
 
 
 
@@ -132,11 +131,22 @@ namespace FinancialCalculator.ViewModels
 
         private readonly FinancialInstitutionsStore _financialInstituitonsStore;
 
+        private DepositAllocationService depositService;
+
+
+        private List<BudgetDepositViewModel> depositBudgets = new List<BudgetDepositViewModel>();
+        public List<BudgetDepositViewModel> DepositBudgets { get => depositBudgets; set { depositBudgets = value; OnPropertyChanged(nameof(DepositBudgets)); } }
+
         public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
         {
             _financialInstituitonsStore = financialInstitutionsStore;
 
             _depositStore = new DepositStore(budgetsStore);
+
+            depositService = new DepositAllocationService(_depositStore, budgetsStore);
+
+            depositService.UpdateDepositAmount(15000);
+            depositService.AllocateWholeDeposit();
 
             federalTaxAmtPct = new AmountPercentModel();
             medicareAmtPct = new AmountPercentModel();
@@ -149,12 +159,14 @@ namespace FinancialCalculator.ViewModels
             SocialSecurityPct = 0.062f;
 
 
+            foreach(BudgetDeposit depositBudget in _depositStore.BudgetDeposits.Values.Where(deposit => deposit.DepositParentID == -1))
+            {
+                depositBudgets.Add(new BudgetDepositViewModel(depositBudget.DepositBudgetID, budgetsStore, _depositStore));
+            }
 
 
-            DepositBudgets = new FixedBudgetDepositViewModel(budgetsStore.Budgets[1] as FixedBudget, budgetsStore, _depositStore);
-
-            DepositBudgets.BudgetValueChanged += (BudgetDepositViewModel bVM) => UpdateCalculatedValues();
-            DepositBudgets.EditBudgetAction += OpenEditMenu;
+            /*DepositBudgets.BudgetValueChanged += (BudgetDepositViewModel bVM) => UpdateCalculatedValues();
+            DepositBudgets.EditBudgetAction += OpenEditMenu;*/
             _depositStore.DepositChanged += UpdateCalculatedValues;
             
 
@@ -184,7 +196,7 @@ namespace FinancialCalculator.ViewModels
             OnPropertyChanged(nameof(StateTaxAmt));
             OnPropertyChanged(nameof(StateTaxPct));
 
-            DepositBudgets.DepositAmt = _depositStore.TakeHomeAmount;
+            //DepositBudgets.DepositAmt = _depositStore.TakeHomeAmount;
 
         }
 
