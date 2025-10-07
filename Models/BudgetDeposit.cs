@@ -20,10 +20,10 @@ namespace FinancialCalculator.Models
 
         public bool DepositIsUserSet { get; set; } = false;
 
-        public BudgetDeposit(int depositBudgetID, AmountPercentModel initialAmtPct = null)
+        public BudgetDeposit(int depositBudgetID, AmountPercentModel initialAmtPct)
         {
             DepositBudgetID = depositBudgetID;
-            depositAmtPct = initialAmtPct is null ? new AmountPercentModel() : initialAmtPct;
+            depositAmtPct = initialAmtPct;
         }
 
         public void SetParent(int parentBudgetID) => DepositParentID = parentBudgetID;

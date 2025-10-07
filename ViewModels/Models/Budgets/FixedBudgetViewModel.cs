@@ -24,8 +24,8 @@ namespace FinancialCalculator.ViewModels
             } 
         }
 
-        public float SetMthlyDepositAmt { get => _fixedBudget.SetAmountPercent.GetAmount(0); set { _fixedBudget.SetAmountPercent.Amount = value; } }
-        public float SetMthlyDepositPct { get => _fixedBudget.SetAmountPercent.GetPercent(0); set { _fixedBudget.SetAmountPercent.Percent = value; } }
+        public float SetMthlyDepositAmt { get => _fixedBudget.SetAmountPercent.Amount; set { _fixedBudget.SetAmountPercent.Amount = value; } }
+        public float SetMthlyDepositPct { get => _fixedBudget.SetAmountPercent.Percent; set { _fixedBudget.SetAmountPercent.Percent = value; } }
 
         public FixedBudgetViewModel(FixedBudget budget) : base(budget)
         {

@@ -29,7 +29,7 @@ namespace FinancialCalculator.ViewModels
         private AmountPercentModel stateTaxAmtPct;
 
         public float FederalTaxAmt { 
-            get => federalTaxAmtPct.GetAmount(_depositStore.DepositAmount);
+            get => federalTaxAmtPct.Amount;
             set 
             {
                 federalTaxAmtPct.Amount = value;
@@ -39,7 +39,7 @@ namespace FinancialCalculator.ViewModels
             } 
         }
         public float FederalTaxPct { 
-            get => federalTaxAmtPct.GetPercent(_depositStore.DepositAmount);
+            get => federalTaxAmtPct.Percent;
             set 
             { 
                 federalTaxAmtPct.Percent = value;
@@ -51,7 +51,7 @@ namespace FinancialCalculator.ViewModels
 
         public float MedicareAmt
         {
-            get => medicareAmtPct.GetAmount(_depositStore.DepositAmount);
+            get => medicareAmtPct.Amount;
             set 
             {
                 medicareAmtPct.Amount = value;
@@ -62,7 +62,7 @@ namespace FinancialCalculator.ViewModels
         }
         public float MedicarePct
         {
-            get => medicareAmtPct.GetPercent(_depositStore.DepositAmount);
+            get => medicareAmtPct.Percent;
             set 
             {
                 medicareAmtPct.Percent = value;
@@ -74,7 +74,7 @@ namespace FinancialCalculator.ViewModels
 
         public float SocialSecurityAmt
         {
-            get => socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount);
+            get => socialSecurityAmtPct.Amount;
             set 
             { 
                 socialSecurityAmtPct.Amount = value;
@@ -85,7 +85,7 @@ namespace FinancialCalculator.ViewModels
         }
         public float SocialSecurityPct
         {
-            get => socialSecurityAmtPct.GetPercent(_depositStore.DepositAmount);
+            get => socialSecurityAmtPct.Percent;
             set 
             { 
                 socialSecurityAmtPct.Percent = value;
@@ -97,7 +97,7 @@ namespace FinancialCalculator.ViewModels
 
         public float StateTaxAmt
         {
-            get => stateTaxAmtPct.GetAmount(_depositStore.DepositAmount);
+            get => stateTaxAmtPct.Amount;
             set 
             { 
                 stateTaxAmtPct.Amount = value;
@@ -107,7 +107,7 @@ namespace FinancialCalculator.ViewModels
         }
         public float StateTaxPct
         {
-            get => stateTaxAmtPct.GetPercent(_depositStore.DepositAmount);
+            get => stateTaxAmtPct.Percent;
             set 
             { 
                 stateTaxAmtPct.Percent = value;
@@ -142,15 +142,10 @@ namespace FinancialCalculator.ViewModels
             depositService.UpdateDepositAmount(15000);
             depositService.AllocateWholeDeposit();
 
-            federalTaxAmtPct = new AmountPercentModel();
-            medicareAmtPct = new AmountPercentModel();
-            socialSecurityAmtPct = new AmountPercentModel();
-            stateTaxAmtPct = new AmountPercentModel();
-
-
-            FederalTaxPct = 0.145f;
-            MedicarePct = 0.0145f;
-            SocialSecurityPct = 0.062f;
+            federalTaxAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.145f);
+            medicareAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.0145f);
+            socialSecurityAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.062f);
+            stateTaxAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.0f);
 
 
             foreach(BudgetDeposit depositBudget in _depositStore.BudgetDeposits.Values.Where(deposit => deposit.DepositParentID == -1))

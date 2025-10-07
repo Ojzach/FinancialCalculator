@@ -11,7 +11,7 @@ namespace FinancialCalculator.Stores
         public float DepositAmount { get => depositAmount; set {  depositAmount = MathF.Max(0, value); } }
         public float TakeHomeAmount { get
             {
-                return MathF.Max(0, DepositAmount - depositDeductions.Sum(deduction => deduction.DepositAmtPct.GetAmount(DepositAmount)));
+                return MathF.Max(0, DepositAmount - depositDeductions.Sum(deduction => deduction.DepositAmtPct.Amount));
             }
         }
 
@@ -40,12 +40,18 @@ namespace FinancialCalculator.Stores
         {
             budgetStore = _budgetStore;
 
-            depositDeductions.Add(new BudgetDeposit(-2, new AmountPercentModel(initialPercent: 0.145f)));
-            depositDeductions.Add(new BudgetDeposit(-3, new AmountPercentModel(initialPercent: 0.014f)));
-            depositDeductions.Add(new BudgetDeposit(-4, new AmountPercentModel(initialPercent: 0.062f)));
-            depositDeductions.Add(new BudgetDeposit(-5, new AmountPercentModel(initialPercent: 0.0f)));
+            depositDeductions.Add(new BudgetDeposit(-2, new AmountPercentModel(() => DepositAmount, initialPercent: 0.145f)));
+            depositDeductions.Add(new BudgetDeposit(-3, new AmountPercentModel(() => DepositAmount, initialPercent: 0.014f)));
+            depositDeductions.Add(new BudgetDeposit(-4, new AmountPercentModel(() => DepositAmount,initialPercent: 0.062f)));
+            depositDeductions.Add(new BudgetDeposit(-5, new AmountPercentModel(() => DepositAmount, initialPercent: 0.0f)));
 
-            foreach (Budget budget in budgetStore.Budgets.Values) deposits.Add(budget.ID, new BudgetDeposit(budget.ID));
+            foreach (Budget budget in budgetStore.Budgets.Values)
+            {
+                if(budgetStore.IsBudgetPreTax(budget.ID)) deposits.Add(budget.ID, new BudgetDeposit(budget.ID, new AmountPercentModel(() => DepositAmount)));
+                else deposits.Add(budget.ID, new BudgetDeposit(budget.ID, new AmountPercentModel(() => TakeHomeAmount)));
+
+            }
+
 
             foreach (int budget in budgetStore.Budgets.Keys)
             {
@@ -65,7 +71,7 @@ namespace FinancialCalculator.Stores
 
         public float GetBudgetDepositAmount(int depositID)
         {
-            return deposits[depositID].DepositAmtPct.GetAmount(GetBudgetReferenceAmount(depositID));
+            return deposits[depositID].DepositAmtPct.Amount;
         }
         public float GetBudgetReferenceAmount(int depositID) => budgetStore.IsBudgetPreTax(depositID) ? DepositAmount : TakeHomeAmount;
 

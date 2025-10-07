@@ -42,7 +42,7 @@ namespace FinancialCalculator.ViewModels
         public float DepositPct { 
             get => DepositAmt / depositStore.GetBudgetReferenceAmount(budgetID); 
             set {
-                float startAmt = depositAmtPct.GetAmount(depositStore.GetBudgetReferenceAmount(budgetID));
+                float startAmt = depositAmtPct.Amount;
                 depositAmtPct.Percent = value;
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
@@ -50,9 +50,9 @@ namespace FinancialCalculator.ViewModels
         }
         public float UsrDepositAmt { get => DepositAmt; set { IsUsrSet = true; DepositAmt = value; OnPropertyChanged(nameof(IsSetByAmt)); } }
         public float DepositAmt { 
-            get => depositAmtPct.GetAmount(depositStore.GetBudgetReferenceAmount(budgetID)) + budget.ChildBudgets.Sum(childID => depositStore.GetBudgetDepositAmount(childID)); 
+            get => depositAmtPct.Amount + budget.ChildBudgets.Sum(childID => depositStore.GetBudgetDepositAmount(childID)); 
             set {
-                float startAmt = depositAmtPct.GetAmount(depositStore.DepositAmount);
+                float startAmt = depositAmtPct.Amount;
                 depositAmtPct.Amount = value;
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));

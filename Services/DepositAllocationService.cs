@@ -88,7 +88,7 @@ namespace FinancialCalculator.Services
             {
                 if (budgetStore.Budgets[budget].ChildBudgets.Count > 0)
                 {
-                    Allocate(budget , depositStore.BudgetDeposits[budget].DepositAmtPct.GetAmount(depositStore.GetBudgetReferenceAmount(budget)), budgetStore.Budgets[budget].ChildBudgets.ToList());
+                    Allocate(budget , depositStore.BudgetDeposits[budget].DepositAmtPct.Amount, budgetStore.Budgets[budget].ChildBudgets.ToList());
                 }
             }
             /*
