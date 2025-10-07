@@ -13,10 +13,10 @@ namespace FinancialCalculator.ViewModels
         public float PaycheckAmount
         {
             get => _depositStore.DepositAmount;
-            set { _depositStore.DepositAmount = value; UpdateCalculatedValues(); }
+            set { _depositStore.DepositAmount = value; }
         }
 
-        public float EstimatedYearlyIncome { get => _depositStore.EstimatedyearlyIncome; set { _depositStore.EstimatedyearlyIncome = value; UpdateCalculatedValues(); } }
+        public float EstimatedYearlyIncome { get => _depositStore.EstimatedyearlyIncome; set { _depositStore.EstimatedyearlyIncome = value; } }
         public int MonthsCoveredByPaycheck { get => _depositStore.MonthsCoveredByDeposit; }
 
 
@@ -135,6 +135,9 @@ namespace FinancialCalculator.ViewModels
         public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
         {
             _depositStore = new DepositStore(budgetsStore);
+
+            _depositStore.DepositsChanged += OnDepositChanged;
+
             _depositStore.DepositAmount = 15000;
 
 
@@ -155,22 +158,24 @@ namespace FinancialCalculator.ViewModels
 
 
 
-        public void UpdateCalculatedValues()
+        public void OnDepositChanged(List<int> changedDeposits)
         {
-            OnPropertyChanged("EstimatedYearlyIncome");
-            OnPropertyChanged("MonthsCoveredByPaycheck");
-            OnPropertyChanged(nameof(TakeHomeAmount));
-            OnPropertyChanged(nameof(TakeHomePercent));
+            if(changedDeposits.Contains(0))
+            {
+                OnPropertyChanged("EstimatedYearlyIncome");
+                OnPropertyChanged("MonthsCoveredByPaycheck");
+                OnPropertyChanged(nameof(TakeHomeAmount));
+                OnPropertyChanged(nameof(TakeHomePercent));
 
-            OnPropertyChanged(nameof(FederalTaxAmt));
-            OnPropertyChanged(nameof(FederalTaxPct));
-            OnPropertyChanged(nameof(MedicareAmt));
-            OnPropertyChanged(nameof(MedicarePct));
-            OnPropertyChanged(nameof(SocialSecurityAmt));
-            OnPropertyChanged(nameof(SocialSecurityPct));
-            OnPropertyChanged(nameof(StateTaxAmt));
-            OnPropertyChanged(nameof(StateTaxPct));
-
+                OnPropertyChanged(nameof(FederalTaxAmt));
+                OnPropertyChanged(nameof(FederalTaxPct));
+                OnPropertyChanged(nameof(MedicareAmt));
+                OnPropertyChanged(nameof(MedicarePct));
+                OnPropertyChanged(nameof(SocialSecurityAmt));
+                OnPropertyChanged(nameof(SocialSecurityPct));
+                OnPropertyChanged(nameof(StateTaxAmt));
+                OnPropertyChanged(nameof(StateTaxPct));
+            }
         }
 
 
