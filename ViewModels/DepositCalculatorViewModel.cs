@@ -13,7 +13,7 @@ namespace FinancialCalculator.ViewModels
         public float PaycheckAmount
         {
             get => _depositStore.DepositAmount;
-            set { depositService.UpdateDepositAmount(value); UpdateCalculatedValues(); }
+            set { _depositStore.DepositAmount = value; UpdateCalculatedValues(); }
         }
 
         public float EstimatedYearlyIncome { get => _depositStore.EstimatedyearlyIncome; set { _depositStore.EstimatedyearlyIncome = value; UpdateCalculatedValues(); } }
@@ -128,8 +128,6 @@ namespace FinancialCalculator.ViewModels
         private ViewModelBase? currentlyEditingBudget;
         public ViewModelBase? CurrentlyEditingBudget { get => currentlyEditingBudget; set { currentlyEditingBudget = value;  OnPropertyChanged(nameof(CurrentlyEditingBudget)); } }
 
-        private DepositAllocationService depositService;
-
 
         private List<BudgetDepositViewModel> depositBudgets = new List<BudgetDepositViewModel>();
         public List<BudgetDepositViewModel> DepositBudgets { get => depositBudgets; set { depositBudgets = value; OnPropertyChanged(nameof(DepositBudgets)); } }
@@ -137,10 +135,8 @@ namespace FinancialCalculator.ViewModels
         public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
         {
             _depositStore = new DepositStore(budgetsStore);
-            depositService = new DepositAllocationService(_depositStore, budgetsStore);
+            _depositStore.DepositAmount = 15000;
 
-            depositService.UpdateDepositAmount(15000);
-            depositService.AllocateWholeDeposit();
 
             federalTaxAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.145f);
             medicareAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.0145f);
@@ -155,18 +151,6 @@ namespace FinancialCalculator.ViewModels
             }
             
             CloseEditMenuCommand = new RelayCommand(execute => CloseEditMenu());
-        }
-
-
-        private void DepositChanged(List<int> depositsChanged)
-        {
-            if (depositsChanged.Count == 0) return;
-
-
-            if (depositsChanged.Contains(0))
-            {
-                foreach (BudgetDepositViewModel depositVM in depositBudgets) depositVM.UpdateUI();
-            }
         }
 
 
@@ -186,9 +170,6 @@ namespace FinancialCalculator.ViewModels
             OnPropertyChanged(nameof(SocialSecurityPct));
             OnPropertyChanged(nameof(StateTaxAmt));
             OnPropertyChanged(nameof(StateTaxPct));
-
-
-            foreach (BudgetDepositViewModel depositVM in depositBudgets) depositVM.UpdateUI();
 
         }
 

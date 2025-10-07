@@ -8,37 +8,51 @@ namespace FinancialCalculator.Stores
     internal class DepositStore
     {
 
-        public float DepositAmount { get => depositAmount; set {  depositAmount = MathF.Max(0, value); } }
-        public float TakeHomeAmount { get
+        private float depositAmount = 0;
+        public float DepositAmount 
+        { 
+            get => depositAmount;
+            set
             {
-                return MathF.Max(0, DepositAmount - depositDeductions.Sum(deduction => deduction.DepositAmtPct.Amount));
+                depositAmount = MathF.Max(0, value);
+                PublishDepositChanged(depositService.AllocateWholeDeposit());
             }
         }
 
-
-        public float EstimatedyearlyIncome { get => estimatedYearlyIncome; set { estimatedYearlyIncome = MathF.Max(0, value); } }
-        public int MonthsCoveredByDeposit { get 
-            { 
-                if(estimatedYearlyIncome == 0) return 0;
-                else return (int)MathF.Ceiling((depositAmount / estimatedYearlyIncome) * 12);
-            } }
+        public float TakeHomeAmount 
+        { 
+            get => MathF.Max(0, DepositAmount - depositDeductions.Sum(deduction => deduction.DepositAmtPct.Amount));
+        }
 
 
-        private float depositAmount = 0;
-        private Dictionary<int, BudgetDeposit> deposits = new Dictionary<int, BudgetDeposit>();
-        private List<BudgetDeposit> depositDeductions = new List<BudgetDeposit>();
-
-        
         private float estimatedYearlyIncome = 0;
+        public float EstimatedyearlyIncome 
+        { 
+            get => estimatedYearlyIncome; 
+            set => estimatedYearlyIncome = MathF.Max(0, value); 
+        }
 
-        public IReadOnlyDictionary<int, BudgetDeposit> BudgetDeposits { get => deposits; }
+        public int MonthsCoveredByDeposit 
+        {
+            get => estimatedYearlyIncome == 0 ? 0 : (int)MathF.Ceiling((depositAmount / estimatedYearlyIncome) * 12);
+        }
 
 
         public BudgetStore budgetStore;
+        private DepositAllocationService depositService;
+        public IReadOnlyDictionary<int, BudgetDeposit> BudgetDeposits => deposits;
+
+
+        public event Action<List<int>>? DepositsChanged;
+        
+        private Dictionary<int, BudgetDeposit> deposits = new();
+        private List<BudgetDeposit> depositDeductions = new();
+
 
         public DepositStore(BudgetStore _budgetStore)
         {
             budgetStore = _budgetStore;
+            depositService = new DepositAllocationService(this, budgetStore);
 
             depositDeductions.Add(new BudgetDeposit(-2, new AmountPercentModel(() => DepositAmount, initialPercent: 0.145f)));
             depositDeductions.Add(new BudgetDeposit(-3, new AmountPercentModel(() => DepositAmount, initialPercent: 0.014f)));
@@ -63,11 +77,11 @@ namespace FinancialCalculator.Stores
 
         }
 
-        public float GetDepositAmount(bool preTaxAmount = false)
+        private void PublishDepositChanged(List<int> depositsChanged)
         {
-            if (preTaxAmount) return DepositAmount;
-            else return TakeHomeAmount;
+            DepositsChanged?.Invoke(depositsChanged);
         }
+
 
         public float GetBudgetDepositAmount(int depositID)
         {
@@ -76,9 +90,6 @@ namespace FinancialCalculator.Stores
         public float GetBudgetReferenceAmount(int depositID) => budgetStore.IsBudgetPreTax(depositID) ? DepositAmount : TakeHomeAmount;
 
         public float SetBudgetDepositAmt(int depositID, float amount) => deposits[depositID].DepositAmtPct.Amount = amount;
-        public float SetBudgetDepositPct(int depositID, float percent) => deposits[depositID].DepositAmtPct.Percent = percent;
-        public float SetDepositDeductionAmt(int deductionID, float amount) => depositDeductions[deductionID].DepositAmtPct.Amount = amount;
 
-        public Action<List<int>> DepositsChanged;
     }
 }

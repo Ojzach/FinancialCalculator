@@ -60,12 +60,11 @@ namespace FinancialCalculator.ViewModels
         }
 
 
-        public float MaxAmt { get => budget.GetMaxMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(budget.ID)); }
-        public float MinAmt { get => budget.GetMinMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(budget.ID)); }
+        public float MaxAmt { get => budget.MaxDepositAmount(depositStore.GetBudgetReferenceAmount(budget.ID)); }
+        public float MinAmt { get => budget.MinDepositAmount(depositStore.GetBudgetReferenceAmount(budget.ID)); }
 
 
         public ICommand EditBudgetCommand { get; set; }
-
 
 
 
@@ -80,6 +79,8 @@ namespace FinancialCalculator.ViewModels
             budget = _budgetStore.GetBudget(_budgetID);
             depositStore = _depositStore;
 
+            depositStore.DepositsChanged += OnDepositChanged;
+
             foreach (int budgetID in budget.ChildBudgets)
             {
                 SubItems.Add(new BudgetDepositViewModel(budgetID, _budgetStore, _depositStore));
@@ -93,12 +94,17 @@ namespace FinancialCalculator.ViewModels
         public Action<ViewModelBase> EditBudgetAction;
 
 
-        public void UpdateUI()
+        private void OnDepositChanged(List<int> depositsChanged)
+        {
+            if (depositsChanged.Contains(0) || depositsChanged.Contains(budgetID)) RefreshUI();
+        }
+
+        public void RefreshUI()
         {
             OnPropertyChanged(nameof(UsrDepositPct));
             OnPropertyChanged(nameof(UsrDepositAmt));
 
-            foreach(BudgetDepositViewModel budgetVM in SubItems) budgetVM.UpdateUI();
+            foreach(BudgetDepositViewModel budgetVM in SubItems) budgetVM.RefreshUI();
         }
 
     }

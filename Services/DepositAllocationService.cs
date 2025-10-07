@@ -22,19 +22,13 @@ namespace FinancialCalculator.Services
             budgetStore = _budgetStore;
         }
 
-        public void UpdateDepositAmount(float newDepositAmount)
-        {
-            depositStore.DepositAmount = newDepositAmount;
-
-            AllocateWholeDeposit();
-        }
-
-        public void AllocateWholeDeposit()
+        public List<int> AllocateWholeDeposit()
         {
             Allocate(-1, depositStore.TakeHomeAmount, depositStore.BudgetDeposits.Keys.Where(id => depositStore.BudgetDeposits[id].DepositParentID == -1).ToList());
+            return new List<int>() { 0 };
         }
 
-        public void Allocate(int parentDeposit, float allocationAmount, List<int> budgetsToAllocate)
+        public List<int> Allocate(int parentDeposit, float allocationAmount, List<int> budgetsToAllocate)
         {  
 
             if (parentDeposit != -1) depositStore.SetBudgetDepositAmt(parentDeposit, 0);
@@ -93,6 +87,9 @@ namespace FinancialCalculator.Services
                     Allocate(budget , depositStore.BudgetDeposits[budget].DepositAmtPct.Amount, budgetStore.Budgets[budget].ChildBudgets.ToList());
                 }
             }
+
+
+            return changedDeposits;
             /*
             //Find the sum of the budgets that are fixed amounts. These are not editable so they will be subtracted out of rebalance
             //Where function does not add fixed cost budgets that are also user set as to not double subtract
