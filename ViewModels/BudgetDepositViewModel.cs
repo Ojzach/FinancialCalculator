@@ -38,30 +38,28 @@ namespace FinancialCalculator.ViewModels
         public bool IsUsrSet { get => depositStore.BudgetDeposits[budgetID].DepositIsUserSet; set { depositStore.BudgetDeposits[budgetID].DepositIsUserSet = value; OnPropertyChanged(nameof(IsUsrSet)); } }
         public bool IsSetByAmt { get => depositAmtPct.IsSetByAmount; }
 
-        public float UsrDepositPct { get => DepositPct; set { IsUsrSet = true; DepositPct = value; OnPropertyChanged(nameof(IsSetByAmt));} }
-        public float DepositPct { 
-            get => DepositAmt / depositStore.GetBudgetReferenceAmount(budgetID); 
-            set {
-                float startAmt = depositAmtPct.Amount;
+        public float UsrDepositPct 
+        { 
+            get => UsrDepositAmt / depositStore.GetBudgetReferenceAmount(budgetID);
+            set { 
+                IsUsrSet = true;
                 depositAmtPct.Percent = value;
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
-            } 
+                OnPropertyChanged(nameof(IsSetByAmt));} 
         }
-        public float UsrDepositAmt { get => DepositAmt; set { IsUsrSet = true; DepositAmt = value; OnPropertyChanged(nameof(IsSetByAmt)); } }
-        public float DepositAmt { 
+
+        public float UsrDepositAmt { 
             get => depositAmtPct.Amount + budget.ChildBudgets.Sum(childID => depositStore.GetBudgetDepositAmount(childID)); 
-            set {
-                float startAmt = depositAmtPct.Amount;
+            set 
+            { 
+                IsUsrSet = true;
                 depositAmtPct.Amount = value;
                 OnPropertyChanged(nameof(UsrDepositPct));
-                OnPropertyChanged(nameof(UsrDepositAmt));
+                OnPropertyChanged(nameof(UsrDepositAmt)); 
+                OnPropertyChanged(nameof(IsSetByAmt)); 
             } 
         }
-
-
-        public float MaxAmt { get => budget.MaxDepositAmount(depositStore.GetBudgetReferenceAmount(budget.ID)); }
-        public float MinAmt { get => budget.MinDepositAmount(depositStore.GetBudgetReferenceAmount(budget.ID)); }
 
 
         public ICommand EditBudgetCommand { get; set; }

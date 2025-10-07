@@ -190,7 +190,7 @@ namespace FinancialCalculator.Services
                 BudgetError();
             }*/
         }
-
+        /*
         private Dictionary<BudgetDepositViewModel, float> DistributeAmtAmongBudgets(List<BudgetDepositViewModel> budgets, float amt, Func<BudgetDepositViewModel, float> ratioWeight, Func<BudgetDepositViewModel, float> preAllocatedAmt)
         {
             Dictionary<BudgetDepositViewModel, float> distributedAmts = budgets.ToDictionary(b => b, b => 0f);
@@ -219,12 +219,7 @@ namespace FinancialCalculator.Services
             }
 
             return distributedAmts;
-        }
-
-        public void UpdateSpecificBudgetAmount()
-        {
-
-        }
+        }*/
 
 
         public void AllocationError()
