@@ -32,9 +32,9 @@ namespace FinancialCalculator.Models
             savingsPriority = _priority;
         }
 
-        public override float GetMinMonthlyDepositAmt(float totalDeposit = 0) => 0;
-        public override float GetMaxMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt();
-        public override float GetRecommendedMonthlyDepositAmt(float totalDeposit = 0) => savingsGoalAmount / (float)MonthsTillGoalDate;
+        public override float MinDepositAmount(float referenceDeposit, int numMonths = 1) => 0;
+        public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1) => (savingsGoalAmount / (float)MonthsTillGoalDate) * numMonths;
 
         public override ViewModelBase ToViewModel() => new SavingsBudgetViewModel(this);
     }

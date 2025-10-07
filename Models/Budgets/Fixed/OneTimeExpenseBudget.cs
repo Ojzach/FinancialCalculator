@@ -18,9 +18,9 @@ namespace FinancialCalculator.Models.Budgets.Fixed
             ExpenseAmt = _expenseAmt;
         }
 
-        public override float GetMinMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt();
-        public override float GetMaxMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt();
-        public override float GetRecommendedMonthlyDepositAmt(float totalDeposit = 0) => ExpenseAmt;
+        public override float MinDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1) => ExpenseAmt;
 
         public override ViewModelBase ToViewModel()
         {

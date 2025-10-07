@@ -16,9 +16,9 @@ namespace FinancialCalculator.Models
             else if(setPct != 0.0f) setAmountPercent.Percent = setPct;
         }
 
-        public override float GetMinMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt(totalDeposit);
-        public override float GetMaxMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt(totalDeposit);
-        public override float GetRecommendedMonthlyDepositAmt(float totalDeposit = 0) => SetAmountPercent.GetAmount(totalDeposit);
+        public override float MinDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1) => SetAmountPercent.GetAmount(referenceDeposit) * numMonths;
 
         public override ViewModelBase ToViewModel() => new FixedBudgetViewModel(this);
     }

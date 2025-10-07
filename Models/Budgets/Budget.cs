@@ -29,9 +29,9 @@ namespace FinancialCalculator.Models
         public void AddChildBudget(int budgetID) => ChildBudgets.Add(budgetID);
         public void AddChildBudget(List<int> budgetIDs) => ChildBudgets.AddRange(budgetIDs);
 
-        public abstract float GetMinMonthlyDepositAmt(float totalDeposit = 0);
-        public abstract float GetMaxMonthlyDepositAmt(float totalDeposit = 0);
-        public abstract float GetRecommendedMonthlyDepositAmt(float totalDeposit = 0);
+        public abstract float MinDepositAmount(float referenceDeposit, int numMonths = 1);
+        public abstract float MaxDepositAmount(float referenceDeposit, int numMonths = 1);
+        public abstract float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1);
 
 
         public abstract ViewModelBase ToViewModel();

@@ -21,9 +21,9 @@ namespace FinancialCalculator.Models
             FreqMonths = freqMonths;
         }
 
-        public override float GetMinMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt();
-        public override float GetMaxMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt();
-        public override float GetRecommendedMonthlyDepositAmt(float totalDeposit = 0) => ExpenseAmt / FreqMonths;
+        public override float MinDepositAmount(float referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(numMonths);
+        public override float MaxDepositAmount(float referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(numMonths);
+        public override float RecommendedDepositAmount(float referenceDeposit = 0, int numMonths = 1) => (ExpenseAmt / FreqMonths) * numMonths;
 
         public override ViewModelBase ToViewModel() => new RecurringExpenseBudgetViewModel(this);
     }

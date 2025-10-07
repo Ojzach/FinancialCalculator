@@ -39,7 +39,7 @@ namespace FinancialCalculator.Services
 
             if (parentDeposit != -1) depositStore.SetBudgetDepositAmt(parentDeposit, 0);
 
-            List<int> completedBudgets = new List<int>();
+            List<int> changedDeposits = new List<int>();
 
             //Find the sum of the budgets that are set by the user. These are not editable so they will be subtracted out of rebalance
             int[] userSetDeposits = budgetsToAllocate.Where(id => depositStore.BudgetDeposits[id].DepositIsUserSet).ToArray();
@@ -57,17 +57,19 @@ namespace FinancialCalculator.Services
 
 
 
-            if(budgetsToAllocate.Sum(id => budgetStore.Budgets[id].GetMinMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(id))) <= allocationAmount)
+            if(budgetsToAllocate.Sum(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id))) <= allocationAmount)
             {
 
                 foreach(Budget budget in budgetStore.Budgets.Values.Where(budget => budgetsToAllocate.Contains(budget.ID)))
                 {
-                    depositStore.SetBudgetDepositAmt(budget.ID, budget.GetMinMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(budget.ID)));
-                    allocationAmount = allocationAmount - budget.GetMinMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(budget.ID));
+                    float budgetMinDeposit = budget.MinDepositAmount(depositStore.GetBudgetReferenceAmount(budget.ID));
+
+                    depositStore.SetBudgetDepositAmt(budget.ID, budgetMinDeposit);
+                    allocationAmount = allocationAmount - budgetMinDeposit;
                 }
 
-                completedBudgets.AddRange(budgetsToAllocate.Where(id => budgetStore.Budgets[id].GetMinMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(id)) == budgetStore.Budgets[id].GetMaxMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(id))));
-                budgetsToAllocate.RemoveAll(id => budgetStore.Budgets[id].GetMinMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(id)) == budgetStore.Budgets[id].GetMaxMonthlyDepositAmt(depositStore.GetBudgetReferenceAmount(id)));
+                changedDeposits.AddRange(budgetsToAllocate.Where(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id)) == budgetStore.Budgets[id].MaxDepositAmount(depositStore.GetBudgetReferenceAmount(id))));
+                budgetsToAllocate.RemoveAll(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id)) == budgetStore.Budgets[id].MaxDepositAmount(depositStore.GetBudgetReferenceAmount(id)));
             }
             else
             {
@@ -84,7 +86,7 @@ namespace FinancialCalculator.Services
 
 
             //Allocates The Children
-            foreach(int budget in completedBudgets)
+            foreach(int budget in changedDeposits)
             {
                 if (budgetStore.Budgets[budget].ChildBudgets.Count > 0)
                 {
