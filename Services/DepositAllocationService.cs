@@ -16,7 +16,7 @@ namespace FinancialCalculator.Services
         DepositStore depositStore;
         BudgetStore budgetStore;
 
-        public DepositAllocationService(DepositStore _depositStore, BudgetStore _budgetStore) 
+        public DepositAllocationService(DepositStore _depositStore, BudgetStore _budgetStore)
         {
             depositStore = _depositStore;
             budgetStore = _budgetStore;
@@ -29,9 +29,13 @@ namespace FinancialCalculator.Services
         }
 
         public List<int> Allocate(int parentDeposit, float allocationAmount, List<int> budgetsToAllocate)
-        {  
+        {
 
-            if (parentDeposit != -1) depositStore.SetBudgetDepositAmt(parentDeposit, 0);
+            if (parentDeposit != -1)
+            {
+                depositStore.SetBudgetDepositAmt(parentDeposit, 0);
+                depositStore.BudgetDeposits[parentDeposit].IsDepositAmountInvalid = false;
+            }
 
             List<int> changedDeposits = new List<int>();
 
@@ -43,18 +47,14 @@ namespace FinancialCalculator.Services
                 budgetsToAllocate.Remove(depositID);
             }
 
-            if (allocationAmount < 0)
-            {
-                AllocationError();
-                allocationAmount = 0;
-            }
+            if (allocationAmount < 0) throw new AllocationException("User-set amounts are greater than amount available.");
 
 
 
-            if(budgetsToAllocate.Sum(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id))) <= allocationAmount)
+            if (budgetsToAllocate.Sum(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id))) <= allocationAmount)
             {
 
-                foreach(Budget budget in budgetStore.Budgets.Values.Where(budget => budgetsToAllocate.Contains(budget.ID)))
+                foreach (Budget budget in budgetStore.Budgets.Values.Where(budget => budgetsToAllocate.Contains(budget.ID)))
                 {
                     float budgetMinDeposit = budget.MinDepositAmount(depositStore.GetBudgetReferenceAmount(budget.ID));
 
@@ -67,7 +67,7 @@ namespace FinancialCalculator.Services
             }
             else
             {
-                AllocationError();
+                depositStore.BudgetDeposits[parentDeposit].DepositInvalid("Child budget's minimum amounts are more then the amount available");
                 allocationAmount = 0;
             }
 
@@ -80,11 +80,11 @@ namespace FinancialCalculator.Services
 
 
             //Allocates The Children
-            foreach(int budget in changedDeposits)
+            foreach (int budget in changedDeposits)
             {
                 if (budgetStore.Budgets[budget].ChildBudgets.Count > 0)
                 {
-                    Allocate(budget , depositStore.BudgetDeposits[budget].DepositAmtPct.Amount, budgetStore.Budgets[budget].ChildBudgets.ToList());
+                    Allocate(budget, depositStore.BudgetDeposits[budget].DepositAmtPct.Amount, budgetStore.Budgets[budget].ChildBudgets.ToList());
                 }
             }
 
@@ -221,12 +221,13 @@ namespace FinancialCalculator.Services
             return distributedAmts;
         }*/
 
+    }
 
-        public void AllocationError()
-        {
-            Debug.Print("Allocation Error");
-        }
-        
 
+    internal class AllocationException : Exception
+    {
+        public AllocationException() { }
+        public AllocationException(string message) : base(message) { }
+        public AllocationException(string message, Exception inner) : base(message, inner) { }
     }
 }

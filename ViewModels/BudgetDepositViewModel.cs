@@ -52,7 +52,8 @@ namespace FinancialCalculator.ViewModels
         private ObservableCollection<BudgetDepositViewModel> subItems = new ObservableCollection<BudgetDepositViewModel>();
         public bool IsSubItemsNotEmpty => SubItems.Count > 0;
 
-        public bool IsDepositAmountInValid => depositStore.BudgetDeposits[budgetID].IsDepositAmountInValid;
+        public bool IsDepositAmountInvalid => depositStore.BudgetDeposits[budgetID].IsDepositAmountInvalid;
+        public string DepositInvalidMsg => depositStore.BudgetDeposits[budgetID].DepositInvalidMsg;
         public virtual bool IsAmtEditable { get => (budget is not FillBudget && budget.Name != "Deposit"); }
 
 
@@ -94,7 +95,7 @@ namespace FinancialCalculator.ViewModels
         {
             OnPropertyChanged(nameof(UsrDepositPct));
             OnPropertyChanged(nameof(UsrDepositAmt));
-            OnPropertyChanged(nameof(IsDepositAmountInValid));
+            OnPropertyChanged(nameof(IsDepositAmountInvalid));
 
             foreach (BudgetDepositViewModel budgetVM in SubItems) budgetVM.RefreshUI();
         }

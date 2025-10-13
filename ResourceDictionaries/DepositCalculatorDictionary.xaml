@@ -11,14 +11,15 @@
 
         <StackPanel Orientation="Vertical">
 
-            <Border Background="LightGray" BorderThickness="2" Height="30" HorizontalAlignment="Stretch">
+            <Border Background="LightGray" BorderThickness="2" Height="30" HorizontalAlignment="Stretch" ToolTipService.InitialShowDelay="100">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Style.Triggers >
-                            <DataTrigger Binding="{Binding IsDepositAmountInValid}" Value="true">
+                            <DataTrigger Binding="{Binding IsDepositAmountInvalid}" Value="true">
                                 <Setter Property="BorderBrush" Value="Red"/>
+                                <Setter Property="ToolTip" Value="{Binding DepositInvalidMsg}"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding IsDepositAmountInValid}" Value="false">
+                            <DataTrigger Binding="{Binding IsDepositAmountInvalid}" Value="false">
                                 <Setter Property="BorderBrush" Value="Gray"/>
                             </DataTrigger>
                         </Style.Triggers>

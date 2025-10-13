@@ -19,7 +19,8 @@ namespace FinancialCalculator.Models
         private AmountPercentModel depositAmtPct;
 
         public bool DepositIsUserSet { get; set; } = false;
-        public bool IsDepositAmountInValid { get; set; } = true;
+        public bool IsDepositAmountInvalid { get; set; } = false;
+        public string DepositInvalidMsg { get; set; } = "";
 
         public BudgetDeposit(int depositBudgetID, AmountPercentModel initialAmtPct)
         {
@@ -28,6 +29,12 @@ namespace FinancialCalculator.Models
         }
 
         public void SetParent(int parentBudgetID) => DepositParentID = parentBudgetID;
+
+        public void DepositInvalid(string message)
+        {
+            IsDepositAmountInvalid = true;
+            DepositInvalidMsg = message;
+        }
 
     }
 }
