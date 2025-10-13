@@ -6,19 +6,28 @@ namespace FinancialCalculator.Models
     {
         public override string BudgetType { get => "Fixed"; }
 
-        private AmountPercentModel setAmountPercent = new AmountPercentModel();
-        public AmountPercentModel SetAmountPercent { get => setAmountPercent; }
+        public bool IsSetByAmount { get => isSetByAmount; set => isSetByAmount = value; }
+        public float SetAmount { get => setAmount; set => setAmount = value; }
+        public float SetPercent { get => setPercent; set => setPercent = value; }
+
+
+        private bool isSetByAmount = true;
+        private float setAmount = 0;
+        private float setPercent = 0;
 
 
         public FixedBudget(int id, string name, FinancialAccount associatedFinancialAccount, float setAmt = 0f, float setPct = 0.0f) : base(id, name, associatedFinancialAccount)
         {
-            if(setAmt != 0.0f) setAmountPercent.Amount = setAmt;
-            else if(setPct != 0.0f) setAmountPercent.Percent = setPct;
+            isSetByAmount = setPct != 0.0f ? false : true;
+            setPercent = setAmt;
+            setPercent = setPct;
         }
+
+        public float GetSetAmount(float referenceAmount) => isSetByAmount ? setAmount : setPercent * referenceAmount;
 
         public override float MinDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
         public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
-        public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1) => SetAmountPercent.GetAmount(referenceDeposit) * numMonths;
+        public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1) => GetSetAmount(referenceDeposit);
 
         public override ViewModelBase ToViewModel() => new FixedBudgetViewModel(this);
     }

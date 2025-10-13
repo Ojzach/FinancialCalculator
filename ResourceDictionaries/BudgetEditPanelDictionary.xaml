@@ -38,8 +38,8 @@
             <usercontrols:AmtOrPctSetter 
                 TitleText="Monthly Amount:" 
                 IsSetByAmt="{Binding IsSetByAmt, Mode=TwoWay}" 
-                SetAmount="{Binding SetMthlyDepositAmt, Mode=TwoWay}" 
-                SetPercent="{Binding SetMthlyDepositPct, Mode=TwoWay}"
+                SetAmount="{Binding SetDepositAmt, Mode=TwoWay}" 
+                SetPercent="{Binding SetDepositPct, Mode=TwoWay}"
                 />
             
             

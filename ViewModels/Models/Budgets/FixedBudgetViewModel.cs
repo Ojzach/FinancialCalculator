@@ -14,18 +14,16 @@ namespace FinancialCalculator.ViewModels
         private FixedBudget _fixedBudget => _budget as FixedBudget;
 
         public bool IsSetByAmt { 
-            get => _fixedBudget.SetAmountPercent.IsSetByAmount; 
+            get => _fixedBudget.IsSetByAmount; 
             set 
             {
-                if (value == true && IsSetByAmt != true) _fixedBudget.SetAmountPercent.Amount = 0;
-                else if (value == false && IsSetByAmt != false) _fixedBudget.SetAmountPercent.Percent = 0;
-
+                _fixedBudget.IsSetByAmount = value;
                 OnPropertyChanged(nameof(IsSetByAmt));
             } 
         }
 
-        public float SetMthlyDepositAmt { get => _fixedBudget.SetAmountPercent.Amount; set { _fixedBudget.SetAmountPercent.Amount = value; } }
-        public float SetMthlyDepositPct { get => _fixedBudget.SetAmountPercent.Percent; set { _fixedBudget.SetAmountPercent.Percent = value; } }
+        public float SetDepositAmt { get => _fixedBudget.SetAmount; set { _fixedBudget.SetAmount = value; } }
+        public float SetDepositPct { get => _fixedBudget.SetPercent; set { _fixedBudget.SetPercent = value; } }
 
         public FixedBudgetViewModel(FixedBudget budget) : base(budget)
         {
