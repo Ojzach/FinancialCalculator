@@ -19,6 +19,7 @@ namespace FinancialCalculator.Models
         private AmountPercentModel depositAmtPct;
 
         public bool DepositIsUserSet { get; set; } = false;
+        public bool IsDepositAmountInValid { get; set; } = true;
 
         public BudgetDeposit(int depositBudgetID, AmountPercentModel initialAmtPct)
         {

@@ -11,7 +11,19 @@
 
         <StackPanel Orientation="Vertical">
 
-            <Border Background="LightGray" BorderBrush="Gray" BorderThickness="2" Height="30" HorizontalAlignment="Stretch">
+            <Border Background="LightGray" BorderThickness="2" Height="30" HorizontalAlignment="Stretch">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers >
+                            <DataTrigger Binding="{Binding IsDepositAmountInValid}" Value="true">
+                                <Setter Property="BorderBrush" Value="Red"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsDepositAmountInValid}" Value="false">
+                                <Setter Property="BorderBrush" Value="Gray"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
 
                 <Grid  HorizontalAlignment="Stretch">
                     <Grid.Resources>
