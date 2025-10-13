@@ -53,7 +53,7 @@ namespace FinancialCalculator.Services
                 {
                     float budgetMinDeposit = budget.MinDepositAmount(depositStore.GetBudgetReferenceAmount(budget.ID));
 
-                    depositStore.SetBudgetDepositAmt(budget.ID, budgetMinDeposit);
+                    depositStore.BudgetDeposits[budget.ID].DepositAmtPct.Amount = budgetMinDeposit;
                     allocationAmount = allocationAmount - budgetMinDeposit;
                 }
 

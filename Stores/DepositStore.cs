@@ -89,7 +89,12 @@ namespace FinancialCalculator.Stores
         }
         public float GetBudgetReferenceAmount(int depositID) => budgetStore.IsBudgetPreTax(depositID) ? DepositAmount : TakeHomeAmount;
 
-        public float SetBudgetDepositAmt(int depositID, float amount) => deposits[depositID].DepositAmtPct.Amount = amount;
+        public void UpdatedBudgetSettings(int budgetID) => PublishDepositChanged(depositService.AllocateWholeDeposit());
 
+        public void UpdateDepositValue(int depositID, float amount)
+        {
+            deposits[depositID].DepositAmtPct.Amount = amount;
+            PublishDepositChanged(depositService.AllocateWholeDeposit());
+        }
     }
 }

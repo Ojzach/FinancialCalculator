@@ -76,14 +76,14 @@ namespace FinancialCalculator.ViewModels
             foreach (int budgetID in budget.ChildBudgets)
             {
                 SubItems.Add(new BudgetDepositViewModel(budgetID, _budgetStore, _depositStore));
-                SubItems.Last().EditBudgetAction += (budgetViewModel) => EditBudgetAction?.Invoke(budgetViewModel);
+                SubItems.Last().EditBudgetAction += (id) => EditBudgetAction?.Invoke(id);
             }
 
 
-            EditBudgetCommand = new RelayCommand(execute => EditBudgetAction?.Invoke(budget.ToViewModel()));
+            EditBudgetCommand = new RelayCommand(execute => EditBudgetAction?.Invoke(budgetID));
         }
 
-        public Action<ViewModelBase> EditBudgetAction;
+        public Action<int> EditBudgetAction;
 
 
         private void OnDepositChanged(List<int> depositsChanged)

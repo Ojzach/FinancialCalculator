@@ -21,6 +21,7 @@ namespace FinancialCalculator.ViewModels
 
 
         private DepositStore _depositStore;
+        private BudgetStore _budgetStore;
 
 
         private AmountPercentModel federalTaxAmtPct;
@@ -125,8 +126,8 @@ namespace FinancialCalculator.ViewModels
         private bool isEditPanelOpen = false;
         public bool IsEditPanelOpen { get => isEditPanelOpen; set { isEditPanelOpen = value; OnPropertyChanged(nameof(IsEditPanelOpen)); } }
 
-        private ViewModelBase? currentlyEditingBudget;
-        public ViewModelBase? CurrentlyEditingBudget { get => currentlyEditingBudget; set { currentlyEditingBudget = value;  OnPropertyChanged(nameof(CurrentlyEditingBudget)); } }
+        private int currentlyEditingBudgetID = -1;
+        public ViewModelBase? CurrentlyEditingBudget => _budgetStore.Budgets.Keys.Contains(currentlyEditingBudgetID) ? _budgetStore.Budgets[currentlyEditingBudgetID].ToViewModel() : null;
 
 
         private List<BudgetDepositViewModel> depositBudgets = new List<BudgetDepositViewModel>();
@@ -135,6 +136,7 @@ namespace FinancialCalculator.ViewModels
         public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
         {
             _depositStore = new DepositStore(budgetsStore);
+            _budgetStore = budgetsStore;
 
             _depositStore.DepositsChanged += OnDepositChanged;
 
@@ -181,18 +183,18 @@ namespace FinancialCalculator.ViewModels
 
         public ICommand CloseEditMenuCommand { get; set; }
 
-        private bool editingItem = false;
-        public void OpenEditMenu(ViewModelBase budget)
+        public void OpenEditMenu(int budgetID)
         {
-            editingItem = true;
-            CurrentlyEditingBudget = budget;
+            currentlyEditingBudgetID = budgetID;
+            OnPropertyChanged(nameof(CurrentlyEditingBudget));
             IsEditPanelOpen = true;
         }
 
         public void CloseEditMenu()
         {
+            _depositStore.UpdatedBudgetSettings(currentlyEditingBudgetID);
             IsEditPanelOpen = false;
-            CurrentlyEditingBudget = null;
+            currentlyEditingBudgetID = -1;
         }
     }
 
