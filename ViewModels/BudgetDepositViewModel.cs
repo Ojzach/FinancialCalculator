@@ -13,21 +13,9 @@ namespace FinancialCalculator.ViewModels
 {
     internal class BudgetDepositViewModel : ViewModelBase
     {
-        private ObservableCollection<BudgetDepositViewModel> subItems = new ObservableCollection<BudgetDepositViewModel>();
-        public ObservableCollection<BudgetDepositViewModel> SubItems { 
-            get => subItems; 
-            set { 
-                subItems = value; 
-                OnPropertyChanged(nameof(SubItems)); 
-                OnPropertyChanged(nameof(SubItemVisibility));
-            } }
-
-        protected BudgetDepositViewModel UnallocattedBudget;
 
         public virtual bool IsAmtEditable { get => (budget is not FillBudget && budget.Name != "Deposit"); }
-        private bool _isVisible = true;
-        public bool IsVisible { get => _isVisible; set { _isVisible = value; OnPropertyChanged(nameof(IsVisible)); } }
-        public Visibility SubItemVisibility { get => SubItems.Count > 0 ? Visibility.Visible : Visibility.Collapsed; }
+        public bool IsSubItemsNotEmpty => SubItems.Count > 0;
 
 
 
@@ -49,7 +37,8 @@ namespace FinancialCalculator.ViewModels
                 OnPropertyChanged(nameof(IsSetByAmt));} 
         }
 
-        public float UsrDepositAmt { 
+        public float UsrDepositAmt 
+        { 
             get => depositAmtPct.Amount + budget.ChildBudgets.Sum(childID => depositStore.GetBudgetDepositAmount(childID)); 
             set 
             { 
@@ -60,6 +49,18 @@ namespace FinancialCalculator.ViewModels
                 OnPropertyChanged(nameof(IsSetByAmt)); 
             } 
         }
+
+        public ObservableCollection<BudgetDepositViewModel> SubItems
+        {
+            get => subItems;
+            set
+            {
+                subItems = value;
+                OnPropertyChanged(nameof(SubItems));
+                OnPropertyChanged(nameof(IsSubItemsNotEmpty));
+            }
+        }
+        private ObservableCollection<BudgetDepositViewModel> subItems = new ObservableCollection<BudgetDepositViewModel>();
 
 
         public ICommand EditBudgetCommand { get; set; }

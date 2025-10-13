@@ -5,6 +5,7 @@
         
 
     <converters:PercentConverter x:Key="PercentConverter"/>
+    <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
     <DataTemplate x:Key="DepositBudget">
 
@@ -96,7 +97,7 @@
             </Border>
 
 
-            <ListBox VerticalAlignment="Stretch" BorderThickness="0"  ItemsSource="{Binding SubItems}" Visibility="{Binding SubItemVisibility}" ItemTemplate="{DynamicResource DepositBudget}">
+            <ListBox VerticalAlignment="Stretch" BorderThickness="0"  ItemsSource="{Binding SubItems}" Visibility="{Binding IsSubItemsNotEmpty, Converter={StaticResource BoolToVisibilityConverter}}" ItemTemplate="{DynamicResource DepositBudget}">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
