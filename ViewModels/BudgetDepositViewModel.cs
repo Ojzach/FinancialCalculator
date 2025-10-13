@@ -28,7 +28,7 @@ namespace FinancialCalculator.ViewModels
 
         public float UsrDepositAmt 
         { 
-            get => depositAmtPct.Amount + budget.ChildBudgets.Sum(childID => depositStore.GetBudgetDepositAmount(childID)); 
+            get => depositAmtPct.Amount; 
             set 
             { 
                 IsUsrSet = true;

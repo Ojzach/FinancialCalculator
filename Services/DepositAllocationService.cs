@@ -30,12 +30,7 @@ namespace FinancialCalculator.Services
 
         public List<int> Allocate(int parentDeposit, float allocationAmount, List<int> budgetsToAllocate)
         {
-
-            if (parentDeposit != -1)
-            {
-                depositStore.SetBudgetDepositAmt(parentDeposit, 0);
-                depositStore.BudgetDeposits[parentDeposit].IsDepositAmountInvalid = false;
-            }
+            if(parentDeposit != -1) depositStore.BudgetDeposits[parentDeposit].IsDepositAmountInvalid = false;
 
             List<int> changedDeposits = new List<int>();
 
@@ -71,12 +66,6 @@ namespace FinancialCalculator.Services
                 allocationAmount = 0;
             }
 
-
-
-
-
-
-            if (parentDeposit != -1) depositStore.SetBudgetDepositAmt(parentDeposit, allocationAmount);
 
 
             //Allocates The Children
