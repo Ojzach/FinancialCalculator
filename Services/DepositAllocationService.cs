@@ -28,9 +28,12 @@ namespace FinancialCalculator.Services
             return new List<int>() { 0 };
         }
 
-        public List<int> Allocate(int parentDeposit, float allocationAmount, List<int> budgetsToAllocate)
+        public List<int> Allocate(int parentDeposit, float allocationAmount, List<int> depositsToAllocate)
         {
-            if(parentDeposit != -1) depositStore.BudgetDeposits[parentDeposit].IsDepositAmountInvalid = false;
+            if(parentDeposit != -1) depositStore.BudgetDeposits[parentDeposit].IsDepositAmountInvalid = false; //Resets Error Outline
+
+            Dictionary<int, float> changedDeposits = new Dictionary<int, float>();
+
 
             List<int> changedDeposits = new List<int>();
 
@@ -38,27 +41,26 @@ namespace FinancialCalculator.Services
             int[] userSetDeposits = budgetsToAllocate.Where(id => depositStore.BudgetDeposits[id].DepositIsUserSet).ToArray();
             foreach (int depositID in userSetDeposits)
             {
-                allocationAmount = allocationAmount - depositStore.GetBudgetDepositAmount(depositID);
-                budgetsToAllocate.Remove(depositID);
+                allocationAmount =- depositStore.GetBudgetDepositAmount(depositID);
+                depositsToAllocate.Remove(depositID);
             }
 
             if (allocationAmount < 0) throw new AllocationException("User-set amounts are greater than amount available.");
 
 
-
-            if (budgetsToAllocate.Sum(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id))) <= allocationAmount)
+            //Allocate Minimum Amount To All
+            if (depositsToAllocate.Sum(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id))) <= allocationAmount)
             {
 
-                foreach (Budget budget in budgetStore.Budgets.Values.Where(budget => budgetsToAllocate.Contains(budget.ID)))
+                foreach (Budget budget in budgetStore.Budgets.Values.Where(budget => depositsToAllocate.Contains(budget.ID)))
                 {
                     float budgetMinDeposit = budget.MinDepositAmount(depositStore.GetBudgetReferenceAmount(budget.ID));
 
-                    depositStore.BudgetDeposits[budget.ID].DepositAmtPct.Amount = budgetMinDeposit;
+                    changedDeposits[budget.ID] = budgetMinDeposit;
                     allocationAmount = allocationAmount - budgetMinDeposit;
                 }
 
-                changedDeposits.AddRange(budgetsToAllocate.Where(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id)) == budgetStore.Budgets[id].MaxDepositAmount(depositStore.GetBudgetReferenceAmount(id))));
-                budgetsToAllocate.RemoveAll(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id)) == budgetStore.Budgets[id].MaxDepositAmount(depositStore.GetBudgetReferenceAmount(id)));
+                depositsToAllocate.RemoveAll(id => budgetStore.Budgets[id].MinDepositAmount(depositStore.GetBudgetReferenceAmount(id)) == budgetStore.Budgets[id].MaxDepositAmount(depositStore.GetBudgetReferenceAmount(id)));
             }
             else
             {
@@ -68,17 +70,20 @@ namespace FinancialCalculator.Services
 
 
 
-            //Allocates The Children
-            foreach (int budget in changedDeposits)
+            changedDeposits = changedDeposits.Where(deposit => deposit.Value != depositStore.GetBudgetDepositAmount(deposit.Key)).ToDictionary();
+
+            foreach (KeyValuePair<int, float> deposit in changedDeposits)
             {
-                if (budgetStore.Budgets[budget].ChildBudgets.Count > 0)
+                depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount = deposit.Value;
+
+                if (budgetStore.Budgets[deposit.Key].ChildBudgets.Count > 0)
                 {
-                    Allocate(budget, depositStore.BudgetDeposits[budget].DepositAmtPct.Amount, budgetStore.Budgets[budget].ChildBudgets.ToList());
+                    Allocate(deposit.Key, depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount, budgetStore.Budgets[deposit.Key].ChildBudgets.ToList());
                 }
             }
 
 
-            return changedDeposits;
+            return changedDeposits.Keys.ToList();
             /*
             //Find the sum of the budgets that are fixed amounts. These are not editable so they will be subtracted out of rebalance
             //Where function does not add fixed cost budgets that are also user set as to not double subtract
