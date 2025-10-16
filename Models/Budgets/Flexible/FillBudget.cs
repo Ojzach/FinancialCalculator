@@ -12,7 +12,7 @@ namespace FinancialCalculator.Models
 
         public override string BudgetType { get => "Fill"; }
 
-        public FillBudget(int id, string name, FinancialAccount associatedFinancialAccount) : base(id, name, associatedFinancialAccount)
+        public FillBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount) : base(id, name, priority, associatedFinancialAccount)
         {
         }
 

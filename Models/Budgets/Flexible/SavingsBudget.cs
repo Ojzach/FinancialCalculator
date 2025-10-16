@@ -12,7 +12,6 @@ namespace FinancialCalculator.Models
 
         private float savingsGoalAmount;
         private LocalDate goalDate = DateTime.Now.ToLocalDateTime().Date;
-        private BudgetPriority savingsPriority;
 
 
         private int MonthsTillGoalDate
@@ -25,15 +24,14 @@ namespace FinancialCalculator.Models
         }
 
 
-        public SavingsBudget(int id, string name, FinancialAccount associatedFinancialAccount, float _savingsGoalAmt = 0f, LocalDate _goalDate = default(LocalDate), BudgetPriority _priority = BudgetPriority.Low) : base(id, name, associatedFinancialAccount)
+        public SavingsBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, float _savingsGoalAmt = 0f, LocalDate _goalDate = default) : base(id, name, priority, associatedFinancialAccount)
         {
             savingsGoalAmount = _savingsGoalAmt;
-            goalDate = _goalDate == default(LocalDate) ? DateTime.Now.ToLocalDateTime().Date : _goalDate;
-            savingsPriority = _priority;
+            goalDate = _goalDate == default ? DateTime.Now.ToLocalDateTime().Date : _goalDate;
         }
 
         public override float MinDepositAmount(float referenceDeposit, int numMonths = 1) => 0;
-        public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => savingsGoalAmount - CurrentBudgetBalance;
         public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1) => (savingsGoalAmount / (float)MonthsTillGoalDate) * numMonths;
 
         public override ViewModelBase ToViewModel() => new SavingsBudgetViewModel(this);

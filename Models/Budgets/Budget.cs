@@ -12,6 +12,7 @@ namespace FinancialCalculator.Models
 
         public int ID { get; private set; }
         public string Name = "";
+        public BudgetPriority Priority;
         public abstract string BudgetType { get; }
         public FinancialAccount AssociatedFinancialAccount;
         public List<int> ChildBudgets = new List<int>();
@@ -19,10 +20,11 @@ namespace FinancialCalculator.Models
         public float CurrentBudgetBalance => localCurrentBudgetBalance;
         private float localCurrentBudgetBalance = 0;
 
-        public Budget(int id, string name, FinancialAccount associatedFinancialAccount)
+        public Budget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount)
         {
             ID = id;
             Name = name;
+            Priority = priority;
             AssociatedFinancialAccount = associatedFinancialAccount;
         }
 
@@ -39,11 +41,11 @@ namespace FinancialCalculator.Models
 
     public enum BudgetPriority
     {
-        None,
-        VeryLow,
-        Low,
-        Medium,
-        High,
-        VeryHigh
+        None = 0,
+        VeryLow = 1,
+        Low = 2,
+        Medium = 4,
+        High = 10,
+        VeryHigh = 20
     }
 }

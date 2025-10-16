@@ -17,7 +17,7 @@ namespace FinancialCalculator.Models
         private float minMonthlyAmt = 0;
         private float minMonthlyPct = 0;
 
-        public FlexibleBudget(int id, string name, FinancialAccount associatedFinancialAccount) : base(id, name, associatedFinancialAccount)
+        public FlexibleBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount) : base(id, name, priority, associatedFinancialAccount)
         {
         }
 
