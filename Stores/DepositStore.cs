@@ -87,7 +87,7 @@ namespace FinancialCalculator.Stores
         {
             return deposits[depositID].DepositAmtPct.Amount;
         }
-        public float GetBudgetReferenceAmount(int depositID) => budgetStore.IsBudgetPreTax(depositID) ? DepositAmount : TakeHomeAmount;
+        public float GetBudgetReferenceAmount(int depositID) => budgetStore.IsBudgetPreTax(GetDepositBudget(depositID).ID) ? DepositAmount : TakeHomeAmount;
 
         public void UpdatedBudgetSettings(int budgetID) => PublishDepositChanged(depositService.AllocateWholeDeposit());
 
@@ -96,5 +96,11 @@ namespace FinancialCalculator.Stores
             deposits[depositID].DepositAmtPct.Amount = amount;
             PublishDepositChanged(depositService.AllocateWholeDeposit());
         }
+
+        public Budget GetDepositBudget(int depositID) => budgetStore.GetBudget(BudgetDeposits[depositID].DepositBudgetID);
+        public Dictionary<int, Budget> GetDepositBudgets(List<int> deposits) => deposits.ToDictionary(depositID => depositID, depositID => GetDepositBudget(depositID));
+
+
+        public BudgetDeposit GetDeposit(int depositID) => BudgetDeposits[depositID];
     }
 }
