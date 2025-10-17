@@ -41,11 +41,11 @@ namespace FinancialCalculator.Models
 
     public enum BudgetPriority
     {
-        None = 0,
-        VeryLow = 1,
-        Low = 2,
-        Medium = 4,
-        High = 10,
-        VeryHigh = 20
+        None = 1,
+        VeryLow = 2,
+        Low = 4,
+        Medium = 10,
+        High = 50,
+        VeryHigh = 100
     }
 }
