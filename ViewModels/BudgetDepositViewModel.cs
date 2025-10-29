@@ -11,6 +11,8 @@ namespace FinancialCalculator.ViewModels
         public string BudgetName { get => budget.Name; }
         public string BudgetType { get => budget.BudgetType; }
 
+        public string BudgetPriority { get => budget.Priority.ToString(); }
+
 
         public bool IsUsrSet { get => depositStore.BudgetDeposits[budgetID].DepositIsUserSet; set { depositStore.BudgetDeposits[budgetID].DepositIsUserSet = value; OnPropertyChanged(nameof(IsUsrSet)); } }
         public bool IsSetByAmt { get => depositAmtPct.IsSetByAmount; }
