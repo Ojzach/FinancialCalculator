@@ -89,6 +89,21 @@ namespace FinancialCalculator.Services
             }
 
             foreach (KeyValuePair<int, float> depositAmt in DistributeAmtAmongDeposits(
+                depositsToAllocate.Where(id => depositBudgets[id].Priority == BudgetPriority.Medium || depositBudgets[id].Priority == BudgetPriority.Low || depositBudgets[id].Priority == BudgetPriority.VeryLow).ToList(),
+                allocationAmount,
+                (id) => (float)depositBudgets[id].Priority,
+                (id) => changedDeposits.ContainsKey(id) ? changedDeposits[id] : 0,
+                (id) => depositBudgets[id].MaxDepositAmount(RefAmt(id))
+                ))
+            {
+                if (changedDeposits.ContainsKey(depositAmt.Key)) changedDeposits[depositAmt.Key] += depositAmt.Value;
+                else changedDeposits[depositAmt.Key] = depositAmt.Value;
+
+                allocationAmount -= depositAmt.Value;
+                depositsToAllocate.Remove(depositAmt.Key);
+            }
+
+            foreach (KeyValuePair<int, float> depositAmt in DistributeAmtAmongDeposits(
                 depositsToAllocate,
                 allocationAmount,
                 (id) => (float)depositBudgets[id].Priority,
