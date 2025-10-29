@@ -98,6 +98,7 @@ namespace FinancialCalculator.ViewModels
             OnPropertyChanged(nameof(UsrDepositPct));
             OnPropertyChanged(nameof(UsrDepositAmt));
             OnPropertyChanged(nameof(IsDepositAmountInvalid));
+            OnPropertyChanged(nameof(BudgetPriority));
 
             foreach (BudgetDepositViewModel budgetVM in SubItems) budgetVM.RefreshUI();
         }

@@ -25,7 +25,12 @@
                 <TextBlock Text="{Binding CurrentBalance, StringFormat='c'}"/>
             </StackPanel>
 
-            <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource BudgetEditPanelTemplateSelector}" Margin="0, 15, 0, 0"/>
+            <StackPanel Orientation="Horizontal" Margin="5, 0, 0, 0">
+                <TextBlock Text="Priority: " VerticalAlignment="Center"/>
+                <ComboBox SelectedItem="{Binding SelectedBudgetPriority}" ItemsSource="{Binding BudgetPriorities}" Width="150" HorizontalAlignment="Left" Margin="5, 0, 0, 0"/>
+            </StackPanel>
+
+            <ContentControl ContentTemplateSelector="{StaticResource BudgetEditPanelTemplateSelector}" Margin="0, 15, 0, 0"/>
 
         </StackPanel>
 
@@ -50,6 +55,8 @@
     <DataTemplate x:Key="FlexibleBudget_EditPanelTemplate">
 
         <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+            <CheckBox Content="Enable Max Amount" IsChecked="{Binding IsMinAmtSet}"/>
 
 
         </StackPanel>
