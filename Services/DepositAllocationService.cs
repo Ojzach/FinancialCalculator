@@ -50,28 +50,6 @@ namespace FinancialCalculator.Services
                 throw new AllocationException("User-set amounts are greater than amount available.");
 
 
-            //Allocate Minimum Amount To All
-            float sumMinAmounts = depositsToAllocate.Sum(id => depositBudgets[id].MinDepositAmount(RefAmt(id)));
-            if (sumMinAmounts <= allocationAmount)
-            {
-
-                foreach (int depositID in depositsToAllocate)
-                {
-                    float budgetMinDeposit = depositBudgets[depositID].MinDepositAmount(RefAmt(depositID));
-                    changedDeposits[depositID] = budgetMinDeposit;
-                    allocationAmount -= budgetMinDeposit;
-                }
-
-                depositsToAllocate.RemoveAll(id => depositBudgets[id].MinDepositAmount(RefAmt(id)) == depositBudgets[id].MaxDepositAmount(RefAmt(id)));
-            }
-            else
-            {
-                if (parentDeposit != -1)
-                    depositStore.BudgetDeposits[parentDeposit].DepositInvalid("Child budget's minimum amounts are more then the amount available");
-                else new AllocationException("Top level budgets minimum amounts are more then the amount available");
-            }
-
-
             void Distribute(List<int> deposits)
             {
                 Dictionary<int, float> distributions = DistributeAmtAmongDeposits(
@@ -94,19 +72,46 @@ namespace FinancialCalculator.Services
                 }
             }
 
+            //Allocate Minimum Amount To All
+            float sumMinAmounts = depositsToAllocate.Sum(id => depositBudgets[id].MinDepositAmount(RefAmt(id)));
+            if (sumMinAmounts <= allocationAmount)
+            {
 
-            var highPriority = depositsToAllocate.Where(id =>
-                depositBudgets[id].Priority == BudgetPriority.VeryHigh
-                || depositBudgets[id].Priority == BudgetPriority.High).ToList();
-            Distribute(highPriority);
+                foreach (int depositID in depositsToAllocate)
+                {
+                    float budgetMinDeposit = depositBudgets[depositID].MinDepositAmount(RefAmt(depositID));
+                    changedDeposits[depositID] = budgetMinDeposit;
+                    allocationAmount -= budgetMinDeposit;
+                }
 
-            var mediumPriority = depositsToAllocate.Where(id =>
-                depositBudgets[id].Priority == BudgetPriority.Medium
-                || depositBudgets[id].Priority == BudgetPriority.Low
-                || depositBudgets[id].Priority == BudgetPriority.VeryLow).ToList();
-            Distribute(mediumPriority);
+                depositsToAllocate.RemoveAll(id => depositBudgets[id].MinDepositAmount(RefAmt(id)) == depositBudgets[id].MaxDepositAmount(RefAmt(id)));
 
-            Distribute(depositsToAllocate);
+                var highPriority = depositsToAllocate.Where(id =>
+                depositBudgets[id].Priority != BudgetPriority.None).ToList();
+                Distribute(highPriority);
+
+            }
+            else
+            {
+                if (parentDeposit != -1)
+                    depositStore.BudgetDeposits[parentDeposit].DepositInvalid("Child budget's minimum amounts are more then the amount available");
+                else new AllocationException("Top level budgets minimum amounts are more then the amount available");
+
+                var highPriority = depositsToAllocate.Where(id =>
+                    depositBudgets[id].Priority == BudgetPriority.VeryHigh
+                    || depositBudgets[id].Priority == BudgetPriority.High).ToList();
+                Distribute(highPriority);
+
+                var mediumPriority = depositsToAllocate.Where(id =>
+                    depositBudgets[id].Priority == BudgetPriority.Medium
+                    || depositBudgets[id].Priority == BudgetPriority.Low
+                    || depositBudgets[id].Priority == BudgetPriority.VeryLow).ToList();
+                Distribute(mediumPriority);
+
+                
+            }
+
+            Distribute(depositsToAllocate); //Distribute All Leftover Deposits
 
 
 
