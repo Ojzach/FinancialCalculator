@@ -89,7 +89,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBox Text="{Binding UsrDepositPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsAmtEditable}"/>
+                            <TextBox Text="{Binding UsrDepositPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}"/>
                         </Border>
 
                         <Border BorderBrush="Green" Grid.Column="1" Margin="3">
@@ -112,7 +112,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBox Text="{Binding UsrDepositAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsAmtEditable}"/>
+                            <TextBox Text="{Binding UsrDepositAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}"/>
                         </Border>
 
                         <Button Command="{Binding EditBudgetCommand}" Grid.Column="3" MaxWidth="20" Margin="5">

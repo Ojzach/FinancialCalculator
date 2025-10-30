@@ -56,8 +56,6 @@ namespace FinancialCalculator.ViewModels
 
         public bool IsDepositAmountInvalid => depositStore.BudgetDeposits[budgetID].IsDepositAmountInvalid;
         public string DepositInvalidMsg => depositStore.BudgetDeposits[budgetID].DepositInvalidMsg;
-        public virtual bool IsAmtEditable { get => (budget is not FillBudget && budget.Name != "Deposit"); }
-
 
         public ICommand EditBudgetCommand { get; set; }
 
