@@ -1,6 +1,7 @@
 ﻿using FinancialCalculator.ViewModels;
 using NodaTime;
 using NodaTime.Extensions;
+using System.Diagnostics;
 
 namespace FinancialCalculator.Models
 {
@@ -13,6 +14,17 @@ namespace FinancialCalculator.Models
         private float savingsGoalAmount;
         private LocalDate goalDate = DateTime.Now.ToLocalDateTime().Date;
 
+        public float SavingsGoalAmount
+        {
+            get => savingsGoalAmount;
+            set => savingsGoalAmount = value;
+        }
+
+        public LocalDate GoalDate
+        {
+            get => goalDate;
+            set => goalDate = value;
+        }
 
         private int MonthsTillGoalDate
         {
@@ -32,7 +44,13 @@ namespace FinancialCalculator.Models
 
         public override float MinDepositAmount(float referenceDeposit, int numMonths = 1) => 0;
         public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => savingsGoalAmount - CurrentBudgetBalance;
-        public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1) => (savingsGoalAmount / (float)MonthsTillGoalDate) * numMonths;
+        public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1)
+        {
+            int MonthsLeft = MonthsTillGoalDate;
+            if (MonthsLeft > 1) return (savingsGoalAmount / MonthsLeft) * numMonths;
+            else return savingsGoalAmount - CurrentBudgetBalance;
+
+        }
 
         public override ViewModelBase ToViewModel() => new SavingsBudgetViewModel(this);
     }

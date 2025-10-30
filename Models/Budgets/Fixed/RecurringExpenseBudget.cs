@@ -12,19 +12,66 @@ namespace FinancialCalculator.Models
 
         public override string BudgetType { get => "Recurring Expense"; }
 
-        public float ExpenseAmt = 0f;
-        public float FreqMonths = 1f;
-
-        public RecurringExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, float _expenseAmt = 0, float freqMonths = 1, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
+        public float ExpenseAmount
         {
-            ExpenseAmt = _expenseAmt;
-            FreqMonths = freqMonths;
+            get => expenseAmount;
+            set => expenseAmount = value;
         }
 
-        public override float MinDepositAmount(float referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(numMonths);
-        public override float MaxDepositAmount(float referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(numMonths);
-        public override float RecommendedDepositAmount(float referenceDeposit = 0, int numMonths = 1) => (ExpenseAmt / FreqMonths) * numMonths;
+        public int FrequencyValue
+        {
+            get => frequencyValue;
+            set => frequencyValue = Math.Max(1, value);
+        }
+
+        public RecurringFrequencyType FrequencyType
+        {
+            get => frequencyType;
+            set => frequencyType = value;
+        }
+
+        private float expenseAmount = 0f;
+        private int frequencyValue = 1;
+        private RecurringFrequencyType frequencyType = RecurringFrequencyType.Month;
+
+        private float FrequencyInMonths => frequencyType switch
+        {
+            RecurringFrequencyType.Day => frequencyValue / 30f,
+            RecurringFrequencyType.Week => frequencyValue / 4f,
+            RecurringFrequencyType.Month => frequencyValue,
+            RecurringFrequencyType.Year => frequencyValue * 12f,
+            _ => frequencyValue
+        };
+
+        public RecurringExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, float expenseAmount = 0, int frequencyValue = 1, RecurringFrequencyType frequencyType = RecurringFrequencyType.Month, List<int>? childBudgets = null)
+            : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
+        {
+            ExpenseAmount = expenseAmount;
+            FrequencyValue = frequencyValue;
+            FrequencyType = frequencyType;
+        }
+
+        public override float MinDepositAmount(float referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override float MaxDepositAmount(float referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override float RecommendedDepositAmount(float referenceDeposit = 0, int numMonths = 1)
+        {
+
+            if (FrequencyInMonths <= 0)
+            {
+                return 0f;
+            }
+
+            return (ExpenseAmount / FrequencyInMonths) * numMonths;
+        }
 
         public override ViewModelBase ToViewModel() => new RecurringExpenseBudgetViewModel(this);
+    }
+
+    public enum RecurringFrequencyType
+    {
+        Day,
+        Week,
+        Month,
+        Year
     }
 }

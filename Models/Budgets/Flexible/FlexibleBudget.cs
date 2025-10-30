@@ -1,6 +1,7 @@
 ﻿using FinancialCalculator.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,11 @@ namespace FinancialCalculator.Models
         {
         }
 
-        public override float MinDepositAmount(float referenceDeposit, int numMonths = 1) => MathF.Max(minMonthlyPct * referenceDeposit, minMonthlyAmt) * numMonths;
+        public override float MinDepositAmount(float referenceDeposit, int numMonths = 1)
+        {
+            return MathF.Max(minMonthlyPct * referenceDeposit, minMonthlyAmt) * numMonths;
+        }
+
         public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => MathF.Min(maxMonthlyPct * referenceDeposit, maxMonthlyAmt) * numMonths;
         public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1) => MinDepositAmount(referenceDeposit, numMonths);
 
