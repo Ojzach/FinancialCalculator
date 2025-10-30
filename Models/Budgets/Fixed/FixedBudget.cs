@@ -19,7 +19,7 @@ namespace FinancialCalculator.Models
         public FixedBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, float setAmt = 0f, float setPct = 0.0f, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets)
         {
             isSetByAmount = setPct != 0.0f ? false : true;
-            setPercent = setAmt;
+            setAmount = setAmt;
             setPercent = setPct;
         }
 
