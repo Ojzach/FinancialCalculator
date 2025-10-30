@@ -15,17 +15,18 @@ namespace FinancialCalculator.Models
         public BudgetPriority Priority;
         public abstract string BudgetType { get; }
         public FinancialAccount AssociatedFinancialAccount;
-        public List<int> ChildBudgets = new List<int>();
+        public List<int> ChildBudgets;
 
         public float CurrentBudgetBalance => localCurrentBudgetBalance;
         private float localCurrentBudgetBalance = 0;
 
-        public Budget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount)
+        public Budget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, List<int>? childBudgets)
         {
             ID = id;
             Name = name;
             Priority = priority;
-            AssociatedFinancialAccount = associatedFinancialAccount;
+            AssociatedFinancialAccount = associatedFinancialAccount;      
+            ChildBudgets = childBudgets == null ? new List<int>() : childBudgets;
         }
 
         public void AddChildBudget(int budgetID) => ChildBudgets.Add(budgetID);

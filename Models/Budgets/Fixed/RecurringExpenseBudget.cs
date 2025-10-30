@@ -15,7 +15,7 @@ namespace FinancialCalculator.Models
         public float ExpenseAmt = 0f;
         public float FreqMonths = 1f;
 
-        public RecurringExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, float _expenseAmt = 0, float freqMonths = 1) : base(id, name, priority, associatedFinancialAccount)
+        public RecurringExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, float _expenseAmt = 0, float freqMonths = 1, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
         {
             ExpenseAmt = _expenseAmt;
             FreqMonths = freqMonths;
