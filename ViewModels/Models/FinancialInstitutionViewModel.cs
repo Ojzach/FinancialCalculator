@@ -24,10 +24,6 @@ namespace FinancialCalculator.ViewModels
         {
             _financialInstitution = financialInstitution;
 
-            AddFinancialAccount(new FinancialAccount("Spending", BankAccountType.Checking, 0));
-            AddFinancialAccount(new FinancialAccount("Saving", BankAccountType.Savings, 1000.0f));
-            AddFinancialAccount(new FinancialAccount("Credit Card", BankAccountType.Credit, 50.34f));
-
             OpenAddFinancialAccountMenuCommand = new RelayCommand(execute => OpenAddFinancialAccountMenu());
         }
 

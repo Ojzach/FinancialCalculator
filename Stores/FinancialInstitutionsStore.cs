@@ -10,14 +10,17 @@ namespace FinancialCalculator.Stores
 {
     class FinancialInstitutionsStore
     {
-        private List<FinancialInstitution> financialInstitutions = new List<FinancialInstitution>();
+        private List<FinancialInstitution> financialInstitutions = new();
+        private Dictionary<int, FinancialAccount> financialAccounts = new();
         public List<FinancialInstitution> FinancialInstitutions { get => financialInstitutions; set => financialInstitutions = value; }
 
-        public FinancialInstitutionsStore()
+        public FinancialInstitutionsStore(List<FinancialInstitution> financialInstitutions = null, List<FinancialAccount> financialAccounts = null)
         {
-            AddFinancialInstitution(new FinancialInstitution("USAA"));
-            AddFinancialInstitution(new FinancialInstitution("Discover"));
-            AddFinancialInstitution(new FinancialInstitution("Fidelity"));
+            if(financialInstitutions != null)
+                foreach(FinancialInstitution financialInstitution in financialInstitutions) this.financialInstitutions.Add(financialInstitution);
+
+            if (financialAccounts != null)
+                foreach (FinancialAccount financialAccount in financialAccounts) this.financialAccounts.Add(financialAccount.ID, financialAccount);
         }
 
 
@@ -25,6 +28,8 @@ namespace FinancialCalculator.Stores
         {
             FinancialInstitutions.Add(fi);
         }
+
+        public FinancialAccount GetFinancialAccount(int accountID) => financialAccounts[accountID];
 
         public void UpdateFinancialInstitutionsList(List<FinancialInstitutionViewModel> _financialInstitutions)
         {

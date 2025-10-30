@@ -113,7 +113,7 @@ namespace FinancialCalculator.ViewModels
         {
             editingItem = false;
             SelectedFinancialInstitution = financialInstitution;
-            CurrentlyEditingAccount = new FinancialAccountViewModel(new FinancialAccount("", BankAccountType.Checking));
+            CurrentlyEditingAccount = new FinancialAccountViewModel(new FinancialAccount(-1, "", -1, BankAccountType.Checking));
             editAccountOpen = true;
             OnPropertyChanged(nameof(EditAccountVisibility));
         }
