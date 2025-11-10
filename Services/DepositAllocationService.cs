@@ -122,7 +122,7 @@ namespace FinancialCalculator.Services
             {
                 depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount = deposit.Value;
 
-                if (budgetStore.Budgets[deposit.Key].ChildBudgets.Count > 0)
+                if (budgetStore.GetBudget(deposit.Key).ChildBudgets.Count > 0)
                 {
                     Allocate(deposit.Key, depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount, budgetStore.Budgets[deposit.Key].ChildBudgets.ToList());
                 }

@@ -24,13 +24,13 @@ namespace FinancialCalculator
 
 
             FinancialInstitutionsStore _financialInstitutionsStore = new FinancialInstitutionsStore(
-                new List<FinancialInstitution>()
+                financialInstitutions: new List<FinancialInstitution>()
                 {
                     new FinancialInstitution("USAA"),
                     new FinancialInstitution("Discover"),
                     new FinancialInstitution("Fidelity")
                 },
-                new List<FinancialAccount>()
+                financialAccounts: new List<FinancialAccount>()
                 { 
                     new FinancialAccount(0, "Income", 0, BankAccountType.Checking, 2000),
                     new FinancialAccount(1, "Spending", 0, BankAccountType.Checking, 1000),
@@ -47,7 +47,7 @@ namespace FinancialCalculator
 
 
             BudgetStore _budgetsStore = new BudgetStore(_financialInstitutionsStore,
-                new List<Budget>()
+                budgets: new List<Budget>()
                 {
                     new FixedBudget(1, "Investments", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 0.6f, childBudgets: new List<int> { 2, 3, 5 }),
                     new FixedBudget(2, "401K", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(6), setPct: 0.1f),
@@ -71,12 +71,12 @@ namespace FinancialCalculator
                     new RecurringExpenseBudget(18, "Adobe", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), 15.89f),
                     new RecurringExpenseBudget(19, "Google Photos", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), 2.11f)
                 },
-                new List<Budget>()
+                hiddenBudgets: new List<Budget>()
                 {
-                    new FixedBudget(-2, "Federal Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4)),
-                    new FixedBudget(-3, "Medicare", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4)),
-                    new FixedBudget(-4, "Social Security", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4)),
-                    new FixedBudget(-5, "State Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4))
+                    new FixedBudget(-2, "Federal Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.145f),
+                    new FixedBudget(-3, "Medicare", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.0145f),
+                    new FixedBudget(-4, "Social Security", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.062f),
+                    new FixedBudget(-5, "State Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0f)
                 });
 
 

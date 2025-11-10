@@ -12,6 +12,7 @@ namespace FinancialCalculator.Models
 
 
         public int DepositBudgetID { get; private set; } = -1; // -1 Should never occur. Throw Error
+        public bool DepositIsDeduction = false;
         public int DepositParentID { get; private set; } = -1; //-1 means no parent
 
         public AmountPercentModel DepositAmtPct { get => depositAmtPct; }
@@ -22,10 +23,11 @@ namespace FinancialCalculator.Models
         public bool IsDepositAmountInvalid { get; set; } = false;
         public string DepositInvalidMsg { get; set; } = "";
 
-        public BudgetDeposit(int depositBudgetID, AmountPercentModel initialAmtPct)
+        public BudgetDeposit(int depositBudgetID, AmountPercentModel initialAmtPct, bool depositIsDeduction = false)
         {
             DepositBudgetID = depositBudgetID;
             depositAmtPct = initialAmtPct;
+            DepositIsDeduction = depositIsDeduction;
         }
 
         public void SetParent(int parentBudgetID) => DepositParentID = parentBudgetID;

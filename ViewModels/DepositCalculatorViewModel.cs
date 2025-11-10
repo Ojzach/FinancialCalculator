@@ -24,100 +24,6 @@ namespace FinancialCalculator.ViewModels
         private BudgetStore _budgetStore;
 
 
-        private AmountPercentModel federalTaxAmtPct;
-        private AmountPercentModel medicareAmtPct;
-        private AmountPercentModel socialSecurityAmtPct;
-        private AmountPercentModel stateTaxAmtPct;
-
-        public float FederalTaxAmt { 
-            get => federalTaxAmtPct.Amount;
-            set 
-            {
-                federalTaxAmtPct.Amount = value;
-                //_depositStore.SetDepositDeductionAmt(0, federalTaxAmtPct.GetAmount(_depositStore.DepositAmount));
-                OnPropertyChanged(nameof(FederalTaxAmt)); 
-                OnPropertyChanged(nameof(FederalTaxPct)); 
-            } 
-        }
-        public float FederalTaxPct { 
-            get => federalTaxAmtPct.Percent;
-            set 
-            { 
-                federalTaxAmtPct.Percent = value;
-                //_depositStore.SetDepositDeductionAmt(0, federalTaxAmtPct.GetAmount(_depositStore.DepositAmount));
-                OnPropertyChanged(nameof(FederalTaxAmt)); 
-                OnPropertyChanged(nameof(FederalTaxPct)); 
-            }
-        }
-
-        public float MedicareAmt
-        {
-            get => medicareAmtPct.Amount;
-            set 
-            {
-                medicareAmtPct.Amount = value;
-                //_depositStore.SetDepositDeductionAmt(1, medicareAmtPct.GetAmount(_depositStore.DepositAmount));
-                OnPropertyChanged(nameof(MedicareAmt)); 
-                OnPropertyChanged(nameof(MedicarePct)); 
-            }
-        }
-        public float MedicarePct
-        {
-            get => medicareAmtPct.Percent;
-            set 
-            {
-                medicareAmtPct.Percent = value;
-                //_depositStore.SetDepositDeductionAmt(1, medicareAmtPct.GetAmount(_depositStore.DepositAmount));
-                OnPropertyChanged(nameof(MedicareAmt)); 
-                OnPropertyChanged(nameof(MedicarePct)); 
-            }
-        }
-
-        public float SocialSecurityAmt
-        {
-            get => socialSecurityAmtPct.Amount;
-            set 
-            { 
-                socialSecurityAmtPct.Amount = value;
-                //_depositStore.SetDepositDeductionAmt(2, socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount));
-                OnPropertyChanged(nameof(SocialSecurityAmt)); 
-                OnPropertyChanged(nameof(SocialSecurityPct)); 
-            }
-        }
-        public float SocialSecurityPct
-        {
-            get => socialSecurityAmtPct.Percent;
-            set 
-            { 
-                socialSecurityAmtPct.Percent = value;
-                //_depositStore.SetDepositDeductionAmt(2, socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount));
-                OnPropertyChanged(nameof(SocialSecurityAmt)); 
-                OnPropertyChanged(nameof(SocialSecurityPct)); 
-            }
-        }
-
-        public float StateTaxAmt
-        {
-            get => stateTaxAmtPct.Amount;
-            set 
-            { 
-                stateTaxAmtPct.Amount = value;
-                //_depositStore.SetDepositDeductionAmt(3, socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount));
-                OnPropertyChanged(nameof(StateTaxAmt)); 
-                OnPropertyChanged(nameof(StateTaxPct)); }
-        }
-        public float StateTaxPct
-        {
-            get => stateTaxAmtPct.Percent;
-            set 
-            { 
-                stateTaxAmtPct.Percent = value;
-                //_depositStore.SetDepositDeductionAmt(3, socialSecurityAmtPct.GetAmount(_depositStore.DepositAmount));
-                OnPropertyChanged(nameof(StateTaxAmt)); 
-                OnPropertyChanged(nameof(StateTaxPct));
-            }
-        }
-
 
         public float TakeHomeAmount => _depositStore.TakeHomeAmount;
         public float TakeHomePercent => _depositStore.TakeHomeAmount / _depositStore.DepositAmount;
@@ -133,6 +39,9 @@ namespace FinancialCalculator.ViewModels
         private List<BudgetDepositViewModel> depositBudgets = new List<BudgetDepositViewModel>();
         public List<BudgetDepositViewModel> DepositBudgets { get => depositBudgets; set { depositBudgets = value; OnPropertyChanged(nameof(DepositBudgets)); } }
 
+        private List<BudgetDepositViewModel> depositDeductions = new List<BudgetDepositViewModel>();
+        public List<BudgetDepositViewModel> DepositDeductions { get => depositDeductions; set { depositDeductions = value; OnPropertyChanged(nameof(DepositDeductions)); } }
+
         public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
         {
             _depositStore = new DepositStore(budgetsStore);
@@ -143,10 +52,11 @@ namespace FinancialCalculator.ViewModels
             _depositStore.DepositAmount = 15000;
 
 
-            federalTaxAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.145f);
-            medicareAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.0145f);
-            socialSecurityAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.062f);
-            stateTaxAmtPct = new AmountPercentModel(() => _depositStore.DepositAmount, initialPercent: 0.0f);
+            foreach(BudgetDeposit depositDeduction in _depositStore.DepositDeductions.Values)
+            {
+                depositDeductions.Add(new BudgetDepositViewModel(depositDeduction.DepositBudgetID, budgetsStore, _depositStore));
+                depositDeductions[depositDeductions.Count() - 1].EditBudgetAction += OpenEditMenu;
+            }
 
 
             foreach(BudgetDeposit depositBudget in _depositStore.BudgetDeposits.Values.Where(deposit => deposit.DepositParentID == -1))
@@ -168,15 +78,6 @@ namespace FinancialCalculator.ViewModels
                 OnPropertyChanged("MonthsCoveredByPaycheck");
                 OnPropertyChanged(nameof(TakeHomeAmount));
                 OnPropertyChanged(nameof(TakeHomePercent));
-
-                OnPropertyChanged(nameof(FederalTaxAmt));
-                OnPropertyChanged(nameof(FederalTaxPct));
-                OnPropertyChanged(nameof(MedicareAmt));
-                OnPropertyChanged(nameof(MedicarePct));
-                OnPropertyChanged(nameof(SocialSecurityAmt));
-                OnPropertyChanged(nameof(SocialSecurityPct));
-                OnPropertyChanged(nameof(StateTaxAmt));
-                OnPropertyChanged(nameof(StateTaxPct));
             }
         }
 

@@ -21,7 +21,7 @@ namespace FinancialCalculator.Stores
 
         public float TakeHomeAmount 
         { 
-            get => MathF.Max(0, DepositAmount - depositDeductions.Sum(deduction => deduction.DepositAmtPct.Amount));
+            get => MathF.Max(0, DepositAmount - DepositDeductions.Sum(deduction => deduction.Value.DepositAmtPct.GetAmount(depositAmount)));
         }
 
 
@@ -40,13 +40,13 @@ namespace FinancialCalculator.Stores
 
         public BudgetStore budgetStore;
         private DepositAllocationService depositService;
-        public IReadOnlyDictionary<int, BudgetDeposit> BudgetDeposits => deposits;
+        public IReadOnlyDictionary<int, BudgetDeposit> BudgetDeposits => deposits.Where(deposit => !deposit.Value.DepositIsDeduction).ToDictionary();
+        public IReadOnlyDictionary<int, BudgetDeposit> DepositDeductions => deposits.Where(deposit => deposit.Value.DepositIsDeduction).ToDictionary();
 
 
         public event Action<List<int>>? DepositsChanged;
         
         private Dictionary<int, BudgetDeposit> deposits = new();
-        private List<BudgetDeposit> depositDeductions = new();
 
 
         public DepositStore(BudgetStore _budgetStore)
@@ -54,10 +54,13 @@ namespace FinancialCalculator.Stores
             budgetStore = _budgetStore;
             depositService = new DepositAllocationService(this, budgetStore);
 
-            depositDeductions.Add(new BudgetDeposit(-2, new AmountPercentModel(() => DepositAmount, initialPercent: 0.145f)));
-            depositDeductions.Add(new BudgetDeposit(-3, new AmountPercentModel(() => DepositAmount, initialPercent: 0.014f)));
-            depositDeductions.Add(new BudgetDeposit(-4, new AmountPercentModel(() => DepositAmount,initialPercent: 0.062f)));
-            depositDeductions.Add(new BudgetDeposit(-5, new AmountPercentModel(() => DepositAmount, initialPercent: 0.0f)));
+
+            foreach(Budget deduction in budgetStore.HiddenBudgets.Values)
+            {
+                AmountPercentModel amtPct = new AmountPercentModel(() => DepositAmount, ((FixedBudget)deduction).SetAmount, ((FixedBudget)deduction).SetPercent);
+
+                deposits.Add(deduction.ID, new BudgetDeposit(deduction.ID, amtPct, true));
+            }
 
             foreach (Budget budget in budgetStore.Budgets.Values)
             {
@@ -91,16 +94,24 @@ namespace FinancialCalculator.Stores
 
         public void UpdatedBudgetSettings(int budgetID) => PublishDepositChanged(depositService.AllocateWholeDeposit());
 
-        public void UpdateDepositValue(int depositID, float amount)
+        public void UpdateDepositValue(int depositID, float amount = -1, float percent = -1)
         {
-            deposits[depositID].DepositAmtPct.Amount = amount;
+            if (amount >= 0) deposits[depositID].DepositAmtPct.Amount = amount;
+            else if (percent >= 0) deposits[depositID].DepositAmtPct.Percent = percent;
+
             PublishDepositChanged(depositService.AllocateWholeDeposit());
         }
 
-        public Budget GetDepositBudget(int depositID) => budgetStore.GetBudget(BudgetDeposits[depositID].DepositBudgetID);
+        public Budget GetDepositBudget(int depositID) => budgetStore.GetBudget(GetDeposit(depositID).DepositBudgetID);
         public Dictionary<int, Budget> GetDepositBudgets(List<int> deposits) => deposits.ToDictionary(depositID => depositID, depositID => GetDepositBudget(depositID));
 
 
-        public BudgetDeposit GetDeposit(int depositID) => BudgetDeposits[depositID];
+        public BudgetDeposit GetDeposit(int depositID)
+        {
+            if (BudgetDeposits.ContainsKey(depositID)) return BudgetDeposits[depositID];
+            else if (DepositDeductions.ContainsKey(depositID)) return DepositDeductions[depositID];
+
+            throw new Exception("Budget ID does not exist in the Budget Store");
+        }
     }
 }

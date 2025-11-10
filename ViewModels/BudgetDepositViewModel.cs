@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using FinancialCalculator.Stores;
 using System.Windows.Input;
 using FinancialCalculator.Commands;
+using System.Diagnostics;
 
 namespace FinancialCalculator.ViewModels
 {
@@ -14,15 +15,15 @@ namespace FinancialCalculator.ViewModels
         public string BudgetPriority { get => budget.Priority.ToString(); }
 
 
-        public bool IsUsrSet { get => depositStore.BudgetDeposits[budgetID].DepositIsUserSet; set { depositStore.BudgetDeposits[budgetID].DepositIsUserSet = value; OnPropertyChanged(nameof(IsUsrSet)); } }
+        public bool IsUsrSet { get => depositStore.GetDeposit(budgetID).DepositIsUserSet; set { depositStore.GetDeposit(budgetID).DepositIsUserSet = value; OnPropertyChanged(nameof(IsUsrSet)); } }
         public bool IsSetByAmt { get => depositAmtPct.IsSetByAmount; }
 
         public float UsrDepositPct 
         { 
             get => UsrDepositAmt / depositStore.GetBudgetReferenceAmount(budgetID);
-            set { 
+            set {
                 IsUsrSet = true;
-                depositAmtPct.Percent = value;
+                depositStore.UpdateDepositValue(budgetID, percent: value);
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
                 OnPropertyChanged(nameof(IsSetByAmt));} 
@@ -34,7 +35,7 @@ namespace FinancialCalculator.ViewModels
             set 
             { 
                 IsUsrSet = true;
-                depositAmtPct.Amount = value;
+                depositStore.UpdateDepositValue(budgetID, amount: value);
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt)); 
                 OnPropertyChanged(nameof(IsSetByAmt)); 
@@ -60,7 +61,7 @@ namespace FinancialCalculator.ViewModels
         public ICommand EditBudgetCommand { get; set; }
 
 
-        private AmountPercentModel depositAmtPct { get => depositStore.BudgetDeposits[budgetID].DepositAmtPct; }
+        private AmountPercentModel depositAmtPct { get => depositStore.GetDeposit(budgetID).DepositAmtPct; }
         protected Budget budget;
         private int budgetID;
         protected DepositStore depositStore;

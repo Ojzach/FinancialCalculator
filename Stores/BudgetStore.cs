@@ -34,6 +34,6 @@ namespace FinancialCalculator.Stores
             throw new Exception("Budget ID does not exist in the Budget Store");
         }
 
-        public bool IsBudgetPreTax(int budgetID) => budgets[budgetID].AssociatedFinancialAccount.isPreTaxAccount;
+        public bool IsBudgetPreTax(int budgetID) => GetBudget(budgetID).AssociatedFinancialAccount.isPreTaxAccount;
     }
 }

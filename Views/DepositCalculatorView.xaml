@@ -23,72 +23,124 @@
     </UserControl.Resources>
 
     <Grid>
-        <DockPanel>
+        <Grid>
 
-            <Grid Margin="5, 40, 5, 25" DockPanel.Dock="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition MinHeight="100"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+
+            <Grid Margin="10, 10, 15, 10" Grid.Row="0">
 
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250"/>
                     <ColumnDefinition/>
-                    <ColumnDefinition MaxWidth="150"/>
                     <ColumnDefinition MaxWidth="75"/>
                     <ColumnDefinition MaxWidth="75"/>
 
                 </Grid.ColumnDefinitions>
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="25"/>
-                </Grid.RowDefinitions>
 
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
                     <TextBlock Text="Estimated Yearly Income: "/>
                     <TextBox Text="{Binding EstimatedYearlyIncome, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Width="100"/>
                 </StackPanel>
 
-                <TextBlock Text="{Binding MonthsCoveredByPaycheck, StringFormat='Months Covered By Paycheck Modifier: {0}'}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left"/>
+                <TextBlock Text="{Binding MonthsCoveredByPaycheck, StringFormat='Months Covered By Paycheck Modifier: {0}'}" Grid.Column="1" HorizontalAlignment="Left"/>
 
-                <TextBlock Text="Paycheck" Grid.Column="1" Grid.Row="0"/>
-                <TextBox  Text="{Binding PaycheckAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" Grid.Row="0" Margin="3"/>
-
-                <TextBlock Text="Federal Income Tax" Grid.Row="1" Grid.Column="1"/>
-                <TextBox Text="{Binding FederalTaxPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="2" Margin="3"/>
-                <TextBox Text="{Binding FederalTaxAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="3" Margin="3"/>
-
-                <TextBlock Text="Medicare" Grid.Row="2" Grid.Column="1"/>
-                <TextBox Text="{Binding MedicarePct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="2" Margin="3"/>
-                <TextBox Text="{Binding MedicareAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="3" Margin="3"/>
-
-                <TextBlock Text="Social Security" Grid.Row="3" Grid.Column="1"/>
-                <TextBox Text="{Binding SocialSecurityPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="2" Margin="3"/>
-                <TextBox Text="{Binding SocialSecurityAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="3" Margin="3"/>
-
-                <TextBlock Text="State Income Tax" Grid.Row="4" Grid.Column="1"/>
-                <TextBox Text="{Binding StateTaxPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}" Grid.Row="4" Grid.Column="2" Margin="3"/>
-                <TextBox Text="{Binding StateTaxAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Row="4" Grid.Column="3" Margin="3"/>
+                <TextBlock Text="Paycheck" Grid.Column="2"/>
+                <TextBox Text="{Binding PaycheckAmount, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" Grid.Column="3"/>
 
             </Grid>
 
-            <Grid DockPanel.Dock="Bottom" Margin="25">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition MaxWidth="150"/>
-                    <ColumnDefinition MaxWidth="75"/>
+            <ScrollViewer Grid.Row="1" Width="300" Margin="10, 10, 10, 10" HorizontalAlignment="Right" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical" Margin="3">
+                    <ListBox VerticalAlignment="Stretch" BorderThickness="0"  ItemsSource="{Binding DepositDeductions}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0, 2, 0, 2"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
 
-                </Grid.ColumnDefinitions>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="25">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="75"/>
+                                        <ColumnDefinition Width="75"/>
+                                    </Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="25"/>
+                                    <TextBlock Text="{Binding BudgetName}"/>
 
-                </Grid.RowDefinitions>
+                                    <Border BorderBrush="Green" Grid.Column="1" Margin="3">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers >
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding IsUsrSet}" Value="true"/>
+                                                            <Condition Binding="{Binding IsSetByAmt}" Value="false"/>
+                                                        </MultiDataTrigger.Conditions>
 
-                <Button Content="Submit" Grid.Column="1" Grid.Row="1"/>
-            </Grid>
+                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding IsUsrSet}" Value="false">
+                                                        <Setter Property="BorderThickness" Value="0"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsSetByAmt}" Value="true">
+                                                        <Setter Property="BorderThickness" Value="0"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBox Text="{Binding UsrDepositPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Border>
 
-            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
+                                    <Border BorderBrush="Green" Grid.Column="2" Margin="3">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers >
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding IsUsrSet}" Value="true"/>
+                                                            <Condition Binding="{Binding IsSetByAmt}" Value="true"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                    </MultiDataTrigger>
+                                                    <DataTrigger Binding="{Binding IsUsrSet}" Value="false">
+                                                        <Setter Property="BorderThickness" Value="0"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsSetByAmt}" Value="false">
+                                                        <Setter Property="BorderThickness" Value="0"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBox Text="{Binding UsrDepositAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Border>
+
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <ListBox.Template>
+                            <ControlTemplate TargetType="ListBox">
+                                <ScrollViewer Focusable="false" CanContentScroll="true" Padding="20, 2, 0, 2">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ListBox.Template>
+
+                    </ListBox>
+                </StackPanel>
+            </ScrollViewer>
+
+            <ScrollViewer Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
                 <StackPanel Orientation="Vertical" Margin="3">
 
                     <Border Background="LightGray" BorderBrush="Gray" BorderThickness="2" Height="30" HorizontalAlignment="Stretch">
@@ -148,9 +200,24 @@
                 </StackPanel>
             </ScrollViewer>
 
+            <Grid Grid.Row="3" Margin="25">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition MaxWidth="150"/>
+                    <ColumnDefinition MaxWidth="75"/>
 
+                </Grid.ColumnDefinitions>
 
-        </DockPanel>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+
+                </Grid.RowDefinitions>
+
+                <Button Content="Submit" Grid.Column="1" Grid.Row="1"/>
+            </Grid>
+
+        </Grid>
 
         <Grid Visibility="{Binding IsEditPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}" d:Visibility="Collapsed">
             <Border Background="Gray" Opacity="0.5"/>
