@@ -96,8 +96,27 @@ namespace FinancialCalculator.Stores
 
         public void UpdateDepositValue(int depositID, float amount = -1, float percent = -1)
         {
-            if (amount >= 0) deposits[depositID].DepositAmtPct.Amount = amount;
-            else if (percent >= 0) deposits[depositID].DepositAmtPct.Percent = percent;
+            BudgetDeposit selectedDeposit = deposits[depositID];
+            AmountPercentModel selectedDepositAmtPct = selectedDeposit.DepositAmtPct;
+            float availableAmount;
+            
+            if(selectedDeposit.DepositIsDeduction)
+                availableAmount = TakeHomeAmount + selectedDepositAmtPct.GetAmount(DepositAmount);
+            else
+            {
+                float usedAmount = budgetStore.Budgets[selectedDeposit.DepositParentID].ChildBudgets
+                    .Sum(budgetID => deposits[budgetID].DepositIsUserSet ? deposits[budgetID].DepositAmtPct.GetAmount(TakeHomeAmount) : 0);
+
+                if (selectedDeposit.DepositIsUserSet) usedAmount -= selectedDepositAmtPct.GetAmount(TakeHomeAmount);
+
+                availableAmount = deposits[selectedDeposit.DepositParentID].DepositAmtPct.GetAmount(TakeHomeAmount) - usedAmount;
+            }
+
+
+            if (amount >= 0)
+                selectedDepositAmtPct.Amount = MathF.Min(amount, availableAmount);
+            else if (percent >= 0)
+                selectedDepositAmtPct.Percent = MathF.Min(percent, availableAmount / DepositAmount);
 
             PublishDepositChanged(depositService.AllocateWholeDeposit());
         }

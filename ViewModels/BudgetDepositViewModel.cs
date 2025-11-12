@@ -22,8 +22,8 @@ namespace FinancialCalculator.ViewModels
         { 
             get => UsrDepositAmt / depositStore.GetBudgetReferenceAmount(budgetID);
             set {
-                IsUsrSet = true;
                 depositStore.UpdateDepositValue(budgetID, percent: value);
+                IsUsrSet = true;
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
                 OnPropertyChanged(nameof(IsSetByAmt));} 
@@ -33,9 +33,9 @@ namespace FinancialCalculator.ViewModels
         { 
             get => depositAmtPct.Amount; 
             set 
-            { 
-                IsUsrSet = true;
+            {     
                 depositStore.UpdateDepositValue(budgetID, amount: value);
+                IsUsrSet = true;
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt)); 
                 OnPropertyChanged(nameof(IsSetByAmt)); 
