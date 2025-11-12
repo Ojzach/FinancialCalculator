@@ -25,16 +25,16 @@ namespace FinancialCalculator.Stores
         }
 
 
-        private float estimatedYearlyIncome = 0;
-        public float EstimatedyearlyIncome 
+        private float estimatedAnnualIncome = 0;
+        public float EstimatedAnnualIncome 
         { 
-            get => estimatedYearlyIncome; 
-            set => estimatedYearlyIncome = MathF.Max(0, value); 
+            get => estimatedAnnualIncome; 
+            set => estimatedAnnualIncome = MathF.Max(0, value); 
         }
 
         public int MonthsCoveredByDeposit 
         {
-            get => estimatedYearlyIncome == 0 ? 0 : (int)MathF.Ceiling((depositAmount / estimatedYearlyIncome) * 12);
+            get => estimatedAnnualIncome == 0 ? 0 : (int)MathF.Ceiling((depositAmount / estimatedAnnualIncome) * 12);
         }
 
 

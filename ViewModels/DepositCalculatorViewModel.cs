@@ -16,7 +16,7 @@ namespace FinancialCalculator.ViewModels
             set { _depositStore.DepositAmount = value; }
         }
 
-        public float EstimatedYearlyIncome { get => _depositStore.EstimatedyearlyIncome; set { _depositStore.EstimatedyearlyIncome = value; } }
+        public float EstimatedYearlyIncome { get => _depositStore.EstimatedAnnualIncome; set { _depositStore.EstimatedAnnualIncome = value; } }
         public int MonthsCoveredByPaycheck { get => _depositStore.MonthsCoveredByDeposit; }
 
 
