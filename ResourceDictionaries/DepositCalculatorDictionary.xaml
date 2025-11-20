@@ -8,6 +8,16 @@
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
     <DataTemplate x:Key="DepositBudget">
+        <DataTemplate.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="TextAlignment" Value="Left"/>
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="TextAlignment" Value="Center"/>
+            </Style>
+        </DataTemplate.Resources>
 
         <StackPanel Orientation="Vertical">
 
@@ -27,16 +37,6 @@
                 </Border.Style>
 
                 <Grid>
-                    <Grid.Resources>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Left"/>
-                        </Style>
-                        <Style TargetType="TextBox">
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </Grid.Resources>
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
@@ -74,16 +74,16 @@
                                     <Style.Triggers >
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding IsUsrSet}" Value="true"/>
-                                                <Condition Binding="{Binding IsSetByAmt}" Value="false"/>
+                                                <Condition Binding="{Binding DepositIsUsrSet}" Value="true"/>
+                                                <Condition Binding="{Binding DepositIsSetByAmt}" Value="false"/>
                                             </MultiDataTrigger.Conditions>
 
                                             <Setter Property="BorderThickness" Value="1"/>
                                         </MultiDataTrigger>
-                                        <DataTrigger Binding="{Binding IsUsrSet}" Value="false">
+                                        <DataTrigger Binding="{Binding DepositIsUsrSet}" Value="false">
                                             <Setter Property="BorderThickness" Value="0"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding IsSetByAmt}" Value="true">
+                                        <DataTrigger Binding="{Binding DepositIsSetByAmt}" Value="true">
                                             <Setter Property="BorderThickness" Value="0"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -98,15 +98,15 @@
                                     <Style.Triggers >
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding IsUsrSet}" Value="true"/>
-                                                <Condition Binding="{Binding IsSetByAmt}" Value="true"/>
+                                                <Condition Binding="{Binding DepositIsUsrSet}" Value="true"/>
+                                                <Condition Binding="{Binding DepositIsSetByAmt}" Value="true"/>
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="BorderThickness" Value="1"/>
                                         </MultiDataTrigger>
-                                        <DataTrigger Binding="{Binding IsUsrSet}" Value="false">
+                                        <DataTrigger Binding="{Binding DepositIsUsrSet}" Value="false">
                                             <Setter Property="BorderThickness" Value="0"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding IsSetByAmt}" Value="false">
+                                        <DataTrigger Binding="{Binding DepositIsSetByAmt}" Value="false">
                                             <Setter Property="BorderThickness" Value="0"/>
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -147,6 +147,75 @@
                 </ListBox.Template>
 
             </ListBox>
+
+            <Border Visibility="{Binding IsSubItemsNotEmpty, Converter={StaticResource BoolToVisibilityConverter}}" Background="LightGray" BorderBrush="Gray" BorderThickness="2" Height="30" Margin="20, 2, 0, 2" HorizontalAlignment="Stretch" ToolTipService.InitialShowDelay="100">
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="175"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="{Binding BudgetName, StringFormat='{}{0} Unallocated Amount'}" FontWeight="Bold" Grid.Column="0" Margin="5, 0, 0, 0" HorizontalAlignment="Left"/>
+
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="75"/>
+                        </Grid.ColumnDefinitions>
+
+
+                        <Border BorderBrush="Green" Grid.Column="0" Margin="3">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers >
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding UnallocatedIsUsrSet}" Value="true"/>
+                                                <Condition Binding="{Binding UnallocatedIsSetByAmt}" Value="false"/>
+                                            </MultiDataTrigger.Conditions>
+
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                        </MultiDataTrigger>
+                                        <DataTrigger Binding="{Binding UnallocatedIsUsrSet}" Value="false">
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding UnallocatedIsSetByAmt}" Value="true">
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBox Text="{Binding UsrUnallocatedPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Border>
+
+                        <Border BorderBrush="Green" Grid.Column="1" Margin="3">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers >
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding UnallocatedIsUsrSet}" Value="true"/>
+                                                <Condition Binding="{Binding UnallocatedIsSetByAmt}" Value="true"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                        </MultiDataTrigger>
+                                        <DataTrigger Binding="{Binding UnallocatedIsUsrSet}" Value="false">
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding UnallocatedIsSetByAmt}" Value="false">
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBox Text="{Binding UsrUnallocatedAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}"/>
+                        </Border>
+                    </Grid>
+
+                </Grid>
+            </Border>
 
         </StackPanel>
 

@@ -16,10 +16,13 @@ namespace FinancialCalculator.Models
         public int DepositParentID { get; private set; } = -1; //-1 means no parent
 
         public AmountPercentModel DepositAmtPct { get => depositAmtPct; }
+        public AmountPercentModel UnallocatedAmtPct { get => unallocatedAmtPct; }
 
+        private AmountPercentModel unallocatedAmtPct;
         private AmountPercentModel depositAmtPct;
 
         public bool DepositIsUserSet { get; set; } = false;
+        public bool UnallocatedIsUserSet { get; set; } = false;
         public bool IsDepositAmountInvalid { get; set; } = false;
         public string DepositInvalidMsg { get; set; } = "";
 
@@ -27,6 +30,7 @@ namespace FinancialCalculator.Models
         {
             DepositBudgetID = depositBudgetID;
             depositAmtPct = initialAmtPct;
+            unallocatedAmtPct = new();
             DepositIsDeduction = depositIsDeduction;
         }
 

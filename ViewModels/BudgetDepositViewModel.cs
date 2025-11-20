@@ -15,31 +15,52 @@ namespace FinancialCalculator.ViewModels
         public string BudgetPriority { get => budget.Priority.ToString(); }
 
 
-        public bool IsUsrSet { get => depositStore.GetDeposit(budgetID).DepositIsUserSet; set { depositStore.GetDeposit(budgetID).DepositIsUserSet = value; OnPropertyChanged(nameof(IsUsrSet)); } }
-        public bool IsSetByAmt { get => depositAmtPct.IsSetByAmount; }
+        public bool DepositIsUsrSet { get => depositStore.GetDeposit(budgetID).DepositIsUserSet; set { depositStore.GetDeposit(budgetID).DepositIsUserSet = value; OnPropertyChanged(nameof(DepositIsUsrSet)); } }
+        public bool DepositIsSetByAmt { get => depositAmtPct.IsSetByAmount; }
+
+        public bool UnallocatedIsUsrSet { get => depositStore.GetDeposit(budgetID).UnallocatedIsUserSet; set { depositStore.GetDeposit(budgetID).UnallocatedIsUserSet = value; OnPropertyChanged(nameof(UnallocatedIsUsrSet)); } }
+        public bool UnallocatedIsSetByAmt { get => unallocatedAmtPct.IsSetByAmount; }
 
         public float UsrDepositPct 
         { 
             get => UsrDepositAmt / depositStore.GetBudgetReferenceAmount(budgetID);
             set {
-                depositStore.UpdateDepositValue(budgetID, percent: value);
-                IsUsrSet = true;
+                DepositIsUsrSet = true;
+                depositStore.UsrUpdateDepositValue(budgetID, percent: value);
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt));
-                OnPropertyChanged(nameof(IsSetByAmt));} 
+                OnPropertyChanged(nameof(DepositIsSetByAmt));} 
         }
 
         public float UsrDepositAmt 
         { 
             get => depositAmtPct.Amount; 
             set 
-            {     
-                depositStore.UpdateDepositValue(budgetID, amount: value);
-                IsUsrSet = true;
+            {
+                DepositIsUsrSet = true;
+                depositStore.UsrUpdateDepositValue(budgetID, amount: value);
                 OnPropertyChanged(nameof(UsrDepositPct));
                 OnPropertyChanged(nameof(UsrDepositAmt)); 
-                OnPropertyChanged(nameof(IsSetByAmt)); 
+                OnPropertyChanged(nameof(DepositIsSetByAmt)); 
             } 
+        }
+
+        public float UsrUnallocatedPct
+        {
+            get => UsrUnallocatedAmt / depositStore.GetBudgetReferenceAmount(budgetID);
+            set
+            {
+                UnallocatedIsUsrSet = true;
+            }
+        }
+
+        public float UsrUnallocatedAmt
+        {
+            get => unallocatedAmtPct.Amount;
+            set
+            {
+                UnallocatedIsUsrSet = true;
+            }
         }
 
         public ObservableCollection<BudgetDepositViewModel> SubItems
@@ -55,6 +76,7 @@ namespace FinancialCalculator.ViewModels
         private ObservableCollection<BudgetDepositViewModel> subItems = new ObservableCollection<BudgetDepositViewModel>();
         public bool IsSubItemsNotEmpty => SubItems.Count > 0;
 
+
         public bool IsDepositAmountInvalid => depositStore.BudgetDeposits[budgetID].IsDepositAmountInvalid;
         public string DepositInvalidMsg => depositStore.BudgetDeposits[budgetID].DepositInvalidMsg;
 
@@ -62,6 +84,7 @@ namespace FinancialCalculator.ViewModels
 
 
         private AmountPercentModel depositAmtPct { get => depositStore.GetDeposit(budgetID).DepositAmtPct; }
+        private AmountPercentModel unallocatedAmtPct { get => depositStore.GetDeposit(budgetID).UnallocatedAmtPct; }
         protected Budget budget;
         private int budgetID;
         protected DepositStore depositStore;

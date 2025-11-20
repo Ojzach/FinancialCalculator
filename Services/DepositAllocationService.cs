@@ -128,6 +128,9 @@ namespace FinancialCalculator.Services
                 }
             }
 
+            if (parentDeposit != -1 && !depositStore.BudgetDeposits[parentDeposit].UnallocatedIsUserSet)
+                depositStore.BudgetDeposits[parentDeposit].UnallocatedAmtPct.Amount = allocationAmount;
+
 
             return changedDeposits.Keys.ToList();
 

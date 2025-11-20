@@ -28,6 +28,9 @@ namespace FinancialCalculator.ViewModels
         public float TakeHomeAmount => _depositStore.TakeHomeAmount;
         public float TakeHomePercent => _depositStore.TakeHomeAmount / _depositStore.DepositAmount;
 
+        public float UnallocatedTakeHomeAmount => _depositStore.TakeHomeAmount - DepositBudgets.Sum(deposit => deposit.UsrDepositAmt);
+        public float UnallocatedTakeHomePercent => UnallocatedTakeHomeAmount / TakeHomeAmount;
+
 
         private bool isEditPanelOpen = false;
         public bool IsEditPanelOpen { get => isEditPanelOpen; set { isEditPanelOpen = value; OnPropertyChanged(nameof(IsEditPanelOpen)); } }
