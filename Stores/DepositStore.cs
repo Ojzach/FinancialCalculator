@@ -1,7 +1,9 @@
 ﻿using FinancialCalculator.Models;
 using FinancialCalculator.Services;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 
 namespace FinancialCalculator.Stores
 {
@@ -94,29 +96,43 @@ namespace FinancialCalculator.Stores
 
         public void UpdatedBudgetSettings(int budgetID) => PublishDepositChanged(depositService.AllocateWholeDeposit());
 
-        public void UpdateDepositValue(int depositID, float amount = -1, float percent = -1)
+        public void UsrUpdateDepositValue(int depositID, float amount = -1, float percent = -1)
         {
             BudgetDeposit selectedDeposit = deposits[depositID];
             AmountPercentModel selectedDepositAmtPct = selectedDeposit.DepositAmtPct;
             float availableAmount;
-            
-            if(selectedDeposit.DepositIsDeduction)
+            float percentReference = DepositAmount;
+
+            if (selectedDeposit.DepositIsDeduction)
                 availableAmount = TakeHomeAmount + selectedDepositAmtPct.GetAmount(DepositAmount);
             else
             {
-                float usedAmount = budgetStore.Budgets[selectedDeposit.DepositParentID].ChildBudgets
-                    .Sum(budgetID => deposits[budgetID].DepositIsUserSet ? deposits[budgetID].DepositAmtPct.GetAmount(TakeHomeAmount) : 0);
+                float usedAmount;
+                percentReference = TakeHomeAmount;
 
-                if (selectedDeposit.DepositIsUserSet) usedAmount -= selectedDepositAmtPct.GetAmount(TakeHomeAmount);
+                if (selectedDeposit.DepositParentID == -1)
+                {
+                    usedAmount = BudgetDeposits
+                        .Where(deposit => deposit.Value.DepositParentID == -1 && deposit.Key != depositID)
+                        .Sum(budgetID => deposits[budgetID.Key].DepositIsUserSet ? deposits[budgetID.Key].DepositAmtPct.GetAmount(TakeHomeAmount) : 0);
 
-                availableAmount = deposits[selectedDeposit.DepositParentID].DepositAmtPct.GetAmount(TakeHomeAmount) - usedAmount;
+                    availableAmount = TakeHomeAmount - usedAmount;
+                }
+                else
+                {
+                    usedAmount = budgetStore.Budgets[selectedDeposit.DepositParentID].ChildBudgets
+                        .Where(budgetID => budgetID != depositID)
+                        .Sum(budgetID => deposits[budgetID].DepositIsUserSet ? deposits[budgetID].DepositAmtPct.GetAmount(TakeHomeAmount) : 0);
+
+                    availableAmount = deposits[selectedDeposit.DepositParentID].DepositAmtPct.GetAmount(TakeHomeAmount) - usedAmount;
+                }
+                    
             }
-
 
             if (amount >= 0)
                 selectedDepositAmtPct.Amount = MathF.Min(amount, availableAmount);
             else if (percent >= 0)
-                selectedDepositAmtPct.Percent = MathF.Min(percent, availableAmount / DepositAmount);
+                selectedDepositAmtPct.Percent = MathF.Min(percent, availableAmount / percentReference);
 
             PublishDepositChanged(depositService.AllocateWholeDeposit());
         }
