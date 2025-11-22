@@ -44,9 +44,9 @@ namespace FinancialCalculator.Models
     {
         None = 1,
         VeryLow = 2,
-        Low = 4,
-        Medium = 10,
-        High = 50,
-        VeryHigh = 100
+        Low = 3,
+        Medium = 6,
+        High = 9,
+        VeryHigh = 18
     }
 }
