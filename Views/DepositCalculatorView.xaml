@@ -179,7 +179,7 @@
                     </Border>
 
 
-                    <ListBox VerticalAlignment="Stretch" BorderThickness="0"  ItemsSource="{Binding DepositBudgets}" ItemTemplate="{DynamicResource DepositBudget}">
+                    <ListBox VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding DepositBudgets}" ItemTemplate="{DynamicResource DepositBudget}">
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>

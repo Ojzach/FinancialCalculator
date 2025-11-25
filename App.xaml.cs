@@ -49,22 +49,24 @@ namespace FinancialCalculator
             BudgetStore _budgetsStore = new BudgetStore(_financialInstitutionsStore,
                 budgets: new List<Budget>()
                 {
-                    new FixedBudget(1, "Investments", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 0.6f, childBudgets: new List<int> { 2, 3, 5 }),
+                    //new FixedBudget(0, "Base Budget", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 1, childBudgets: [1, 6, 10, 14]),
+
+                    new FixedBudget(1, "Investments", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 0.6f, childBudgets: [2, 3, 5]),
                     new FixedBudget(2, "401K", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(6), setPct: 0.1f),
                     new FixedBudget(3, "Roth IRA", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(5), setPct: 0.1f),
                     new SavingsBudget(5, "House", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(0), 50000, new LocalDate(2026, 10, 20)),
 
-                    new FlexibleBudget(6, "Fixed Costs", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), childBudgets: new List<int> { 7, 8, 9 }),
+                    new FlexibleBudget(6, "Fixed Costs", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), childBudgets: [7, 8, 9]),
                     new RecurringExpenseBudget(7, "Student Loans", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), 500f),
                     new RecurringExpenseBudget(8, "Motorcycle Insurance", BudgetPriority.High, _financialInstitutionsStore.GetFinancialAccount(1), 43.32f),
                     new RecurringExpenseBudget(9, "AMO Dues", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(1), 425, 3),
 
-                    new FixedBudget(10, "Savings", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 0.2f, childBudgets: new List<int> { 11, 12, 13 }),
+                    new FixedBudget(10, "Savings", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 0.2f, childBudgets: [11, 12, 13]),
                     new SavingsBudget(11, "Emergency Fund", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(3), 10000, new LocalDate(2025, 8, 25)),
                     new SavingsBudget(12, "Rally Car", BudgetPriority.VeryLow, _financialInstitutionsStore.GetFinancialAccount(0), 15000, new LocalDate(2026, 3, 1)),
                     new SavingsBudget(13, "Travel", BudgetPriority.Low, _financialInstitutionsStore.GetFinancialAccount(0), 3000, new LocalDate(2025, 8, 20)),
 
-                    new FlexibleBudget(14, "Free Spending", BudgetPriority.Low, _financialInstitutionsStore.GetFinancialAccount(1), new List<int> { 15, 16, 17, 18, 19 }),
+                    new FlexibleBudget(14, "Free Spending", BudgetPriority.Low, _financialInstitutionsStore.GetFinancialAccount(1), [15, 16, 17, 18, 19]),
                     new FlexibleBudget(15, "Food", BudgetPriority.High, _financialInstitutionsStore.GetFinancialAccount(1)),
                     new FlexibleBudget(16, "Gas", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(1)),
                     new RecurringExpenseBudget(17, "Spotify", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), 12.71f),
