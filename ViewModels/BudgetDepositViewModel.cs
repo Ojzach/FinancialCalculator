@@ -24,25 +24,22 @@ namespace FinancialCalculator.ViewModels
         public float UsrDepositPct 
         { 
             get => UsrDepositAmt / depositStore.GetBudgetReferenceAmount(budgetID);
-            set {
-                DepositIsUsrSet = true;
-                depositStore.UsrUpdateDepositValue(budgetID, percent: value);
-                OnPropertyChanged(nameof(UsrDepositPct));
-                OnPropertyChanged(nameof(UsrDepositAmt));
-                OnPropertyChanged(nameof(DepositIsSetByAmt));} 
+            set => UserChangedValue(percent: value);
         }
 
         public float UsrDepositAmt 
         { 
-            get => depositAmtPct.Amount; 
-            set 
-            {
-                DepositIsUsrSet = true;
-                depositStore.UsrUpdateDepositValue(budgetID, amount: value);
-                OnPropertyChanged(nameof(UsrDepositPct));
-                OnPropertyChanged(nameof(UsrDepositAmt)); 
-                OnPropertyChanged(nameof(DepositIsSetByAmt)); 
-            } 
+            get => depositAmtPct.Amount;
+            set => UserChangedValue(amount: value);
+        }
+
+        private void UserChangedValue(float amount = -1, float percent = -1)
+        {
+            DepositIsUsrSet = true;
+            depositStore.UsrUpdateDepositValue(budgetID, amount, percent);
+            OnPropertyChanged(nameof(UsrDepositPct));
+            OnPropertyChanged(nameof(UsrDepositAmt));
+            OnPropertyChanged(nameof(DepositIsSetByAmt));
         }
 
         public float UsrUnallocatedPct
