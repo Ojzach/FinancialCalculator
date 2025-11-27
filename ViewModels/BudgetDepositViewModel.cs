@@ -21,19 +21,19 @@ namespace FinancialCalculator.ViewModels
         public bool UnallocatedIsUsrSet { get => depositStore.GetDeposit(budgetID).UnallocatedIsUserSet; set { depositStore.GetDeposit(budgetID).UnallocatedIsUserSet = value; OnPropertyChanged(nameof(UnallocatedIsUsrSet)); } }
         public bool UnallocatedIsSetByAmt { get => unallocatedAmtPct.IsSetByAmount; }
 
-        public float UsrDepositPct 
+        public decimal UsrDepositPct 
         { 
             get => UsrDepositAmt / depositStore.GetBudgetReferenceAmount(budgetID);
             set => UserChangedValue(percent: value);
         }
 
-        public float UsrDepositAmt 
+        public decimal UsrDepositAmt 
         { 
             get => depositAmtPct.Amount;
             set => UserChangedValue(amount: value);
         }
 
-        private void UserChangedValue(float amount = -1, float percent = -1)
+        private void UserChangedValue(decimal amount = -1, decimal percent = -1)
         {
             DepositIsUsrSet = true;
             depositStore.UsrUpdateDepositValue(budgetID, amount, percent);
@@ -42,7 +42,7 @@ namespace FinancialCalculator.ViewModels
             OnPropertyChanged(nameof(DepositIsSetByAmt));
         }
 
-        public float UsrUnallocatedPct
+        public decimal UsrUnallocatedPct
         {
             get => UsrUnallocatedAmt / depositStore.GetBudgetReferenceAmount(budgetID);
             set
@@ -51,7 +51,7 @@ namespace FinancialCalculator.ViewModels
             }
         }
 
-        public float UsrUnallocatedAmt
+        public decimal UsrUnallocatedAmt
         {
             get => unallocatedAmtPct.Amount;
             set

@@ -16,7 +16,7 @@ namespace FinancialCalculator.ViewModels
 
         public ObservableCollection<RecurringFrequencyType> FrequencyTypes { get; } = new(Enum.GetValues<RecurringFrequencyType>());
 
-        public float ExpenseAmount
+        public decimal ExpenseAmount
         {
             get => RecurringBudget.ExpenseAmount;
             set

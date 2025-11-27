@@ -14,6 +14,7 @@ namespace FinancialCalculator.Models
         public int DepositBudgetID { get; private set; } = -1; // -1 Should never occur. Throw Error
         public bool DepositIsDeduction = false;
         public int DepositParentID { get; private set; } = -1; //-1 means no parent
+        public List<int> DepositChildrenIDs { get; private set; } = new();
 
         public AmountPercentModel DepositAmtPct { get => depositAmtPct; }
         public AmountPercentModel UnallocatedAmtPct { get => unallocatedAmtPct; }
@@ -34,7 +35,8 @@ namespace FinancialCalculator.Models
             DepositIsDeduction = depositIsDeduction;
         }
 
-        public void SetParent(int parentBudgetID) => DepositParentID = parentBudgetID;
+        public void SetParent(int parenDepositID) => DepositParentID = parenDepositID;
+        public void SetChildren(List<int> childrenDepositIDs) => DepositChildrenIDs = childrenDepositIDs;
 
         public void DepositInvalid(string message)
         {

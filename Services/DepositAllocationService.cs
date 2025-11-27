@@ -29,13 +29,13 @@ namespace FinancialCalculator.Services
             return new List<int>() { 0 };
         }
 
-        public List<int> Allocate(int parentDeposit, float allocationAmount, List<int> depositsToAllocate)
+        public List<int> Allocate(int parentDeposit, decimal allocationAmount, List<int> depositsToAllocate)
         {
             if(parentDeposit != -1) 
                 depositStore.GetDeposit(parentDeposit).IsDepositAmountInvalid = false; //Resets Error Outline
 
             ReadOnlyDictionary<int, Budget> depositBudgets = new (depositStore.GetDepositBudgets(depositsToAllocate));
-            Dictionary<int, float> changedDeposits = new Dictionary<int, float>();
+            Dictionary<int, decimal> changedDeposits = new();
 
 
             //Find the sum of the budgets that are set by the user. These are not editable so they will be subtracted out of rebalance
@@ -43,8 +43,10 @@ namespace FinancialCalculator.Services
             foreach (int depositID in userSetDeposits)
             {
                 allocationAmount -= depositStore.GetBudgetDepositAmount(depositID);
+                Debug.Print(depositID + " " + depositStore.GetBudgetDepositAmount(depositID) + " " + allocationAmount);
                 depositsToAllocate.Remove(depositID);
             }
+
 
             if (allocationAmount < 0) 
                 throw new AllocationException("User-set amounts are greater than amount available.");
@@ -52,10 +54,10 @@ namespace FinancialCalculator.Services
 
             void Distribute(List<int> deposits)
             {
-                Dictionary<int, float> distributions = DistributeAmtAmongDeposits(
+                Dictionary<int, decimal> distributions = DistributeAmtAmongDeposits(
                     deposits,
                     allocationAmount,
-                    id => (float)depositBudgets[id].Priority,
+                    id => (decimal)depositBudgets[id].Priority,
                     id => changedDeposits.ContainsKey(id) ? changedDeposits[id] : 0,
                     id => depositBudgets[id].MaxDepositAmount(RefAmt(id))
                 );
@@ -73,13 +75,13 @@ namespace FinancialCalculator.Services
             }
 
             //Allocate Minimum Amount To All
-            float sumMinAmounts = depositsToAllocate.Sum(id => depositBudgets[id].MinDepositAmount(RefAmt(id)));
+            decimal sumMinAmounts = depositsToAllocate.Sum(id => depositBudgets[id].MinDepositAmount(RefAmt(id)));
             if (sumMinAmounts <= allocationAmount)
             {
 
                 foreach (int depositID in depositsToAllocate)
                 {
-                    float budgetMinDeposit = depositBudgets[depositID].MinDepositAmount(RefAmt(depositID));
+                    decimal budgetMinDeposit = depositBudgets[depositID].MinDepositAmount(RefAmt(depositID));
                     changedDeposits[depositID] = budgetMinDeposit;
                     allocationAmount -= budgetMinDeposit;
                 }
@@ -118,7 +120,7 @@ namespace FinancialCalculator.Services
             //This will not update children that are set by percentages if the parent amount didnt change
             changedDeposits = changedDeposits.Where(deposit => deposit.Value != depositStore.GetBudgetDepositAmount(deposit.Key)).ToDictionary();
 
-            foreach (KeyValuePair<int, float> deposit in changedDeposits)
+            foreach (KeyValuePair<int, decimal> deposit in changedDeposits)
             {
                 depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount = deposit.Value;
 
@@ -136,28 +138,28 @@ namespace FinancialCalculator.Services
 
         }
 
-        private float RefAmt(int depositID) => depositStore.GetBudgetReferenceAmount(depositID); //Gets either Takehome amount or Deposit Amount depending on if budget is pre-tax
+        private decimal RefAmt(int depositID) => depositStore.GetBudgetReferenceAmount(depositID); //Gets either Takehome amount or Deposit Amount depending on if budget is pre-tax
 
 
-        private Dictionary<int, float> DistributeAmtAmongDeposits(List<int> deposits, float amt, Func<int, float> ratioWeight, Func<int, float> preAllocatedAmt, Func<int, float> maxAllocationAmt)
+        private Dictionary<int, decimal> DistributeAmtAmongDeposits(List<int> deposits, decimal amt, Func<int, decimal> ratioWeight, Func<int, decimal> preAllocatedAmt, Func<int, decimal> maxAllocationAmt)
         {
-            Dictionary<int, float> distributedAmts = deposits.ToDictionary(b => b, b => 0f);
+            Dictionary<int, decimal> distributedAmts = deposits.ToDictionary(b => b, b => 0m);
 
             bool finishedAllocation = false;
-            float totalUsed = 0;
+            decimal totalUsed = 0;
 
             while (finishedAllocation == false)
             {
                 finishedAllocation = true;
-                float ratioTotal = deposits.Sum(id => ratioWeight(id));
+                decimal ratioTotal = deposits.Sum(id => ratioWeight(id));
 
                 foreach (int deposit in deposits)
                 {
-                    float calculatedAmt = (amt - totalUsed) * (ratioWeight(deposit) / ratioTotal);
+                    decimal calculatedAmt = (amt - totalUsed) * (ratioWeight(deposit) / ratioTotal);
 
                     if (calculatedAmt + preAllocatedAmt(deposit) >= maxAllocationAmt(deposit))
                     {
-                        float maxDepositAmount = maxAllocationAmt(deposit) - preAllocatedAmt(deposit);
+                        decimal maxDepositAmount = maxAllocationAmt(deposit) - preAllocatedAmt(deposit);
                         distributedAmts[deposit] = maxDepositAmount;
                         totalUsed += maxDepositAmount;
                         deposits.Remove(deposit);

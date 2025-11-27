@@ -10,13 +10,13 @@ namespace FinancialCalculator.ViewModels
 {
     internal class DepositCalculatorViewModel : ViewModelBase
     {
-        public float PaycheckAmount
+        public decimal PaycheckAmount
         {
             get => _depositStore.DepositAmount;
             set { _depositStore.DepositAmount = value; }
         }
 
-        public float EstimatedYearlyIncome { get => _depositStore.EstimatedAnnualIncome; set { _depositStore.EstimatedAnnualIncome = value; } }
+        public decimal EstimatedYearlyIncome { get => _depositStore.EstimatedAnnualIncome; set { _depositStore.EstimatedAnnualIncome = value; } }
         public int MonthsCoveredByPaycheck { get => _depositStore.MonthsCoveredByDeposit; }
 
 
@@ -25,11 +25,11 @@ namespace FinancialCalculator.ViewModels
 
 
 
-        public float TakeHomeAmount => _depositStore.TakeHomeAmount;
-        public float TakeHomePercent => _depositStore.TakeHomeAmount / _depositStore.DepositAmount;
+        public decimal TakeHomeAmount => _depositStore.TakeHomeAmount;
+        public decimal TakeHomePercent => _depositStore.TakeHomeAmount / _depositStore.DepositAmount;
 
-        public float UnallocatedTakeHomeAmount => _depositStore.TakeHomeAmount - DepositBudgets.Sum(deposit => deposit.UsrDepositAmt);
-        public float UnallocatedTakeHomePercent => UnallocatedTakeHomeAmount / TakeHomeAmount;
+        public decimal UnallocatedTakeHomeAmount => _depositStore.TakeHomeAmount - DepositBudgets.Sum(deposit => deposit.UsrDepositAmt);
+        public decimal UnallocatedTakeHomePercent => UnallocatedTakeHomeAmount / TakeHomeAmount;
 
 
         private bool isEditPanelOpen = false;

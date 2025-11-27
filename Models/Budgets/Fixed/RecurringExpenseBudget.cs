@@ -12,7 +12,7 @@ namespace FinancialCalculator.Models
 
         public override string BudgetType { get => "Recurring Expense"; }
 
-        public float ExpenseAmount
+        public decimal ExpenseAmount
         {
             get => expenseAmount;
             set => expenseAmount = value;
@@ -30,20 +30,20 @@ namespace FinancialCalculator.Models
             set => frequencyType = value;
         }
 
-        private float expenseAmount = 0f;
+        private decimal expenseAmount = 0m;
         private int frequencyValue = 1;
         private RecurringFrequencyType frequencyType = RecurringFrequencyType.Month;
 
-        private float FrequencyInMonths => frequencyType switch
+        private decimal FrequencyInMonths => frequencyType switch
         {
-            RecurringFrequencyType.Day => frequencyValue / 30f,
-            RecurringFrequencyType.Week => frequencyValue / 4f,
+            RecurringFrequencyType.Day => frequencyValue / 30,
+            RecurringFrequencyType.Week => frequencyValue / 4,
             RecurringFrequencyType.Month => frequencyValue,
-            RecurringFrequencyType.Year => frequencyValue * 12f,
+            RecurringFrequencyType.Year => frequencyValue * 12,
             _ => frequencyValue
         };
 
-        public RecurringExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, float expenseAmount = 0, int frequencyValue = 1, RecurringFrequencyType frequencyType = RecurringFrequencyType.Month, List<int>? childBudgets = null)
+        public RecurringExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, decimal expenseAmount = 0, int frequencyValue = 1, RecurringFrequencyType frequencyType = RecurringFrequencyType.Month, List<int>? childBudgets = null)
             : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
         {
             ExpenseAmount = expenseAmount;
@@ -51,14 +51,14 @@ namespace FinancialCalculator.Models
             FrequencyType = frequencyType;
         }
 
-        public override float MinDepositAmount(float referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
-        public override float MaxDepositAmount(float referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
-        public override float RecommendedDepositAmount(float referenceDeposit = 0, int numMonths = 1)
+        public override decimal MinDepositAmount(decimal referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override decimal MaxDepositAmount(decimal referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override decimal RecommendedDepositAmount(decimal referenceDeposit = 0, int numMonths = 1)
         {
 
             if (FrequencyInMonths <= 0)
             {
-                return 0f;
+                return 0m;
             }
 
             return (ExpenseAmount / FrequencyInMonths) * numMonths;

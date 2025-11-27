@@ -11,10 +11,10 @@ namespace FinancialCalculator.Models
         public override string BudgetType { get => "Savings Goal"; }
 
 
-        private float savingsGoalAmount;
+        private decimal savingsGoalAmount;
         private LocalDate goalDate = DateTime.Now.ToLocalDateTime().Date;
 
-        public float SavingsGoalAmount
+        public decimal SavingsGoalAmount
         {
             get => savingsGoalAmount;
             set => savingsGoalAmount = value;
@@ -36,15 +36,15 @@ namespace FinancialCalculator.Models
         }
 
 
-        public SavingsBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, float _savingsGoalAmt = 0f, LocalDate _goalDate = default, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
+        public SavingsBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, decimal _savingsGoalAmt = 0m, LocalDate _goalDate = default, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
         {
             savingsGoalAmount = _savingsGoalAmt;
             goalDate = _goalDate == default ? DateTime.Now.ToLocalDateTime().Date : _goalDate;
         }
 
-        public override float MinDepositAmount(float referenceDeposit, int numMonths = 1) => 0;
-        public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => savingsGoalAmount - CurrentBudgetBalance;
-        public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1)
+        public override decimal MinDepositAmount(decimal referenceDeposit, int numMonths = 1) => 0;
+        public override decimal MaxDepositAmount(decimal referenceDeposit, int numMonths = 1) => savingsGoalAmount - CurrentBudgetBalance;
+        public override decimal RecommendedDepositAmount(decimal referenceDeposit, int numMonths = 1)
         {
             int MonthsLeft = MonthsTillGoalDate;
             if (MonthsLeft > 1) return (savingsGoalAmount / MonthsLeft) * numMonths;

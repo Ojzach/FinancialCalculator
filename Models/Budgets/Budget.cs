@@ -17,8 +17,8 @@ namespace FinancialCalculator.Models
         public FinancialAccount AssociatedFinancialAccount;
         public List<int> ChildBudgets;
 
-        public float CurrentBudgetBalance => localCurrentBudgetBalance;
-        private float localCurrentBudgetBalance = 0;
+        public decimal CurrentBudgetBalance => localCurrentBudgetBalance;
+        private decimal localCurrentBudgetBalance = 0;
 
         public Budget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, List<int>? childBudgets)
         {
@@ -32,9 +32,9 @@ namespace FinancialCalculator.Models
         public void AddChildBudget(int budgetID) => ChildBudgets.Add(budgetID);
         public void AddChildBudget(List<int> budgetIDs) => ChildBudgets.AddRange(budgetIDs);
 
-        public abstract float MinDepositAmount(float referenceDeposit, int numMonths = 1);
-        public abstract float MaxDepositAmount(float referenceDeposit, int numMonths = 1);
-        public abstract float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1);
+        public abstract decimal MinDepositAmount(decimal referenceDeposit, int numMonths = 1);
+        public abstract decimal MaxDepositAmount(decimal referenceDeposit, int numMonths = 1);
+        public abstract decimal RecommendedDepositAmount(decimal referenceDeposit, int numMonths = 1);
 
 
         public abstract ViewModelBase ToViewModel();

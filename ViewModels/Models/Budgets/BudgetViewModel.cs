@@ -17,7 +17,7 @@ namespace FinancialCalculator.ViewModels
 
         public abstract string BudgetType { get; }
 
-        public float CurrentBalance { get => _budget.CurrentBudgetBalance; }
+        public decimal CurrentBalance { get => _budget.CurrentBudgetBalance; }
 
 
         public BudgetPriority SelectedBudgetPriority { get => _budget.Priority; set => _budget.Priority = value; }

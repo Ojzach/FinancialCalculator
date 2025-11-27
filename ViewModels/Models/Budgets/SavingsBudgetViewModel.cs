@@ -15,7 +15,7 @@ namespace FinancialCalculator.ViewModels
 
         private SavingsBudget SavingsBudget => (SavingsBudget)_budget;
 
-        public float GoalAmount
+        public decimal GoalAmount
         {
             get => SavingsBudget.SavingsGoalAmount;
             set
@@ -48,7 +48,7 @@ namespace FinancialCalculator.ViewModels
             }
         }
 
-        public float CalculatedAmtPerMonth => SavingsBudget.RecommendedDepositAmount(0);
+        public decimal CalculatedAmtPerMonth => SavingsBudget.RecommendedDepositAmount(0);
 
         public SavingsBudgetViewModel(SavingsBudget budget) : base(budget)
         {

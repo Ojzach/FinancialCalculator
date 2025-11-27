@@ -10,33 +10,33 @@ namespace FinancialCalculator.Stores
     internal class DepositStore
     {
 
-        private float depositAmount = 0;
-        public float DepositAmount 
+        private decimal depositAmount = 0;
+        public decimal DepositAmount 
         { 
             get => depositAmount;
             set
             {
-                depositAmount = MathF.Max(0, value);
+                depositAmount = Math.Max(0, value);
                 PublishDepositChanged(depositService.AllocateWholeDeposit());
             }
         }
 
-        public float TakeHomeAmount 
+        public decimal TakeHomeAmount 
         { 
-            get => MathF.Max(0, DepositAmount - DepositDeductions.Sum(deduction => deduction.Value.DepositAmtPct.GetAmount(depositAmount)));
+            get => Math.Max(0, DepositAmount - DepositDeductions.Sum(deduction => deduction.Value.DepositAmtPct.GetAmount(depositAmount)));
         }
 
 
-        private float estimatedAnnualIncome = 0;
-        public float EstimatedAnnualIncome 
+        private decimal estimatedAnnualIncome = 0;
+        public decimal EstimatedAnnualIncome 
         { 
             get => estimatedAnnualIncome; 
-            set => estimatedAnnualIncome = MathF.Max(0, value); 
+            set => estimatedAnnualIncome = Math.Max(0, value); 
         }
 
         public int MonthsCoveredByDeposit 
         {
-            get => estimatedAnnualIncome == 0 ? 0 : (int)MathF.Ceiling((depositAmount / estimatedAnnualIncome) * 12);
+            get => estimatedAnnualIncome == 0 ? 0 : (int)Math.Ceiling((depositAmount / estimatedAnnualIncome) * 12);
         }
 
 
@@ -74,6 +74,8 @@ namespace FinancialCalculator.Stores
 
             foreach (int budget in budgetStore.Budgets.Keys)
             {
+                deposits[budget].SetChildren(budgetStore.Budgets[budget].ChildBudgets);
+
                 foreach(int childBudget in budgetStore.Budgets[budget].ChildBudgets)
                 {
                     deposits[childBudget].SetParent(budget);
@@ -88,27 +90,49 @@ namespace FinancialCalculator.Stores
         }
 
 
-        public float GetBudgetDepositAmount(int depositID)
+        public decimal GetBudgetDepositAmount(int depositID)
         {
             return deposits[depositID].DepositAmtPct.Amount;
         }
-        public float GetBudgetReferenceAmount(int depositID) => budgetStore.IsBudgetPreTax(GetDepositBudget(depositID).ID) ? DepositAmount : TakeHomeAmount;
+        public decimal GetBudgetReferenceAmount(int depositID) => budgetStore.IsBudgetPreTax(GetDepositBudget(depositID).ID) ? DepositAmount : TakeHomeAmount;
 
         public void UpdatedBudgetSettings(int budgetID) => PublishDepositChanged(depositService.AllocateWholeDeposit());
 
-        public void UsrUpdateDepositValue(int depositID, float amount = -1, float percent = -1)
+        public void UsrUpdateDepositValue(int depositID, decimal amount = -1, decimal percent = -1)
         {
+
+
             BudgetDeposit selectedDeposit = deposits[depositID];
             AmountPercentModel selectedDepositAmtPct = selectedDeposit.DepositAmtPct;
-            float availableAmount;
-            float percentReference = DepositAmount;
+            decimal availableAmount = GetMaxUsrSetAmount(depositID);
 
-            if (selectedDeposit.DepositIsDeduction)
-                availableAmount = TakeHomeAmount + selectedDepositAmtPct.GetAmount(DepositAmount);
+            Debug.Print(depositID + " Amt: " + amount + " Pct: " + percent + " " + " Max Amount: " + availableAmount);
+
+            if (amount >= 0)
+                selectedDepositAmtPct.Amount = Math.Min(amount, availableAmount);
+            else if (percent >= 0)
+                selectedDepositAmtPct.Percent = Math.Min(percent, availableAmount / GetBudgetReferenceAmount(depositID));
+
+            if (selectedDeposit.DepositParentID == -1)
+                PublishDepositChanged(depositService.AllocateWholeDeposit());
             else
             {
-                float usedAmount;
-                percentReference = TakeHomeAmount;
+                List<int> changed = depositService.Allocate(selectedDeposit.DepositParentID, deposits[selectedDeposit.DepositParentID].DepositAmtPct.GetAmount(GetBudgetReferenceAmount(selectedDeposit.DepositParentID)), deposits[selectedDeposit.DepositParentID].DepositChildrenIDs.ToList());
+                PublishDepositChanged(changed);
+
+            }
+        }
+
+        private decimal GetMaxUsrSetAmount(int depositID)
+        {
+            decimal availableAmount = 0;
+            BudgetDeposit selectedDeposit = deposits[depositID];
+
+            if (selectedDeposit.DepositIsDeduction)
+                availableAmount = TakeHomeAmount + selectedDeposit.DepositAmtPct.GetAmount(DepositAmount);
+            else
+            {
+                decimal usedAmount;
 
                 if (selectedDeposit.DepositParentID == -1)
                 {
@@ -124,17 +148,12 @@ namespace FinancialCalculator.Stores
                         .Where(budgetID => budgetID != depositID)
                         .Sum(budgetID => deposits[budgetID].DepositIsUserSet ? deposits[budgetID].DepositAmtPct.GetAmount(TakeHomeAmount) : 0);
 
-                    availableAmount = deposits[selectedDeposit.DepositParentID].DepositAmtPct.GetAmount(TakeHomeAmount) - usedAmount;
+                    availableAmount = Math.Max(0, deposits[selectedDeposit.DepositParentID].DepositAmtPct.GetAmount(TakeHomeAmount) - usedAmount);
                 }
-                    
+
             }
 
-            if (amount >= 0)
-                selectedDepositAmtPct.Amount = MathF.Min(amount, availableAmount);
-            else if (percent >= 0)
-                selectedDepositAmtPct.Percent = MathF.Min(percent, availableAmount / percentReference);
-
-            PublishDepositChanged(depositService.AllocateWholeDeposit());
+            return availableAmount;
         }
 
         public Budget GetDepositBudget(int depositID) => budgetStore.GetBudget(GetDeposit(depositID).DepositBudgetID);

@@ -13,10 +13,10 @@ namespace FinancialCalculator.ViewModels
         private bool isMaxAmountEnabled;
         private bool isMaxPercentEnabled;
 
-        private float cachedMinAmount;
-        private float cachedMinPercent;
-        private float cachedMaxAmount;
-        private float cachedMaxPercent;
+        private decimal cachedMinAmount;
+        private decimal cachedMinPercent;
+        private decimal cachedMaxAmount;
+        private decimal cachedMaxPercent;
 
         public bool IsMinAmountEnabled
         {
@@ -30,7 +30,7 @@ namespace FinancialCalculator.ViewModels
                     if (!isMinAmountEnabled)
                     {
                         cachedMinAmount = flexibleBudget.MinMonthlyAmt;
-                        flexibleBudget.MinMonthlyAmt = 0f;
+                        flexibleBudget.MinMonthlyAmt = 0m;
                     }
                     else
                     {
@@ -55,7 +55,7 @@ namespace FinancialCalculator.ViewModels
                     if (!isMinPercentEnabled)
                     {
                         cachedMinPercent = flexibleBudget.MinMonthlyPct;
-                        flexibleBudget.MinMonthlyPct = 0f;
+                        flexibleBudget.MinMonthlyPct = 0m;
                     }
                     else
                     {
@@ -79,8 +79,8 @@ namespace FinancialCalculator.ViewModels
 
                     if (!isMaxAmountEnabled)
                     {
-                        cachedMaxAmount = flexibleBudget.MaxMonthlyAmt == float.MaxValue ? 0f : flexibleBudget.MaxMonthlyAmt;
-                        flexibleBudget.MaxMonthlyAmt = float.MaxValue;
+                        cachedMaxAmount = flexibleBudget.MaxMonthlyAmt == decimal.MaxValue ? 0m : flexibleBudget.MaxMonthlyAmt;
+                        flexibleBudget.MaxMonthlyAmt = decimal.MaxValue;
                     }
                     else
                     {
@@ -104,8 +104,8 @@ namespace FinancialCalculator.ViewModels
 
                     if (!isMaxPercentEnabled)
                     {
-                        cachedMaxPercent = flexibleBudget.MaxMonthlyPct == 1f ? 0f : flexibleBudget.MaxMonthlyPct;
-                        flexibleBudget.MaxMonthlyPct = 1f;
+                        cachedMaxPercent = flexibleBudget.MaxMonthlyPct == 1m ? 0m : flexibleBudget.MaxMonthlyPct;
+                        flexibleBudget.MaxMonthlyPct = 1m;
                     }
                     else
                     {
@@ -118,12 +118,12 @@ namespace FinancialCalculator.ViewModels
             }
         }
 
-        public float MinAmount
+        public decimal MinAmount
         {
             get => flexibleBudget.MinMonthlyAmt;
             set
             {
-                float sanitizedValue = Math.Max(0f, value);
+                decimal sanitizedValue = Math.Max(0m, value);
 
                 if (flexibleBudget.MinMonthlyAmt != sanitizedValue)
                 {
@@ -142,12 +142,12 @@ namespace FinancialCalculator.ViewModels
             }
         }
 
-        public float MinPercent
+        public decimal MinPercent
         {
             get => flexibleBudget.MinMonthlyPct;
             set
             {
-                float sanitizedValue = Math.Clamp(value, 0f, 1f);
+                decimal sanitizedValue = Math.Clamp(value, 0m, 1m);
 
                 if (flexibleBudget.MinMonthlyPct != sanitizedValue)
                 {
@@ -166,12 +166,12 @@ namespace FinancialCalculator.ViewModels
             }
         }
 
-        public float MaxAmount
+        public decimal MaxAmount
         {
-            get => flexibleBudget.MaxMonthlyAmt == float.MaxValue ? cachedMaxAmount : flexibleBudget.MaxMonthlyAmt;
+            get => flexibleBudget.MaxMonthlyAmt == decimal.MaxValue ? cachedMaxAmount : flexibleBudget.MaxMonthlyAmt;
             set
             {
-                float sanitizedValue = value;
+                decimal sanitizedValue = value;
 
                 if (!IsMaxAmountEnabled && value > 0)
                 {
@@ -181,7 +181,7 @@ namespace FinancialCalculator.ViewModels
 
                 if (sanitizedValue <= 0)
                 {
-                    sanitizedValue = 0f;
+                    sanitizedValue = 0m;
                 }
 
                 if (flexibleBudget.MaxMonthlyAmt != sanitizedValue)
@@ -194,12 +194,12 @@ namespace FinancialCalculator.ViewModels
             }
         }
 
-        public float MaxPercent
+        public decimal MaxPercent
         {
-            get => flexibleBudget.MaxMonthlyPct == 1f ? cachedMaxPercent : flexibleBudget.MaxMonthlyPct;
+            get => flexibleBudget.MaxMonthlyPct == 1m ? cachedMaxPercent : flexibleBudget.MaxMonthlyPct;
             set
             {
-                float sanitizedValue = Math.Clamp(value, 0f, 1f);
+                decimal sanitizedValue = Math.Clamp(value, 0m, 1m);
 
                 if (!IsMaxPercentEnabled && sanitizedValue > 0)
                 {
@@ -224,13 +224,13 @@ namespace FinancialCalculator.ViewModels
             cachedMaxAmount = budget.MaxMonthlyAmt;
             cachedMaxPercent = budget.MaxMonthlyPct;
 
-            isMinAmountEnabled = budget.MinMonthlyAmt > 0f;
-            isMinPercentEnabled = budget.MinMonthlyPct > 0f;
-            isMaxAmountEnabled = budget.MaxMonthlyAmt < float.MaxValue;
-            isMaxPercentEnabled = budget.MaxMonthlyPct < 1f;
+            isMinAmountEnabled = budget.MinMonthlyAmt > 0m;
+            isMinPercentEnabled = budget.MinMonthlyPct > 0m;
+            isMaxAmountEnabled = budget.MaxMonthlyAmt < decimal.MaxValue;
+            isMaxPercentEnabled = budget.MaxMonthlyPct < 1m;
 
-            if (!isMaxAmountEnabled) cachedMaxAmount = 0f;
-            if (!isMaxPercentEnabled) cachedMaxPercent = 0f;
+            if (!isMaxAmountEnabled) cachedMaxAmount = 0m;
+            if (!isMaxPercentEnabled) cachedMaxPercent = 0m;
         }
     }
 }

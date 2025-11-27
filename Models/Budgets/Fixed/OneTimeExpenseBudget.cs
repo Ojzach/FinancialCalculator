@@ -11,16 +11,16 @@ namespace FinancialCalculator.Models.Budgets.Fixed
     {
         public override string BudgetType { get => "Recurring Expense"; }
 
-        public float ExpenseAmt = 0f;
+        public decimal ExpenseAmt = 0m;
 
-        public OneTimeExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, float _expenseAmt = 0, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
+        public OneTimeExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, decimal _expenseAmt = 0, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
         {
             ExpenseAmt = _expenseAmt;
         }
 
-        public override float MinDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
-        public override float MaxDepositAmount(float referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
-        public override float RecommendedDepositAmount(float referenceDeposit, int numMonths = 1) => ExpenseAmt;
+        public override decimal MinDepositAmount(decimal referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override decimal MaxDepositAmount(decimal referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override decimal RecommendedDepositAmount(decimal referenceDeposit, int numMonths = 1) => ExpenseAmt;
 
         public override ViewModelBase ToViewModel()
         {

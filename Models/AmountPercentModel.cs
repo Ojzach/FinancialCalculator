@@ -11,11 +11,11 @@ namespace FinancialCalculator.Models
     {
 
         public bool IsSetByAmount { get; private set; } = true;
-        public float Amount {
+        public decimal Amount {
             get
             {
                 if (IsSetByAmount) return amount;
-                else return MathF.Round(ResolveReferenceAmount() * percent, 2);
+                else return Math.Round(ResolveReferenceAmount() * percent, 2);
             }
             set {
                 IsSetByAmount = true;
@@ -23,7 +23,7 @@ namespace FinancialCalculator.Models
                 percent = 0;
             }
         }
-        public float Percent {
+        public decimal Percent {
             get
             {
                 if (!IsSetByAmount) return percent;
@@ -38,25 +38,25 @@ namespace FinancialCalculator.Models
             } 
         }
 
-        private float amount = 0;
-        private float percent = 0; //Percents will be held in decimal form (Ex: 10% = 0.1, 100% = 1.0, 50% = 0.5)
+        private decimal amount = 0;
+        private decimal percent = 0; //Percents will be held in decimal form (Ex: 10% = 0.1, 100% = 1.0, 50% = 0.5)
 
-        private Func<float> referenceAmountProvider;
+        private Func<decimal> referenceAmountProvider;
 
-        public AmountPercentModel(Func<float> referenceAmountProvider = null, float initialAmount = 0, float initialPercent = 0)
+        public AmountPercentModel(Func<decimal> referenceAmountProvider = null, decimal initialAmount = 0, decimal initialPercent = 0)
         {
             this.referenceAmountProvider = referenceAmountProvider;
             if (initialAmount != 0) Amount = initialAmount;
             else if(initialPercent != 0) Percent = initialPercent;
         }
 
-        public float GetAmount(float referenceAmount)
+        public decimal GetAmount(decimal referenceAmount)
         {
             if (IsSetByAmount) return amount;
-            else return MathF.Round(referenceAmount * percent, 2);
+            else return Math.Round(referenceAmount * percent, 2);
         }
 
-        public float GetPercent(float referenceAmount)
+        public decimal GetPercent(decimal referenceAmount)
         {
             if (!IsSetByAmount) return percent;
             else if (referenceAmount == 0) return 0;
@@ -64,7 +64,7 @@ namespace FinancialCalculator.Models
         }
 
 
-        private float ResolveReferenceAmount()
+        private decimal ResolveReferenceAmount()
         {
             if (referenceAmountProvider is null)
             {
