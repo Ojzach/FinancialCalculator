@@ -1,6 +1,7 @@
 ﻿using FinancialCalculator.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,18 +52,12 @@ namespace FinancialCalculator.Models
             FrequencyType = frequencyType;
         }
 
-        public override decimal MinDepositAmount(decimal referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
-        public override decimal MaxDepositAmount(decimal referenceDeposit = 0, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override decimal MinDepositAmount(decimal referenceDeposit = 0, int numMonths = 1) 
+            => RecommendedDepositAmount(referenceDeposit, numMonths);
+        public override decimal MaxDepositAmount(decimal referenceDeposit = 0, int numMonths = 1) 
+            => RecommendedDepositAmount(referenceDeposit, numMonths);
         public override decimal RecommendedDepositAmount(decimal referenceDeposit = 0, int numMonths = 1)
-        {
-
-            if (FrequencyInMonths <= 0)
-            {
-                return 0m;
-            }
-
-            return (ExpenseAmount / FrequencyInMonths) * numMonths;
-        }
+            => Math.Round(ExpenseAmount / FrequencyInMonths, 2) * numMonths;
 
         public override ViewModelBase ToViewModel() => new RecurringExpenseBudgetViewModel(this);
     }

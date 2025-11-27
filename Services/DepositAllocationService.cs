@@ -43,7 +43,6 @@ namespace FinancialCalculator.Services
             foreach (int depositID in userSetDeposits)
             {
                 allocationAmount -= depositStore.GetBudgetDepositAmount(depositID);
-                Debug.Print(depositID + " " + depositStore.GetBudgetDepositAmount(depositID) + " " + allocationAmount);
                 depositsToAllocate.Remove(depositID);
             }
 
@@ -155,7 +154,7 @@ namespace FinancialCalculator.Services
 
                 foreach (int deposit in deposits)
                 {
-                    decimal calculatedAmt = (amt - totalUsed) * (ratioWeight(deposit) / ratioTotal);
+                    decimal calculatedAmt = Math.Round((amt - totalUsed) * (ratioWeight(deposit) / ratioTotal), 2);
 
                     if (calculatedAmt + preAllocatedAmt(deposit) >= maxAllocationAmt(deposit))
                     {
