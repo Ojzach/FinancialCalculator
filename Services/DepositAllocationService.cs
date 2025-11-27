@@ -15,12 +15,10 @@ namespace FinancialCalculator.Services
     {
 
         DepositStore depositStore;
-        BudgetStore budgetStore;
 
-        public DepositAllocationService(DepositStore _depositStore, BudgetStore _budgetStore)
+        public DepositAllocationService(DepositStore _depositStore)
         {
             depositStore = _depositStore;
-            budgetStore = _budgetStore;
         }
 
         public List<int> AllocateWholeDeposit()
@@ -123,9 +121,10 @@ namespace FinancialCalculator.Services
             {
                 depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount = deposit.Value;
 
-                if (budgetStore.GetBudget(deposit.Key).ChildBudgets.Count > 0)
+                if(depositStore.GetDeposit(deposit.Key).DepositChildrenIDs.Count > 0)
                 {
-                    Allocate(deposit.Key, depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount, budgetStore.Budgets[deposit.Key].ChildBudgets.ToList());
+                    Allocate(deposit.Key, depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount, depositStore.GetDeposit(deposit.Key).DepositChildrenIDs.ToList());
+
                 }
             }
 

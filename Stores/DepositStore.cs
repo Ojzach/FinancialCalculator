@@ -54,7 +54,7 @@ namespace FinancialCalculator.Stores
         public DepositStore(BudgetStore _budgetStore)
         {
             budgetStore = _budgetStore;
-            depositService = new DepositAllocationService(this, budgetStore);
+            depositService = new DepositAllocationService(this);
 
 
             foreach(Budget deduction in budgetStore.HiddenBudgets.Values)
