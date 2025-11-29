@@ -116,6 +116,8 @@ namespace FinancialCalculator.ViewModels
         {
             OnPropertyChanged(nameof(UsrDepositPct));
             OnPropertyChanged(nameof(UsrDepositAmt));
+            OnPropertyChanged(nameof(UsrUnallocatedPct));
+            OnPropertyChanged(nameof(UsrUnallocatedAmt));
             OnPropertyChanged(nameof(IsDepositAmountInvalid));
             OnPropertyChanged(nameof(BudgetPriority));
 
