@@ -1,9 +1,4 @@
 ﻿using FinancialCalculator.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FinancialCalculator.Models
 {
@@ -25,12 +20,9 @@ namespace FinancialCalculator.Models
             ID = id;
             Name = name;
             Priority = priority;
-            AssociatedFinancialAccount = associatedFinancialAccount;      
+            AssociatedFinancialAccount = associatedFinancialAccount;
             ChildBudgets = childBudgets == null ? new List<int>() : childBudgets;
         }
-
-        public void AddChildBudget(int budgetID) => ChildBudgets.Add(budgetID);
-        public void AddChildBudget(List<int> budgetIDs) => ChildBudgets.AddRange(budgetIDs);
 
         public abstract decimal MinDepositAmount(decimal referenceDeposit, int numMonths = 1);
         public abstract decimal MaxDepositAmount(decimal referenceDeposit, int numMonths = 1);
