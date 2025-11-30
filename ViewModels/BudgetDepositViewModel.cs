@@ -34,7 +34,11 @@ namespace FinancialCalculator.ViewModels
 
         public decimal UsrDepositAmt 
         { 
-            get => depositAmtPct.Amount;
+            get
+            {
+                return depositAmtPct.GetAmount(depositStore.GetBudgetReferenceAmount(budgetID));
+            }
+
             set => UserChangedValue(amount: value);
         }
 
@@ -49,7 +53,12 @@ namespace FinancialCalculator.ViewModels
 
         public decimal UsrUnallocatedPct
         {
-            get => UsrUnallocatedAmt / depositStore.GetBudgetReferenceAmount(budgetID);
+            get
+            {
+                if (depositStore.GetBudgetReferenceAmount(budgetID) != 0)
+                    return UsrUnallocatedAmt / depositStore.GetBudgetReferenceAmount(budgetID);
+                else return 0;
+            }
             set
             {
                 UnallocatedIsUsrSet = true;
@@ -102,7 +111,6 @@ namespace FinancialCalculator.ViewModels
 
             IsNotBaseBudget = !isBaseBudget;
 
-
             foreach (int budgetID in budget.ChildBudgets)
             {
                 SubItems.Add(new BudgetDepositViewModel(budgetID, _budgetStore, _depositStore));
@@ -118,7 +126,7 @@ namespace FinancialCalculator.ViewModels
 
         private void OnDepositChanged(List<int> depositsChanged)
         {
-            if (depositsChanged.Contains(0) || depositsChanged.Contains(budgetID)) RefreshUI();
+            if (depositsChanged.Contains(depositStore.BaseDepositID) || depositsChanged.Contains(budgetID)) RefreshUI();
         }
 
         public void RefreshUI()

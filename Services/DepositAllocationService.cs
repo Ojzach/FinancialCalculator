@@ -21,20 +21,13 @@ namespace FinancialCalculator.Services
             depositStore = _depositStore;
         }
 
-        public List<int> AllocateWholeDeposit()
+        public List<int> Allocate(int parentDeposit, decimal allocationAmount)
         {
-            Allocate(-1, depositStore.TakeHomeAmount, depositStore.BudgetDeposits.Keys.Where(id => depositStore.BudgetDeposits[id].DepositParentID == -1).ToList());
-            return new List<int>() { 0 };
-        }
+            depositStore.GetDeposit(parentDeposit).IsDepositAmountInvalid = false; //Resets Error Outline
 
-        public List<int> Allocate(int parentDeposit, decimal allocationAmount, List<int> depositsToAllocate)
-        {
-            if(parentDeposit != -1) 
-                depositStore.GetDeposit(parentDeposit).IsDepositAmountInvalid = false; //Resets Error Outline
-
+            List<int> depositsToAllocate = depositStore.GetDeposit(parentDeposit).DepositChildrenIDs.ToList();
             ReadOnlyDictionary<int, Budget> depositBudgets = new (depositStore.GetDepositBudgets(depositsToAllocate));
             Dictionary<int, decimal> changedDeposits = new();
-
 
             //Find the sum of the budgets that are set by the user. These are not editable so they will be subtracted out of rebalance
             var userSetDeposits = depositsToAllocate.Where(id => depositStore.GetDeposit(id).DepositIsUserSet).ToList();
@@ -42,6 +35,11 @@ namespace FinancialCalculator.Services
             {
                 allocationAmount -= depositStore.GetBudgetDepositAmount(depositID);
                 depositsToAllocate.Remove(depositID);
+            }
+
+            if(depositStore.GetDeposit(parentDeposit).UnallocatedIsUserSet)
+            {
+                allocationAmount -= depositStore.GetDeposit(parentDeposit).UnallocatedAmtPct.GetAmount(RefAmt(parentDeposit));
             }
 
 
@@ -92,9 +90,7 @@ namespace FinancialCalculator.Services
             }
             else
             {
-                if (parentDeposit != -1)
                     depositStore.BudgetDeposits[parentDeposit].DepositInvalid("Child budget's minimum amounts are more then the amount available");
-                else new AllocationException("Top level budgets minimum amounts are more then the amount available");
 
                 var highPriority = depositsToAllocate.Where(id =>
                     depositBudgets[id].Priority == BudgetPriority.VeryHigh
@@ -112,10 +108,10 @@ namespace FinancialCalculator.Services
 
             Distribute(depositsToAllocate); //Distribute All Leftover Deposits
 
-
-
             //This will not update children that are set by percentages if the parent amount didnt change
-            changedDeposits = changedDeposits.Where(deposit => deposit.Value != depositStore.GetBudgetDepositAmount(deposit.Key)).ToDictionary();
+            //changedDeposits = changedDeposits.Where(deposit => deposit.Value != depositStore.GetBudgetDepositAmount(deposit.Key)).ToDictionary();
+
+            List<int> depositsToUpdate = changedDeposits.Keys.ToList();
 
             foreach (KeyValuePair<int, decimal> deposit in changedDeposits)
             {
@@ -123,14 +119,11 @@ namespace FinancialCalculator.Services
 
                 if(depositStore.GetDeposit(deposit.Key).DepositChildrenIDs.Count > 0)
                 {
-                    Allocate(deposit.Key, depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount, depositStore.GetDeposit(deposit.Key).DepositChildrenIDs.ToList());
-
+                    depositsToUpdate.AddRange(Allocate(deposit.Key, depositStore.BudgetDeposits[deposit.Key].DepositAmtPct.Amount));
                 }
             }
 
-            if (parentDeposit != -1 && !depositStore.BudgetDeposits[parentDeposit].UnallocatedIsUserSet)
-                depositStore.BudgetDeposits[parentDeposit].UnallocatedAmtPct.Amount = allocationAmount;
-
+            depositStore.BudgetDeposits[parentDeposit].UnallocatedAmtPct.Amount = allocationAmount;
 
             return changedDeposits.Keys.ToList();
 

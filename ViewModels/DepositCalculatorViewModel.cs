@@ -40,13 +40,10 @@ namespace FinancialCalculator.ViewModels
         {
             _depositStore = new DepositStore(budgetsStore);
             _budgetStore = budgetsStore;
-
             _depositStore.DepositsChanged += OnDepositChanged;
 
-            _depositStore.DepositAmount = 15000;
 
-
-            foreach(BudgetDeposit depositDeduction in _depositStore.DepositDeductions.Values)
+            foreach (BudgetDeposit depositDeduction in _depositStore.DepositDeductions.Values)
             {
                 depositDeductions.Add(new BudgetDepositViewModel(depositDeduction.DepositBudgetID, budgetsStore, _depositStore));
                 depositDeductions[depositDeductions.Count() - 1].EditBudgetAction += OpenEditMenu;
@@ -56,6 +53,9 @@ namespace FinancialCalculator.ViewModels
             BaseDeposit.EditBudgetAction += OpenEditMenu;
             
             CloseEditMenuCommand = new RelayCommand(execute => CloseEditMenu());
+
+
+            _depositStore.DepositAmount = 15000;
         }
 
 
