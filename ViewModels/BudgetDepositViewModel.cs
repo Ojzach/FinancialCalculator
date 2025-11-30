@@ -22,8 +22,13 @@ namespace FinancialCalculator.ViewModels
         public bool UnallocatedIsSetByAmt { get => unallocatedAmtPct.IsSetByAmount; }
 
         public decimal UsrDepositPct 
-        { 
-            get => UsrDepositAmt / depositStore.GetBudgetReferenceAmount(budgetID);
+        {
+            get
+            {
+                if (depositStore.GetBudgetReferenceAmount(budgetID) != 0)
+                    return UsrDepositAmt / depositStore.GetBudgetReferenceAmount(budgetID);
+                else return 0;
+            }
             set => UserChangedValue(percent: value);
         }
 
