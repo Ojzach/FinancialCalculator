@@ -46,7 +46,7 @@ namespace FinancialCalculator.Stores
         public IReadOnlyDictionary<int, BudgetDeposit> BudgetDeposits => deposits.Where(deposit => !deposit.Value.DepositIsDeduction).ToDictionary();
         public IReadOnlyDictionary<int, BudgetDeposit> DepositDeductions => deposits.Where(deposit => deposit.Value.DepositIsDeduction).ToDictionary();
 
-        public int BaseDepositID { get; private set; } = 0;
+        public int BaseDepositID { get; private set; } = -1;
 
         public event Action<List<int>>? DepositsChanged;
         
@@ -73,7 +73,7 @@ namespace FinancialCalculator.Stores
 
             }
 
-            BaseDepositID = 0;
+            BaseDepositID = 6;
             deposits[BaseDepositID].DepositAmtPct.Percent = 1;
 
             foreach (int budget in budgetStore.Budgets.Keys)

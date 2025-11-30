@@ -49,7 +49,7 @@ namespace FinancialCalculator.ViewModels
                 depositDeductions[depositDeductions.Count() - 1].EditBudgetAction += OpenEditMenu;
             }
 
-            BaseDeposit = new BudgetDepositViewModel(0, budgetsStore, _depositStore, true);
+            BaseDeposit = new BudgetDepositViewModel(_depositStore.BaseDepositID, budgetsStore, _depositStore, true);
             BaseDeposit.EditBudgetAction += OpenEditMenu;
             
             CloseEditMenuCommand = new RelayCommand(execute => CloseEditMenu());
