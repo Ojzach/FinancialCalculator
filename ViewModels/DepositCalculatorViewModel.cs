@@ -24,14 +24,6 @@ namespace FinancialCalculator.ViewModels
         private BudgetStore _budgetStore;
 
 
-
-        public decimal TakeHomeAmount => _depositStore.TakeHomeAmount;
-        public decimal TakeHomePercent => _depositStore.TakeHomeAmount / _depositStore.DepositAmount;
-
-        public decimal UnallocatedTakeHomeAmount => _depositStore.TakeHomeAmount - DepositBudgets.Sum(deposit => deposit.UsrDepositAmt);
-        public decimal UnallocatedTakeHomePercent => UnallocatedTakeHomeAmount / TakeHomeAmount;
-
-
         private bool isEditPanelOpen = false;
         public bool IsEditPanelOpen { get => isEditPanelOpen; set { isEditPanelOpen = value; OnPropertyChanged(nameof(IsEditPanelOpen)); } }
 
@@ -39,11 +31,10 @@ namespace FinancialCalculator.ViewModels
         public ViewModelBase? CurrentlyEditingBudget => _budgetStore.Budgets.Keys.Contains(currentlyEditingBudgetID) ? _budgetStore.Budgets[currentlyEditingBudgetID].ToViewModel() : null;
 
 
-        private List<BudgetDepositViewModel> depositBudgets = new List<BudgetDepositViewModel>();
-        public List<BudgetDepositViewModel> DepositBudgets { get => depositBudgets; set { depositBudgets = value; OnPropertyChanged(nameof(DepositBudgets)); } }
-
         private List<BudgetDepositViewModel> depositDeductions = new List<BudgetDepositViewModel>();
         public List<BudgetDepositViewModel> DepositDeductions { get => depositDeductions; set { depositDeductions = value; OnPropertyChanged(nameof(DepositDeductions)); } }
+
+        public BudgetDepositViewModel BaseDeposit { get; set; }
 
         public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
         {
@@ -61,12 +52,8 @@ namespace FinancialCalculator.ViewModels
                 depositDeductions[depositDeductions.Count() - 1].EditBudgetAction += OpenEditMenu;
             }
 
-
-            foreach(BudgetDeposit depositBudget in _depositStore.BudgetDeposits.Values.Where(deposit => deposit.DepositParentID == -1))
-            {
-                depositBudgets.Add(new BudgetDepositViewModel(depositBudget.DepositBudgetID, budgetsStore, _depositStore));
-                depositBudgets[depositBudgets.Count() - 1].EditBudgetAction += OpenEditMenu;
-            }
+            BaseDeposit = new BudgetDepositViewModel(0, budgetsStore, _depositStore, true);
+            BaseDeposit.EditBudgetAction += OpenEditMenu;
             
             CloseEditMenuCommand = new RelayCommand(execute => CloseEditMenu());
         }
@@ -79,8 +66,6 @@ namespace FinancialCalculator.ViewModels
             {
                 OnPropertyChanged("EstimatedYearlyIncome");
                 OnPropertyChanged("MonthsCoveredByPaycheck");
-                OnPropertyChanged(nameof(TakeHomeAmount));
-                OnPropertyChanged(nameof(TakeHomePercent));
             }
         }
 

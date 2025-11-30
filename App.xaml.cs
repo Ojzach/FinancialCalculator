@@ -49,7 +49,7 @@ namespace FinancialCalculator
             BudgetStore _budgetsStore = new BudgetStore(_financialInstitutionsStore,
                 budgets: new List<Budget>()
                 {
-                    //new FixedBudget(0, "Base Budget", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 1, childBudgets: [1, 6, 10, 14]),
+                    new FixedBudget(0, "Base Budget", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 1, childBudgets: [1, 6, 10, 14]),
 
                     new FixedBudget(1, "Investments", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 0.6m, childBudgets: [2, 3, 5]),
                     new FixedBudget(2, "401K", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(6), setPct: 0.1m),

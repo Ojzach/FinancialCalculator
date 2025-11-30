@@ -54,9 +54,9 @@
 
                         <TextBlock Text="{Binding BudgetName}" FontWeight="Bold" Grid.Column="0" Margin="5, 0, 0, 0" HorizontalAlignment="Left"/>
 
-                        <TextBlock Text="{Binding BudgetType}" Grid.Column="1"/>
+                        <TextBlock Text="{Binding BudgetType}" Visibility="{Binding IsNotBaseBudget, Converter={StaticResource BoolToVisibilityConverter}}" Grid.Column="1"/>
 
-                        <TextBlock Text="{Binding BudgetPriority}" Grid.Column="2"/>
+                        <TextBlock Text="{Binding BudgetPriority}" Visibility="{Binding IsNotBaseBudget, Converter={StaticResource BoolToVisibilityConverter}}" Grid.Column="2"/>
 
                     </Grid>
 
@@ -89,7 +89,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBox Text="{Binding UsrDepositPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Text="{Binding UsrDepositPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotBaseBudget}"/>
                         </Border>
 
                         <Border BorderBrush="Green" Grid.Column="1" Margin="3">
@@ -112,10 +112,10 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBox Text="{Binding UsrDepositAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Text="{Binding UsrDepositAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotBaseBudget}"/>
                         </Border>
 
-                        <Button Command="{Binding EditBudgetCommand}" Grid.Column="3" MaxWidth="20" Margin="5">
+                        <Button Command="{Binding EditBudgetCommand}" IsEnabled="{Binding IsNotBaseBudget}" Grid.Column="3" MaxWidth="20" Margin="5">
                             <Button.Content>
                                 <TextBlock Text="⋮" FontSize="10" FontWeight="Bold"/>
                             </Button.Content>
@@ -187,7 +187,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBox Text="{Binding UsrUnallocatedPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Text="{Binding UsrUnallocatedPct, Converter={StaticResource PercentConverter}, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotBaseBudget}"/>
                         </Border>
 
                         <Border BorderBrush="Green" Grid.Column="1" Margin="3">
@@ -210,7 +210,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBox Text="{Binding UsrUnallocatedAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Text="{Binding UsrUnallocatedAmt, StringFormat='c', UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotBaseBudget}"/>
                         </Border>
                     </Grid>
 

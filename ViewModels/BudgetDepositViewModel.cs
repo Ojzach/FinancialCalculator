@@ -72,6 +72,7 @@ namespace FinancialCalculator.ViewModels
         }
         private ObservableCollection<BudgetDepositViewModel> subItems = new ObservableCollection<BudgetDepositViewModel>();
         public bool IsSubItemsNotEmpty => SubItems.Count > 0;
+        public bool IsNotBaseBudget { get; set; } = true;
 
 
         public bool IsDepositAmountInvalid => depositStore.BudgetDeposits[budgetID].IsDepositAmountInvalid;
@@ -86,13 +87,16 @@ namespace FinancialCalculator.ViewModels
         private int budgetID;
         protected DepositStore depositStore;
 
-        public BudgetDepositViewModel(int _budgetID, BudgetStore _budgetStore, DepositStore _depositStore)
+        public BudgetDepositViewModel(int _budgetID, BudgetStore _budgetStore, DepositStore _depositStore, bool isBaseBudget = false)
         {
             budgetID = _budgetID;
             budget = _budgetStore.GetBudget(_budgetID);
             depositStore = _depositStore;
 
             depositStore.DepositsChanged += OnDepositChanged;
+
+            IsNotBaseBudget = !isBaseBudget;
+
 
             foreach (int budgetID in budget.ChildBudgets)
             {
