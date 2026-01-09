@@ -56,35 +56,36 @@ namespace FinancialCalculator.Stores
         public DepositStore(BudgetStore _budgetStore)
         {
             budgetStore = _budgetStore;
-            depositService = new DepositAllocationService(this);
+            depositService = new DepositAllocationService(this);          
 
-
-            foreach(Budget deduction in budgetStore.HiddenBudgets.Values)
+            foreach (var deduction in budgetStore.HiddenBudgets)
             {
-                AmountPercentModel amtPct = new AmountPercentModel(() => DepositAmount, ((FixedBudget)deduction).SetAmount, ((FixedBudget)deduction).SetPercent);
+                AmountPercentModel amtPct = new AmountPercentModel(() => DepositAmount, ((FixedBudget)deduction.Value).SetAmount, ((FixedBudget)deduction.Value).SetPercent);
 
-                deposits.Add(deduction.ID, new BudgetDeposit(deduction.ID, amtPct, true));
+                deposits.Add(deduction.Value.ID, new BudgetDeposit(deduction.Value.ID, amtPct, true));
+                deposits[deduction.Key].SetParent(-2);
             }
 
-            foreach (Budget budget in budgetStore.Budgets.Values)
+            foreach (var budget in budgetStore.Budgets)
             {
-                if(budgetStore.IsBudgetPreTax(budget.ID)) deposits.Add(budget.ID, new BudgetDeposit(budget.ID, new AmountPercentModel(() => DepositAmount)));
-                else deposits.Add(budget.ID, new BudgetDeposit(budget.ID, new AmountPercentModel(() => TakeHomeAmount)));
+                if(budgetStore.IsBudgetPreTax(budget.Value.ID)) deposits.Add(budget.Value.ID, new BudgetDeposit(budget.Value.ID, new AmountPercentModel(() => DepositAmount)));
+                else deposits.Add(budget.Value.ID, new BudgetDeposit(budget.Value.ID, new AmountPercentModel(() => TakeHomeAmount)));
+
+            }
+
+            foreach (var budget in budgetStore.Budgets)
+            {
+                deposits[budget.Key].SetChildren(budgetStore.Budgets[budget.Key].ChildBudgets);
+
+                foreach (int childBudget in budgetStore.Budgets[budget.Key].ChildBudgets)
+                {
+                    deposits[childBudget].SetParent(budget.Key);
+                }
 
             }
 
             BaseDepositID = 6;
             deposits[BaseDepositID].DepositAmtPct.Percent = 1;
-
-            foreach (int budget in budgetStore.Budgets.Keys)
-            {
-                deposits[budget].SetChildren(budgetStore.Budgets[budget].ChildBudgets);
-
-                foreach(int childBudget in budgetStore.Budgets[budget].ChildBudgets)
-                {
-                    deposits[childBudget].SetParent(budget);
-                }
-            }
 
         }
 
@@ -117,8 +118,18 @@ namespace FinancialCalculator.Stores
             else if (percent >= 0)
                 selectedDepositAmtPct.Percent = Math.Min(percent, availableAmount / GetBudgetReferenceAmount(depositID));
 
-            List<int> changed = depositService.Allocate(selectedDeposit.DepositParentID, deposits[selectedDeposit.DepositParentID].DepositAmtPct.GetAmount(GetBudgetReferenceAmount(selectedDeposit.DepositParentID)));
-            changed.AddRange(depositService.Allocate(depositID, selectedDepositAmtPct.GetAmount(GetBudgetReferenceAmount(depositID))));
+
+            List<int> changed = new();
+            if (selectedDeposit.DepositParentID == -2)
+            {
+                changed = depositService.Allocate(BaseDepositID, TakeHomeAmount);
+            }
+            else
+            {
+                changed  = depositService.Allocate(selectedDeposit.DepositParentID, deposits[selectedDeposit.DepositParentID].DepositAmtPct.GetAmount(GetBudgetReferenceAmount(selectedDeposit.DepositParentID)));
+                changed.AddRange(depositService.Allocate(depositID, selectedDepositAmtPct.GetAmount(GetBudgetReferenceAmount(depositID))));
+            }
+
             PublishDepositChanged(changed);
         }
 

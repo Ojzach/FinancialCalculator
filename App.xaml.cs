@@ -75,10 +75,10 @@ namespace FinancialCalculator
                 },
                 hiddenBudgets: new List<Budget>()
                 {
-                    new FixedBudget(-2, "Federal Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.145m),
-                    new FixedBudget(-3, "Medicare", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.0145m),
-                    new FixedBudget(-4, "Social Security", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.062m),
-                    new FixedBudget(-5, "State Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0m)
+                    new FixedBudget(100, "Federal Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.145m),
+                    new FixedBudget(101, "Medicare", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.0145m),
+                    new FixedBudget(102, "Social Security", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.062m),
+                    new FixedBudget(103, "State Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0m)
                 });
 
 
