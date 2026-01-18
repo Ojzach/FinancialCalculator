@@ -126,7 +126,11 @@ namespace FinancialCalculator.ViewModels
 
         private void OnDepositChanged(List<int> depositsChanged)
         {
-            if (depositsChanged.Contains(depositStore.BaseDepositID) || depositsChanged.Contains(budgetID)) RefreshUI();
+
+            if (depositsChanged.Count == 0 || depositsChanged.Contains(budgetID))
+            {
+                RefreshUI();
+            }
         }
 
         public void RefreshUI()

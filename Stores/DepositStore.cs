@@ -17,8 +17,9 @@ namespace FinancialCalculator.Stores
             set
             {
                 depositAmount = Math.Max(0, value);
-                depositService.Allocate(0, TakeHomeAmount);
-                PublishDepositChanged([0]);
+                deposits[BaseDepositID].DepositAmtPct.Amount = TakeHomeAmount;
+                depositService.Allocate(BaseDepositID, TakeHomeAmount);
+                PublishDepositChanged([]);
             }
         }
 
@@ -122,7 +123,9 @@ namespace FinancialCalculator.Stores
             List<int> changed = new();
             if (selectedDeposit.DepositParentID == -2)
             {
+                deposits[BaseDepositID].DepositAmtPct.Amount = TakeHomeAmount;
                 changed = depositService.Allocate(BaseDepositID, TakeHomeAmount);
+                changed.Add(BaseDepositID);
             }
             else
             {

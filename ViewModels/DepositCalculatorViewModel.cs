@@ -10,7 +10,7 @@ namespace FinancialCalculator.ViewModels
 {
     internal class DepositCalculatorViewModel : ViewModelBase
     {
-        public decimal PaycheckAmount
+        public decimal InitialDepositAmount
         {
             get => _depositStore.DepositAmount;
             set { _depositStore.DepositAmount = value; }
@@ -62,7 +62,7 @@ namespace FinancialCalculator.ViewModels
 
         public void OnDepositChanged(List<int> changedDeposits)
         {
-            if(changedDeposits.Contains(0))
+            if(changedDeposits.Count == 0)
             {
                 OnPropertyChanged("EstimatedYearlyIncome");
                 OnPropertyChanged("MonthsCoveredByPaycheck");
