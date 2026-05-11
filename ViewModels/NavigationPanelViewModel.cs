@@ -20,7 +20,7 @@ namespace FinancialCalculator.ViewModels
         public ICommand LoadDepositCalculatorViewCommand { get; }
         public ICommand LoadFinancialAccountsViewCommand { get; }
 
-        public NavigationPanelViewModel(NavigationStore navigationStore, FinancialInstitutionsStore financialInstitutionsStore, BudgetsStore budgetsStore)
+        public NavigationPanelViewModel(NavigationStore navigationStore, FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
         {
             _navigationStore = navigationStore;
 

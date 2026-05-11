@@ -1,6 +1,7 @@
 ﻿using FinancialCalculator.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,12 +14,16 @@ namespace FinancialCalculator.ViewModels
 
 
         public string BudgetName { get => _budget.Name; private set => _budget.Name = value; }
+
         public abstract string BudgetType { get; }
-        public string AssociatedFinancialAccountName { get => _budget.AssociatedFinancialAccount.accountName; }
 
-        public float CurrentBalance { get => _budget.CurrentBudgetBalance; }
+        public decimal CurrentBalance { get => _budget.CurrentBudgetBalance; }
 
-        public string DebugInfo { get => "Recommended MD: $" + _budget.GetRecommendedMonthlyDepositAmt() + "  Min MD: $" + _budget.GetMinMonthlyDepositAmt() + "  Max MD: $" + _budget.GetMaxMonthlyDepositAmt();  }
+
+        public BudgetPriority SelectedBudgetPriority { get => _budget.Priority; set => _budget.Priority = value; }
+        
+        private ObservableCollection<BudgetPriority> budgetPriorities = new(Enum.GetValues(typeof(BudgetPriority)).Cast<BudgetPriority>().ToList());
+        public ObservableCollection<BudgetPriority> BudgetPriorities => budgetPriorities;
 
         public BudgetViewModel(Budget budget)
         {

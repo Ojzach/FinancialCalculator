@@ -2,6 +2,7 @@
 using FinancialCalculator.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,17 +17,16 @@ namespace FinancialCalculator.ResourceDictionaries
         {
             FrameworkElement element = container as FrameworkElement;
 
-            if (element != null && item != null)
+            if (element is null || item is null || item is not BudgetViewModel) return null;
+
+            return item switch
             {
-
-                if (item is BudgetViewModel)
-                {
-                    if (item is SavingsBudgetViewModel) return element.FindResource("SavingsBudget_EditPanelTemplate") as DataTemplate;
-                    else if (item is FixedBudgetViewModel) return element.FindResource("FixedBudget_EditPanelTemplate") as DataTemplate;
-                }
-            }
-
-            return null;
+                SavingsBudgetViewModel => element.FindResource("SavingsBudget_EditPanelTemplate") as DataTemplate,
+                RecurringExpenseBudgetViewModel => element.FindResource("RecurringExpenseBudget_EditPanelTemplate") as DataTemplate,
+                FlexibleBudgetViewModel => element.FindResource("FlexibleBudget_EditPanelTemplate") as DataTemplate,
+                FixedBudgetViewModel => element.FindResource("FixedBudget_EditPanelTemplate") as DataTemplate,
+                _ => null
+            };
         }
     }
 }

@@ -11,13 +11,13 @@
     
     <StackPanel Orientation="Horizontal">
         <StackPanel.Resources>
-            <converters:BoolToIntConverter x:Key="BoolToIntConverter"/>
+            <converters:AmtPctSelectionConverter x:Key="AmtPctSelectionConverter"/>
             <converters:PercentConverter x:Key="PercentageConverter"/>
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         </StackPanel.Resources>
 
         <TextBlock Text="{Binding TitleText, ElementName=root}" Height="20"/>
-        <ComboBox SelectedIndex="{Binding IsSetByAmt, ElementName=root, Converter={StaticResource BoolToIntConverter}}" Width="100" Height="20" Margin="8, 0, 8, 0">
+        <ComboBox SelectedIndex="{Binding IsSetByAmt, ElementName=root, Converter={StaticResource AmtPctSelectionConverter}}" Width="100" Height="20" Margin="8, 0, 8, 0">
             <ComboBoxItem Content="Amount"/>
             <ComboBoxItem Content="Percent"/>
         </ComboBox>

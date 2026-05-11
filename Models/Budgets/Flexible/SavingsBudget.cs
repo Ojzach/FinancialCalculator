@@ -1,6 +1,7 @@
 ﻿using FinancialCalculator.ViewModels;
 using NodaTime;
 using NodaTime.Extensions;
+using System.Diagnostics;
 
 namespace FinancialCalculator.Models
 {
@@ -10,10 +11,20 @@ namespace FinancialCalculator.Models
         public override string BudgetType { get => "Savings Goal"; }
 
 
-        private float savingsGoalAmount;
+        private decimal savingsGoalAmount;
         private LocalDate goalDate = DateTime.Now.ToLocalDateTime().Date;
-        private BudgetPriority savingsPriority;
 
+        public decimal SavingsGoalAmount
+        {
+            get => savingsGoalAmount;
+            set => savingsGoalAmount = value;
+        }
+
+        public LocalDate GoalDate
+        {
+            get => goalDate;
+            set => goalDate = value;
+        }
 
         private int MonthsTillGoalDate
         {
@@ -25,16 +36,21 @@ namespace FinancialCalculator.Models
         }
 
 
-        public SavingsBudget(string name, FinancialAccount associatedFinancialAccount, float _savingsGoalAmt = 0f, LocalDate _goalDate = default(LocalDate), BudgetPriority _priority = BudgetPriority.Low) : base(name, associatedFinancialAccount)
+        public SavingsBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, decimal _savingsGoalAmt = 0m, LocalDate _goalDate = default, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
         {
             savingsGoalAmount = _savingsGoalAmt;
-            goalDate = _goalDate == default(LocalDate) ? DateTime.Now.ToLocalDateTime().Date : _goalDate;
-            savingsPriority = _priority;
+            goalDate = _goalDate == default ? DateTime.Now.ToLocalDateTime().Date : _goalDate;
         }
 
-        public override float GetMinMonthlyDepositAmt(float totalDeposit = 0) => 0;
-        public override float GetMaxMonthlyDepositAmt(float totalDeposit = 0) => GetRecommendedMonthlyDepositAmt();
-        public override float GetRecommendedMonthlyDepositAmt(float totalDeposit = 0) => savingsGoalAmount / (float)MonthsTillGoalDate;
+        public override decimal MinDepositAmount(decimal referenceDeposit, int numMonths = 1) => 0;
+        public override decimal MaxDepositAmount(decimal referenceDeposit, int numMonths = 1) => savingsGoalAmount - CurrentBudgetBalance;
+        public override decimal RecommendedDepositAmount(decimal referenceDeposit, int numMonths = 1)
+        {
+            int MonthsLeft = MonthsTillGoalDate;
+            if (MonthsLeft > 1) return (savingsGoalAmount / MonthsLeft) * numMonths;
+            else return savingsGoalAmount - CurrentBudgetBalance;
+
+        }
 
         public override ViewModelBase ToViewModel() => new SavingsBudgetViewModel(this);
     }
