@@ -100,6 +100,10 @@ namespace FinancialCalculator.Stores
         {
             return deposits[depositID].DepositAmtPct.Amount;
         }
+
+        public bool IsBudgetDepositInvalid(int depositID) => BudgetDeposits[depositID].IsDepositAmountInvalid;
+        public string InvalidDepositMessage(int depositID) => BudgetDeposits[depositID].DepositInvalidMsg;
+
         public decimal GetBudgetReferenceAmount(int depositID) => budgetStore.IsBudgetPreTax(GetDepositBudget(depositID).ID) ? DepositAmount : TakeHomeAmount;
 
         public void UpdatedBudgetSettings(int budgetID)

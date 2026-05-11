@@ -89,8 +89,8 @@ namespace FinancialCalculator.ViewModels
         public bool IsNotBaseBudget { get; set; } = true;
 
 
-        public bool IsDepositAmountInvalid => depositStore.BudgetDeposits[budgetID].IsDepositAmountInvalid;
-        public string DepositInvalidMsg => depositStore.BudgetDeposits[budgetID].DepositInvalidMsg;
+        public bool IsDepositAmountInvalid => depositStore.IsBudgetDepositInvalid(budgetID);
+        public string DepositInvalidMsg => depositStore.InvalidDepositMessage(budgetID);
 
         public ICommand EditBudgetCommand { get; set; }
 
