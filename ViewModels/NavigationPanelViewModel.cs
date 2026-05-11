@@ -20,11 +20,11 @@ namespace FinancialCalculator.ViewModels
         public ICommand LoadDepositCalculatorViewCommand { get; }
         public ICommand LoadFinancialAccountsViewCommand { get; }
 
-        public NavigationPanelViewModel(NavigationStore navigationStore, FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
+        public NavigationPanelViewModel(NavigationStore navigationStore, FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore, DepositStore depositStore)
         {
             _navigationStore = navigationStore;
 
-            _depositCalculatorView = new DepositCalculatorViewModel(financialInstitutionsStore, budgetsStore);
+            _depositCalculatorView = new DepositCalculatorViewModel(financialInstitutionsStore, budgetsStore, depositStore);
             _financialAccountsPageViewModel = new FinancialAccountsPageViewModel(financialInstitutionsStore);
 
             LoadDepositCalculatorViewCommand = new NavigateCommand(navigationStore, () => _depositCalculatorView);

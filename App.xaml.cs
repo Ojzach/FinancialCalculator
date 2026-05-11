@@ -81,9 +81,9 @@ namespace FinancialCalculator
                     new FixedBudget(103, "State Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0m)
                 });
 
+            DepositStore _depositStore = new DepositStore(_budgetsStore);
 
-
-            MainWindow = new MainWindow() { DataContext = new MainWindowViewModel(_navigationStore, _financialInstitutionsStore, _budgetsStore) };
+            MainWindow = new MainWindow() { DataContext = new MainWindowViewModel(_navigationStore, _financialInstitutionsStore, _budgetsStore, _depositStore) };
             MainWindow.Show();
 
             base.OnStartup(e);

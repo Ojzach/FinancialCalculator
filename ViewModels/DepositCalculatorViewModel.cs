@@ -36,9 +36,9 @@ namespace FinancialCalculator.ViewModels
 
         public BudgetDepositViewModel BaseDeposit { get; set; }
 
-        public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore)
+        public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore, DepositStore depositStore)
         {
-            _depositStore = new DepositStore(budgetsStore);
+            _depositStore = depositStore;
             _budgetStore = budgetsStore;
             _depositStore.DepositsChanged += OnDepositChanged;
 
