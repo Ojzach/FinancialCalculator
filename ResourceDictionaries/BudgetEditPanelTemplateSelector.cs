@@ -20,7 +20,7 @@ namespace FinancialCalculator.ResourceDictionaries
             if (element is null || item is null || item is not BudgetViewModel) return null;
 
             return item switch
-            {
+                {
                 SavingsBudgetViewModel => element.FindResource("SavingsBudget_EditPanelTemplate") as DataTemplate,
                 RecurringExpenseBudgetViewModel => element.FindResource("RecurringExpenseBudget_EditPanelTemplate") as DataTemplate,
                 FlexibleBudgetViewModel => element.FindResource("FlexibleBudget_EditPanelTemplate") as DataTemplate,
