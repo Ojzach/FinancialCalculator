@@ -28,7 +28,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition MinHeight="100"/>
-                <RowDefinition Height="2*"/>
+                <RowDefinition Height="3*"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
 
@@ -145,7 +145,7 @@
             </ScrollViewer>
 
             <ScrollViewer Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
-                <ContentPresenter Content="{Binding BaseDeposit}" ContentTemplate="{StaticResource DepositBudget}" Margin="3"/>
+                <ContentPresenter Content="{Binding BaseDeposit}" ContentTemplate="{StaticResource DepositBudget}" Margin="15, 3, 15, 3"/>
             </ScrollViewer>
 
             <Grid Grid.Row="3" Margin="25">

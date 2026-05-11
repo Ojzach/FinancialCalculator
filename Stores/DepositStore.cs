@@ -85,7 +85,7 @@ namespace FinancialCalculator.Stores
 
             }
 
-            BaseDepositID = 6;
+            BaseDepositID = 0;
             deposits[BaseDepositID].DepositAmtPct.Percent = 1;
 
         }
