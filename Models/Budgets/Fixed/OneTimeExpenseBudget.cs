@@ -9,9 +9,11 @@ namespace FinancialCalculator.Models.Budgets.Fixed
 {
     public class OneTimeExpenseBudget : FixedBudget
     {
-        public override string BudgetType { get => "Recurring Expense"; }
+        public override string BudgetType { get => "One-Time Expense"; }
 
-        public decimal ExpenseAmt = 0m;
+        public decimal ExpenseAmt { get; set; } = 0m;
+
+        public OneTimeExpenseBudget() { }
 
         public OneTimeExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, decimal _expenseAmt = 0, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
         {
@@ -22,9 +24,6 @@ namespace FinancialCalculator.Models.Budgets.Fixed
         public override decimal MaxDepositAmount(decimal referenceDeposit, int numMonths = 1) => RecommendedDepositAmount(referenceDeposit, numMonths);
         public override decimal RecommendedDepositAmount(decimal referenceDeposit, int numMonths = 1) => ExpenseAmt;
 
-        public override ViewModelBase ToViewModel()
-        {
-            throw new NotImplementedException();
-        }
+        public override ViewModelBase ToViewModel() => new OneTimeExpenseViewModel(this);
     }
 }

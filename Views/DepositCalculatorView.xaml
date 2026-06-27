@@ -162,7 +162,7 @@
 
                 </Grid.RowDefinitions>
 
-                <Button Content="Submit" Grid.Column="1" Grid.Row="1"/>
+                <Button Content="Submit" Grid.Column="1" Grid.Row="1" Command="{Binding SubmitDepositCommand}"/>
             </Grid>
 
         </Grid>

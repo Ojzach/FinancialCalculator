@@ -1,94 +1,54 @@
-﻿using FinancialCalculator.Models;
+using FinancialCalculator.Data;
+using FinancialCalculator.Models;
 using FinancialCalculator.Stores;
 using FinancialCalculator.ViewModels;
-using NodaTime;
+using System.IO;
 using System.Windows;
-
 
 namespace FinancialCalculator
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-
         public App()
         {
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            // Ensure the data directory exists
+            string dataDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "FinancialCalculator");
+            Directory.CreateDirectory(dataDir);
+            string dbPath = Path.Combine(dataDir, "data.db");
 
-            NavigationStore _navigationStore = new NavigationStore();
+            var db = new FinancialDbContext(dbPath);
+            DatabaseInitializer.EnsureCreated(db);
 
+            // Load data from DB
+            var (institutions, accountsById) = DatabaseInitializer.LoadAccountsAndInstitutions(db);
+            var (activeBudgets, hiddenBudgets) = DatabaseInitializer.LoadBudgets(db, accountsById);
 
-            FinancialInstitutionsStore _financialInstitutionsStore = new FinancialInstitutionsStore(
-                financialInstitutions: new List<FinancialInstitution>()
-                {
-                    new FinancialInstitution("USAA"),
-                    new FinancialInstitution("Discover"),
-                    new FinancialInstitution("Fidelity")
-                },
-                financialAccounts: new List<FinancialAccount>()
-                { 
-                    new FinancialAccount(0, "Income", 0, BankAccountType.Checking, 2000),
-                    new FinancialAccount(1, "Spending", 0, BankAccountType.Checking, 1000),
-                    new FinancialAccount(2, "Credit Card", 0, BankAccountType.Credit, -1000),
-                    new FinancialAccount(3, "Emergency Fund", 1, BankAccountType.Savings, 10000),
-                    new FinancialAccount(4, "State Tax", 1, BankAccountType.Savings, 5000, _isPreTaxAccount: true),
-                    new FinancialAccount(5, "Roth IRA", 2, BankAccountType.Investment, 10000),
-                    new FinancialAccount(6, "401K", 2, BankAccountType.Investment, 10000, _isPreTaxAccount: true)
-                }
-                )
+            NavigationStore navigationStore = new NavigationStore();
+
+            FinancialInstitutionsStore financialInstitutionsStore = new FinancialInstitutionsStore(
+                db,
+                financialInstitutions: institutions,
+                financialAccounts: accountsById.Values.ToList());
+
+            BudgetStore budgetStore = new BudgetStore(financialInstitutionsStore, db,
+                budgets: activeBudgets,
+                hiddenBudgets: hiddenBudgets);
+
+            DepositStore depositStore = new DepositStore(budgetStore);
+
+            MainWindow = new MainWindow()
             {
-
+                DataContext = new MainWindowViewModel(navigationStore, financialInstitutionsStore, budgetStore, depositStore)
             };
-
-
-            BudgetStore _budgetsStore = new BudgetStore(_financialInstitutionsStore,
-                budgets: new List<Budget>()
-                {
-                    new FixedBudget(0, "Base Budget", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 1, childBudgets: [1, 6, 10, 14]),
-
-                    new FixedBudget(1, "Investments", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 0.6m, childBudgets: [2, 3, 5]),
-                    new FixedBudget(2, "401K", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(6), setPct: 0.1m),
-                    new FixedBudget(3, "Roth IRA", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(5), setPct: 0.1m),
-                    new SavingsBudget(5, "House", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(0), 50000, new LocalDate(2026, 10, 20)),
-
-                    new FlexibleBudget(6, "Fixed Costs", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), childBudgets: [7, 8, 9]),
-                    new RecurringExpenseBudget(7, "Student Loans", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), 500m),
-                    new RecurringExpenseBudget(8, "Motorcycle Insurance", BudgetPriority.High, _financialInstitutionsStore.GetFinancialAccount(1), 43.32m),
-                    new RecurringExpenseBudget(9, "AMO Dues", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(1), 425, 3),
-
-                    new FixedBudget(10, "Savings", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(0), setPct: 0.2m, childBudgets: [11, 12, 13]),
-                    new SavingsBudget(11, "Emergency Fund", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(3), 10000, new LocalDate(2025, 8, 25)),
-                    new SavingsBudget(12, "Rally Car", BudgetPriority.VeryLow, _financialInstitutionsStore.GetFinancialAccount(0), 15000, new LocalDate(2026, 3, 1)),
-                    new SavingsBudget(13, "Travel", BudgetPriority.Low, _financialInstitutionsStore.GetFinancialAccount(0), 3000, new LocalDate(2025, 8, 20)),
-
-                    new FlexibleBudget(14, "Free Spending", BudgetPriority.Low, _financialInstitutionsStore.GetFinancialAccount(1), [15, 16, 17, 18, 19]),
-                    new FlexibleBudget(15, "Food", BudgetPriority.High, _financialInstitutionsStore.GetFinancialAccount(1)),
-                    new FlexibleBudget(16, "Gas", BudgetPriority.Medium, _financialInstitutionsStore.GetFinancialAccount(1)),
-                    new RecurringExpenseBudget(17, "Spotify", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), 12.71m),
-                    new RecurringExpenseBudget(18, "Adobe", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), 15.89m),
-                    new RecurringExpenseBudget(19, "Google Photos", BudgetPriority.VeryHigh, _financialInstitutionsStore.GetFinancialAccount(1), 2.11m)
-                },
-                hiddenBudgets: new List<Budget>()
-                {
-                    new FixedBudget(100, "Federal Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.145m),
-                    new FixedBudget(101, "Medicare", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.0145m),
-                    new FixedBudget(102, "Social Security", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0.062m),
-                    new FixedBudget(103, "State Income Tax", BudgetPriority.VeryHigh,  _financialInstitutionsStore.GetFinancialAccount(4), setPct: 0m)
-                });
-
-            DepositStore _depositStore = new DepositStore(_budgetsStore);
-
-            MainWindow = new MainWindow() { DataContext = new MainWindowViewModel(_navigationStore, _financialInstitutionsStore, _budgetsStore, _depositStore) };
             MainWindow.Show();
 
             base.OnStartup(e);
         }
-
     }
-
 }

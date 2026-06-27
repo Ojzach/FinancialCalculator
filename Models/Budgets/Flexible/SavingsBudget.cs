@@ -36,6 +36,8 @@ namespace FinancialCalculator.Models
         }
 
 
+        public SavingsBudget() { }
+
         public SavingsBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, decimal _savingsGoalAmt = 0m, LocalDate _goalDate = default, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
         {
             savingsGoalAmount = _savingsGoalAmt;

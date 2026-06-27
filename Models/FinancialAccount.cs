@@ -7,14 +7,15 @@ namespace FinancialCalculator.Models
     public class FinancialAccount
     {
         public int ID { get; set; } = -1;
-        public string accountName;
-        public int financialInstitutionID = -1;
-        public BankAccountType accountType;
-        public float currentBalance = 0.0f;
-        public List<Transaction> transactions = new List<Transaction>();
-        public bool isPreTaxAccount;
+        public string accountName { get; set; } = "";
+        public int financialInstitutionID { get; set; } = -1;
+        public BankAccountType accountType { get; set; }
+        public float currentBalance { get; set; } = 0.0f;
+        public bool isPreTaxAccount { get; set; }
 
-        public FinancialAccount(int id, string _accountName, int _financialInstitutionID, BankAccountType _accountType, float _currentBalance = 0, bool _isPreTaxAccount = false, List<Transaction>? _transactions = null)
+        public FinancialAccount() { }
+
+        public FinancialAccount(int id, string _accountName, int _financialInstitutionID, BankAccountType _accountType, float _currentBalance = 0, bool _isPreTaxAccount = false)
         {
             ID = id;
             accountName = _accountName;
@@ -22,7 +23,6 @@ namespace FinancialCalculator.Models
             accountType = _accountType;
             currentBalance = _currentBalance;
             isPreTaxAccount = _isPreTaxAccount;
-            transactions = _transactions is null? new List<Transaction>() : _transactions;
         }
 
         public FinancialAccount(FinancialAccountViewModel accountViewModel)

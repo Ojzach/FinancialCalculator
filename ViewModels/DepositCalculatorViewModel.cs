@@ -22,6 +22,9 @@ namespace FinancialCalculator.ViewModels
 
         private DepositStore _depositStore;
         private BudgetStore _budgetStore;
+        private FinancialInstitutionsStore _accountsStore;
+        private NavigationStore _navigationStore;
+        private BudgetOverviewViewModel? _budgetOverviewVM;
 
 
         private bool isEditPanelOpen = false;
@@ -36,10 +39,13 @@ namespace FinancialCalculator.ViewModels
 
         public BudgetDepositViewModel BaseDeposit { get; set; }
 
-        public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore, DepositStore depositStore)
+        public DepositCalculatorViewModel(FinancialInstitutionsStore financialInstitutionsStore, BudgetStore budgetsStore, DepositStore depositStore, NavigationStore navigationStore, BudgetOverviewViewModel? budgetOverviewVM = null)
         {
             _depositStore = depositStore;
             _budgetStore = budgetsStore;
+            _accountsStore = financialInstitutionsStore;
+            _navigationStore = navigationStore;
+            _budgetOverviewVM = budgetOverviewVM;
             _depositStore.DepositsChanged += OnDepositChanged;
 
 
@@ -51,9 +57,11 @@ namespace FinancialCalculator.ViewModels
 
             BaseDeposit = new BudgetDepositViewModel(_depositStore.BaseDepositID, budgetsStore, _depositStore, true);
             BaseDeposit.EditBudgetAction += OpenEditMenu;
-            
-            CloseEditMenuCommand = new RelayCommand(execute => CloseEditMenu());
 
+            CloseEditMenuCommand = new RelayCommand(execute => CloseEditMenu());
+            SubmitDepositCommand = new RelayCommand(
+                _ => SubmitDeposit(),
+                _ => _depositStore.DepositAmount > 0 && _depositStore.BudgetDeposits.All(kvp => !kvp.Value.IsDepositAmountInvalid));
 
             _depositStore.DepositAmount = 15000;
         }
@@ -71,6 +79,7 @@ namespace FinancialCalculator.ViewModels
 
 
         public ICommand CloseEditMenuCommand { get; set; }
+        public ICommand SubmitDepositCommand { get; set; }
 
         public void OpenEditMenu(int budgetID)
         {
@@ -84,6 +93,13 @@ namespace FinancialCalculator.ViewModels
             _depositStore.UpdatedBudgetSettings(currentlyEditingBudgetID);
             IsEditPanelOpen = false;
             currentlyEditingBudgetID = -1;
+        }
+
+        private void SubmitDeposit()
+        {
+            var confirmVM = new DepositConfirmationViewModel(
+                _depositStore, _budgetStore, _accountsStore, _navigationStore, this, _budgetOverviewVM);
+            _navigationStore.CurrentViewModel = confirmVM;
         }
     }
 

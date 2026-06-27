@@ -1,33 +1,29 @@
-﻿using NodaTime;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FinancialCalculator.Models
 {
     public class Transaction
     {
-        public string Name;
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public bool IsDeposit { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime TransactionDate { get; set; } = System.DateTime.Now;
 
-        public bool IsDeposit;
-        public float Amount;
+        public int AccountId { get; set; }
+        public int? BudgetId { get; set; }
 
-        public LocalDateTime DateTime;
+        public Transaction() { }
 
-        public Budget? Budget;
-        public FinancialAccount Account;
-
-        public Transaction(string name, bool isDeposit, float amount, LocalDateTime transactionTime, FinancialAccount account, Budget? budget)
+        public Transaction(string name, bool isDeposit, decimal amount, FinancialAccount account, Budget? budget = null)
         {
             Name = name;
             IsDeposit = isDeposit;
             Amount = amount;
-            DateTime = transactionTime;
-            Account = account;
-            Budget = budget;
-
+            AccountId = account.ID;
+            BudgetId = budget?.ID;
+            TransactionDate = System.DateTime.Now;
         }
     }
 }

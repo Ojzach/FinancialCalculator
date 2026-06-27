@@ -44,6 +44,8 @@ namespace FinancialCalculator.Models
             _ => frequencyValue
         };
 
+        public RecurringExpenseBudget() { }
+
         public RecurringExpenseBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, decimal expenseAmount = 0, int frequencyValue = 1, RecurringFrequencyType frequencyType = RecurringFrequencyType.Month, List<int>? childBudgets = null)
             : base(id, name, priority, associatedFinancialAccount, childBudgets: childBudgets)
         {

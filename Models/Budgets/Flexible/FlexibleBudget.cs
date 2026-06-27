@@ -23,6 +23,8 @@ namespace FinancialCalculator.Models
         private decimal minMonthlyAmt = 0;
         private decimal minMonthlyPct = 0;
 
+        protected FlexibleBudget() { }
+
         public FlexibleBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets)
         {
         }

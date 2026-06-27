@@ -42,7 +42,7 @@ namespace FinancialCalculator.Stores
         }
 
 
-        public BudgetStore budgetStore;
+        private BudgetStore budgetStore;
         private DepositAllocationService depositService;
         public IReadOnlyDictionary<int, BudgetDeposit> BudgetDeposits => deposits.Where(deposit => !deposit.Value.DepositIsDeduction).ToDictionary();
         public IReadOnlyDictionary<int, BudgetDeposit> DepositDeductions => deposits.Where(deposit => deposit.Value.DepositIsDeduction).ToDictionary();
@@ -159,6 +159,44 @@ namespace FinancialCalculator.Stores
             }
 
             return availableAmount;
+        }
+
+        /// <summary>
+        /// Registers a newly-added budget in the deposit system under the given parent.
+        /// Call this after adding a budget to BudgetStore so it participates in allocation.
+        /// </summary>
+        public void RegisterNewBudget(int newBudgetID, int parentBudgetID = 0)
+        {
+            if (deposits.ContainsKey(newBudgetID)) return;
+
+            var newDeposit = budgetStore.IsBudgetPreTax(newBudgetID)
+                ? new BudgetDeposit(newBudgetID, new AmountPercentModel(() => DepositAmount))
+                : new BudgetDeposit(newBudgetID, new AmountPercentModel(() => TakeHomeAmount));
+
+            newDeposit.SetParent(parentBudgetID);
+            deposits.Add(newBudgetID, newDeposit);
+
+            // Update parent's children list
+            var parentDeposit = deposits[parentBudgetID];
+            var updatedChildren = parentDeposit.DepositChildrenIDs.ToList();
+            updatedChildren.Add(newBudgetID);
+            parentDeposit.SetChildren(updatedChildren);
+
+            depositService.Allocate(BaseDepositID, TakeHomeAmount);
+            PublishDepositChanged([]);
+        }
+
+        /// <summary>Resets all deposit amounts to zero (call after confirming a deposit).</summary>
+        public void Reset()
+        {
+            foreach (var deposit in deposits.Values)
+            {
+                deposit.DepositAmtPct.Amount = 0;
+                deposit.DepositIsUserSet = false;
+                deposit.IsDepositAmountInvalid = false;
+            }
+            depositAmount = 0;
+            PublishDepositChanged([]);
         }
 
         public Budget GetDepositBudget(int depositID) => budgetStore.GetBudget(GetDeposit(depositID).DepositBudgetID);

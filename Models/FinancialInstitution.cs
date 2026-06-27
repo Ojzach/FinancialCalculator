@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace FinancialCalculator.Models
 {
-    internal class FinancialInstitution
+    public class FinancialInstitution
     {
-
-
-        public string Name { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
 
         public ObservableCollection<FinancialAccount> financialAccounts { get; set; } = new ObservableCollection<FinancialAccount>();
+
+        public FinancialInstitution() { }
 
         public FinancialInstitution(string name)
         {

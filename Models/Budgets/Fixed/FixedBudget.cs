@@ -16,6 +16,8 @@ namespace FinancialCalculator.Models
         private decimal setPercent = 0;
 
 
+        protected FixedBudget() { }
+
         public FixedBudget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, decimal setAmt = 0m, decimal setPct = 0m, List<int>? childBudgets = null) : base(id, name, priority, associatedFinancialAccount, childBudgets)
         {
             isSetByAmount = setPct != 0.0m ? false : true;

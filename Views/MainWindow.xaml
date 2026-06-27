@@ -37,6 +37,15 @@
                 <DataTemplate DataType="{x:Type vms:FinancialAccountsPageViewModel}">
                     <views:FinancialAccountsPageView/>
                 </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:BudgetManagementViewModel}">
+                    <views:BudgetManagementView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:DepositConfirmationViewModel}">
+                    <views:DepositConfirmationView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vms:BudgetOverviewViewModel}">
+                    <views:BudgetOverviewView/>
+                </DataTemplate>
             </Grid.Resources>
 
             <ContentControl Content="{Binding CurrentViewModel}"/>

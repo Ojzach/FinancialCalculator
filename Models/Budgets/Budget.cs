@@ -5,15 +5,25 @@ namespace FinancialCalculator.Models
     public abstract class Budget
     {
 
-        public int ID { get; private set; }
-        public string Name = "";
-        public BudgetPriority Priority;
+        public int ID { get; set; }
+        public string Name { get; set; } = "";
+        public BudgetPriority Priority { get; set; }
         public abstract string BudgetType { get; }
-        public FinancialAccount AssociatedFinancialAccount;
-        public List<int> ChildBudgets;
 
-        public decimal CurrentBudgetBalance => localCurrentBudgetBalance;
-        private decimal localCurrentBudgetBalance = 0;
+        // EF Core FK — set before saving
+        public int AssociatedFinancialAccountId { get; set; }
+        public FinancialAccount AssociatedFinancialAccount { get; set; } = null!;
+
+        public List<int> ChildBudgets { get; set; } = new();
+
+        // Whether this budget is a hidden deduction (taxes, etc.)
+        public bool IsHidden { get; set; } = false;
+
+        public decimal CurrentBudgetBalance { get; set; } = 0;
+
+        public void AddToBalance(decimal amount) => CurrentBudgetBalance += amount;
+
+        protected Budget() { }
 
         public Budget(int id, string name, BudgetPriority priority, FinancialAccount associatedFinancialAccount, List<int>? childBudgets)
         {
@@ -21,6 +31,7 @@ namespace FinancialCalculator.Models
             Name = name;
             Priority = priority;
             AssociatedFinancialAccount = associatedFinancialAccount;
+            AssociatedFinancialAccountId = associatedFinancialAccount.ID;
             ChildBudgets = childBudgets == null ? new List<int>() : childBudgets;
         }
 

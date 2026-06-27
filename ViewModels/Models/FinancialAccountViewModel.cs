@@ -13,7 +13,8 @@ namespace FinancialCalculator.ViewModels
 {
     public class FinancialAccountViewModel : ViewModelBase
     {
-        private FinancialAccount _account;
+        internal FinancialAccount _account;
+        public FinancialAccount BaseAccount => _account;
 
         public string AccountName { get => _account.accountName; set { _account.accountName = value; OnPropertyChanged("AccountName"); } }
         public BankAccountType AccountType { get => _account.accountType; set { _account.accountType = value; OnPropertyChanged("AccountType"); } }

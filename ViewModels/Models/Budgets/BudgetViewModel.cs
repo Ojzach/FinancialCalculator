@@ -13,7 +13,9 @@ namespace FinancialCalculator.ViewModels
         protected Budget _budget;
 
 
-        public string BudgetName { get => _budget.Name; private set => _budget.Name = value; }
+        public int BudgetID => _budget.ID;
+        public string BudgetName { get => _budget.Name; set { _budget.Name = value; OnPropertyChanged(nameof(BudgetName)); } }
+        public string AssociatedFinancialAccountName => _budget.AssociatedFinancialAccount?.accountName ?? "N/A";
 
         public abstract string BudgetType { get; }
 
